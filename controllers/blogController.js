@@ -33,16 +33,16 @@ const addBlog = async (req, res) => {
 const getAllBlogs = async (req, res) => {
   const blogs = await Blog.find({ published: true });
 
-  const result = blogs.map((blog) => {
-    (title = blog.title),
-      (image = blog.image),
-      (likes = blog.likes),
-      (views = blog.views),
-      (date = blog.createdAt),
-      (slug = blog.slug);
-
-    return { title, likes, date, views, image, slug };
-  });
+  const result = blogs
+    .map((blog) => ({
+      title: blog.title,
+      image: blog.image,
+      likes: blog.likes,
+      views: blog.views,
+      date: blog.createdAt,
+      slug: blog.slug,
+    }))
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
 
   return res.status(200).json(result);
 };
@@ -50,7 +50,11 @@ const getAllBlogs = async (req, res) => {
 const getBlogByTitle = async (req, res) => {
   const slug = req.params.title;
 
-  const blog = await Blog.findOne({ slug: slug });
+  const blog = await Blog.findOneAndUpdate(
+    { slug, published: true },
+    { $inc: { views: 1 } },
+    { new: true } // return the updated document
+  );
   return res.status(200).json(blog);
 };
 
