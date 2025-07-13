@@ -48,7 +48,8 @@ const getAllBlogs = async (req, res) => {
 };
 
 const getBlogBySlug = async (req, res) => {
-  const slug = req.params.title;
+  const slug = req.params.slug;
+
 
   const blog = await Blog.findOneAndUpdate(
     { slug, published: true },
