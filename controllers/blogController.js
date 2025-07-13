@@ -8,7 +8,7 @@ const slugify = (title) =>
     .replace(/(^-|-$)/g, "");
 
 const addBlog = async (req, res) => {
-  const { title, content, image, published } = req.body;
+  const { title, content, image, published, slug } = req.body;
   if (!(title && content && image && published)) {
     return res.json({ Error: "All fields are required" });
   }
@@ -18,7 +18,7 @@ const addBlog = async (req, res) => {
       content,
       image,
       published,
-      slug: slugify(title),
+      slug: slug ? slug : slugify(title),
     });
 
     return res
@@ -35,11 +35,13 @@ const getAllBlogs = async (req, res) => {
 
   const result = blogs.map((blog) => {
     (title = blog.title),
-      (content = blog.content[0]),
       (image = blog.image),
+      (likes = blog.likes),
+      (views = blog.views),
+      (date = blog.createdAt),
       (slug = blog.slug);
 
-    return { title, content, image, slug };
+    return { title, likes, date, views, image, slug };
   });
 
   return res.status(200).json(result);
