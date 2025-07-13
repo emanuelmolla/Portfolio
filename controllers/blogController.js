@@ -47,7 +47,7 @@ const getAllBlogs = async (req, res) => {
   return res.status(200).json(result);
 };
 
-const getBlogByTitle = async (req, res) => {
+const getBlogBySlug = async (req, res) => {
   const slug = req.params.title;
 
   const blog = await Blog.findOneAndUpdate(
@@ -58,4 +58,4 @@ const getBlogByTitle = async (req, res) => {
   return res.status(200).json(blog);
 };
 
-module.exports = { addBlog, getAllBlogs, getBlogByTitle };
+module.exports = { addBlog, getAllBlogs, getBlogBySlug };
