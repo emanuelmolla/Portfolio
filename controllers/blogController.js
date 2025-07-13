@@ -50,7 +50,6 @@ const getAllBlogs = async (req, res) => {
 const getBlogBySlug = async (req, res) => {
   const slug = req.params.slug;
 
-
   const blog = await Blog.findOneAndUpdate(
     { slug, published: true },
     { $inc: { views: 1 } },
@@ -59,4 +58,15 @@ const getBlogBySlug = async (req, res) => {
   return res.status(200).json(blog);
 };
 
-module.exports = { addBlog, getAllBlogs, getBlogBySlug };
+const updateBlog = async (req, res) => {
+  try {
+    const id = req.params._id;
+    const { likes } = req.body;
+    const blog = await Blog.findByIdAndUpdate(id, { likes }, { new: true });
+    return res.status(200).json({ blog });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = { addBlog, getAllBlogs, getBlogBySlug, updateBlog };
