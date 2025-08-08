@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/blogs", blogRoutes);
-app.use("ping", pingRoute);
+app.use("/ping", pingRoute);
 
 app.listen(PORT, () => {
   console.log(`All good server is runing on port: ${PORT}`);
