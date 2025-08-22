@@ -6,7 +6,7 @@ dotenv.config();
 const connectDB = require("./service/connectDB");
 connectDB();
 
-const blogRoutes = require("./routes/blogRoutes");
+const blogRoutes = require("./routes/blog");
 const pingRoute = require("./routes/ping");
 const authRoutes = require("./routes/auth")
 

@@ -4,14 +4,16 @@ const {
   getAllBlogs,
   getBlogBySlug,
   addBlog,
-  updateBlog
+  updateBlog,
 } = require("../controllers/blogController");
+
+const authMiddleware = require("../middlewares/authMiddleware");
 
 router.get("/", getAllBlogs);
 router.get("/:slug", getBlogBySlug);
 
-router.put("/:id", updateBlog);
+router.put("/:id", authMiddleware, updateBlog);
 
-router.post("/", addBlog);
+router.post("/", authMiddleware, addBlog);
 
 module.exports = router;
