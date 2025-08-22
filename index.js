@@ -10,6 +10,7 @@ const blogRoutes = require("./routes/blog");
 const pingRoute = require("./routes/ping");
 const authRoutes = require("./routes/auth");
 const messageRoutes = require("./routes/message");
+const dashboardRoutes = require("./routes/dashboard");
 
 const PORT = process.env.PORT;
 
@@ -22,6 +23,7 @@ app.use("/ping", pingRoute);
 
 app.use("/auth", authRoutes);
 app.use("/message", messageRoutes);
+app.use("/dashboard", dashboardRoutes);
 
 app.listen(PORT, () => {
   console.log(`All good server is runing on port: ${PORT}`);
