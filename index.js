@@ -8,7 +8,8 @@ connectDB();
 
 const blogRoutes = require("./routes/blog");
 const pingRoute = require("./routes/ping");
-const authRoutes = require("./routes/auth")
+const authRoutes = require("./routes/auth");
+const messageRoutes = require("./routes/message");
 
 const PORT = process.env.PORT;
 
@@ -19,7 +20,8 @@ app.use(express.json());
 app.use("/blogs", blogRoutes);
 app.use("/ping", pingRoute);
 
-app.use("/auth", authRoutes)
+app.use("/auth", authRoutes);
+app.use("/message", messageRoutes);
 
 app.listen(PORT, () => {
   console.log(`All good server is runing on port: ${PORT}`);
