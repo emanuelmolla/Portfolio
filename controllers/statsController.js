@@ -4,12 +4,18 @@ const Blog = require("../models/Blog"); // make sure you have this
 
 const getStats = async (req, res) => {
   try {
-    const today = new Date();
-    const startOfToday = new Date(today.setHours(0, 0, 0, 0));
-    const startOfWeek = new Date();
-    startOfWeek.setDate(startOfWeek.getDate() - 6);
-    const prevWeekStart = new Date();
-    prevWeekStart.setDate(prevWeekStart.getDate() - 14);
+    const now = new Date();
+    const startOfToday = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+    );
+    // last 7 days INCLUDING today in UTC
+    const startOfWeek = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 6)
+    );
+
+    const prevWeekStart = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 13)
+    );
 
     // Count visits
     const todayVisits = await Visit.countDocuments({
