@@ -20,7 +20,9 @@ const sendMessage = async (req, res) => {
 const getAllMessages = async (req, res) => {
   try {
     const messages = await Message.find().lean();
-    const sorted = messages.sort((a, b) => a.createdAt - b.createdAt);
+    const sorted = messages.sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
     return res.status(200).json({ messages: sorted });
   } catch (err) {
     return res
