@@ -22,7 +22,7 @@ app.use("/blogs", blogRoutes);
 app.use("/ping", pingRoute);
 
 app.use("/auth", authRoutes);
-app.use("/message", messageRoutes);
+app.use("/messages", messageRoutes);
 app.use("/dashboard", dashboardRoutes);
 
 app.listen(PORT, () => {

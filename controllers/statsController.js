@@ -7,7 +7,7 @@ const getStats = async (req, res) => {
     const today = new Date();
     const startOfToday = new Date(today.setHours(0, 0, 0, 0));
     const startOfWeek = new Date();
-    startOfWeek.setDate(startOfWeek.getDate() - 7);
+    startOfWeek.setDate(startOfWeek.getDate() - 6);
     const prevWeekStart = new Date();
     prevWeekStart.setDate(prevWeekStart.getDate() - 14);
 
@@ -39,7 +39,12 @@ const getStats = async (req, res) => {
       },
       {
         $group: {
-          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          _id: {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: "$createdAt",
+            },
+          },
           count: { $sum: 1 },
         },
       },
@@ -49,7 +54,6 @@ const getStats = async (req, res) => {
     const visitData = visits.map((v) => ({
       date: v._id,
       visits: v.count,
-      day: new Date(v._id).toLocaleDateString("en-US", { weekday: "short" }),
     }));
 
     return res.json({
