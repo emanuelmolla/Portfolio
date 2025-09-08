@@ -17,4 +17,44 @@ const addVisit = async (req, res) => {
   }
 };
 
-module.exports = { addVisit };
+/**
+ * Delete any visits older than 14 full days.
+ * (i.e., createdAt < cutoff)
+ */
+async function deleteVisitsOlderThan14Days() {
+  // Cutoff = now minus 14 days
+  const cutoff = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+
+  const { deletedCount } = await Visit.deleteMany({
+    createdAt: { $lt: cutoff },
+  });
+
+  return { deletedCount, cutoff };
+}
+
+/**
+ * (Optional) Delete all visits created today (local server time).
+ */
+async function deleteTodaysVisits() {
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
+
+  const { deletedCount } = await Visit.deleteMany({
+    createdAt: { $gte: startOfDay, $lte: endOfDay },
+  });
+
+  return { deletedCount, startOfDay, endOfDay };
+}
+
+
+
+module.exports = {
+  deleteVisitsOlderThan14Days,
+  deleteTodaysVisits,
+  addVisit,
+};
+
+
