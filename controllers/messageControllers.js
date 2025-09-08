@@ -1,12 +1,14 @@
 const Message = require("../models/Message");
 const sendMessage = async (req, res) => {
   try {
-    const { email, name, message } = req.body;
-
+    const { email, name, message, consent } = req.body;
+    const validYes = new Set(["y", "yes", "yeah", "yep", "yea"]);
+  
     const newMessage = await Message.create({
       message: message.trim(),
       email: email.trim(),
       name: name.trim(),
+      contactConsent: validYes.has(consent.trim().toLowerCase()),
     });
 
     return res.status(200).json(newMessage);

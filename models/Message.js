@@ -18,6 +18,10 @@ const messageSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    contactConsent: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
