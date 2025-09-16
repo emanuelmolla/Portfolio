@@ -1,29 +1,59 @@
 const Visit = require("../models/Visit");
 const geoip = require("geoip-lite");
+const axios = require("axios");
 
-// Record a new visit
+const getLocationFromIP = async (ip) => {
+  try {
+    // Batch endpoint for better performance
+    const response = await axios.post("http://ip-api.com/batch", [
+      {
+        query: ip,
+        fields:
+          "status,country,countryCode,region,regionName,city,lat,lon,timezone,query",
+      },
+    ]);
+
+    const result = response.data[0];
+    if (result.status === "success") {
+      return {
+        country: result.countryCode,
+        city: result.city,
+        region: result.regionName,
+        lat: result.lat,
+        lon: result.lon,
+        timezone: result.timezone,
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error("IP-API error:", error);
+    return null;
+  }
+};
+
+// Usage in your controller
 const addVisit = async (req, res) => {
   try {
-    // Try to get real IP from headers first
     let ip =
-      req.headers["x-forwarded-for"]?.split(",")[0].trim() || // from proxy/CDN
+      req.headers["x-forwarded-for"]?.split(",")[0].trim() ||
       req.connection?.remoteAddress ||
-      req.socket?.remoteAddress ||
       req.ip;
 
-    // Remove IPv6 prefix "::ffff:" if present
     if (ip.startsWith("::ffff:")) {
       ip = ip.replace("::ffff:", "");
     }
 
-    // Geo lookup
-    const geo = geoip.lookup(ip);
+    // Skip geolocation for local IPs
+    let geo = null;
+    if (!isPrivateIP(ip)) {
+      geo = await getLocationFromIP(ip);
+    }
 
     await Visit.create({
       ip,
       userAgent: req.headers["user-agent"],
       country: geo ? geo.country : "Unknown",
-      city: geo && geo.city ? geo.city : null,
+      city: geo ? geo.city : null,
       date: new Date(),
     });
 
@@ -35,6 +65,50 @@ const addVisit = async (req, res) => {
       .json({ message: "Unable to record visit", error: err.message });
   }
 };
+
+// Helper function to check if IP is private
+const isPrivateIP = (ip) => {
+  return (
+    /^(127\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|192\.168\.)/.test(ip) ||
+    ip === "localhost" ||
+    ip === "::1"
+  );
+};
+
+// // Record a new visit
+// const addVisit = async (req, res) => {
+//   try {
+//     // Try to get real IP from headers first
+//     let ip =
+//       req.headers["x-forwarded-for"]?.split(",")[0].trim() || // from proxy/CDN
+//       req.connection?.remoteAddress ||
+//       req.socket?.remoteAddress ||
+//       req.ip;
+
+//     // Remove IPv6 prefix "::ffff:" if present
+//     if (ip.startsWith("::ffff:")) {
+//       ip = ip.replace("::ffff:", "");
+//     }
+
+//     // Geo lookup
+//     const geo = geoip.lookup(ip);
+
+//     await Visit.create({
+//       ip,
+//       userAgent: req.headers["user-agent"],
+//       country: geo ? geo.country : "Unknown",
+//       city: geo && geo.city ? geo.city : null,
+//       date: new Date(),
+//     });
+
+//     return res.status(201).json({ message: "Visit recorded", ip, geo });
+//   } catch (err) {
+//     console.error("Error adding visit:", err);
+//     return res
+//       .status(500)
+//       .json({ message: "Unable to record visit", error: err.message });
+//   }
+// };
 
 async function backfillCountries() {
   try {
