@@ -50,7 +50,7 @@ const addVisit = async (req, res) => {
     }
 
     await Visit.create({
-      ip,
+      // ip,
       userAgent: req.headers["user-agent"],
       country: geo ? geo.country : "Unknown",
       city: geo ? geo.city : null,
