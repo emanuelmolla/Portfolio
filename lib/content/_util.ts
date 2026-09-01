@@ -48,20 +48,42 @@ export function toPlain<T>(value: T): T {
   return value
 }
 
+/** No connection string configured means we run off the seed module. */
+export function hasDatabase(): boolean {
+  return Boolean(process.env.MONGODB_URI)
+}
+
 /**
  * Wrap a read so it connects, runs, and serializes, cached under `tags`.
  *
  * The cache is what makes both drivers work at once: pages are fully static for
  * crawlers, and an admin save calls revalidateTag() so an edit goes live
  * without a redeploy.
+ *
+ * `seed` is the no-database path. It is not a mock: it returns the same real
+ * content that `npm run seed` writes into Mongo, from lib/content/_seed.ts.
+ * This exists so the site runs on a fresh clone with no configuration, which
+ * matters for reviewing design work. The moment MONGODB_URI is set, this branch
+ * is dead and every read goes to the database.
  */
 export function cachedQuery<Args extends unknown[], Result>(
   keyParts: string[],
   tags: Tag[],
-  fn: (...args: Args) => Promise<Result>
+  fn: (...args: Args) => Promise<Result>,
+  seed?: (...args: Args) => Result
 ) {
   return unstable_cache(
     async (...args: Args) => {
+      if (!hasDatabase()) {
+        if (!seed) {
+          throw new Error(
+            `No MONGODB_URI and no seed fallback for [${keyParts.join('/')}]. ` +
+              `Either set MONGODB_URI in .env.local or add a seed resolver.`
+          )
+        }
+        return toPlain(seed(...args))
+      }
+
       await connectDB()
       return toPlain(await fn(...args))
     },

@@ -1,5 +1,6 @@
 import { ExperienceModel, type Experience } from '@/lib/models'
 import { TAGS, cachedQuery } from './_util'
+import { seedExperience } from './_seed'
 
 export interface ExperienceFilter {
   section?: Experience['section']
@@ -20,5 +21,11 @@ export const getExperience = cachedQuery(
       .lean()
 
     return docs as unknown as Experience[]
+  },
+  (filter: ExperienceFilter = {}) => {
+    const out = seedExperience.filter(
+      (e) => e.status === 'published' && (!filter.section || e.section === filter.section)
+    )
+    return [...out].sort((a, b) => Number(b.current) - Number(a.current) || a.order - b.order)
   }
 )

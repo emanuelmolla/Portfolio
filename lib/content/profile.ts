@@ -1,5 +1,6 @@
 import { ProfileModel, type Profile } from '@/lib/models'
 import { TAGS, cachedQuery } from './_util'
+import { seedProfile } from './_seed'
 
 /**
  * The identity singleton. Fetched on essentially every page, so it is cached
@@ -11,5 +12,6 @@ export const getProfile = cachedQuery(
   async (): Promise<Profile | null> => {
     const doc = await ProfileModel.findById('me').lean()
     return (doc ?? null) as unknown as Profile | null
-  }
+  },
+  () => seedProfile
 )

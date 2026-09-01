@@ -1,5 +1,6 @@
 import { WorkModel, type Work, type WorkKind } from '@/lib/models'
 import { TAGS, cachedQuery } from './_util'
+import { seedWork } from './_seed'
 
 /**
  * Reads for the work collection.
@@ -39,6 +40,14 @@ export const getWork = cachedQuery(
     if (filter.limit) q = q.limit(filter.limit)
 
     return (await q) as unknown as Work[]
+  },
+  (filter: WorkFilter = {}) => {
+    let out = seedWork.filter((w) => filter.includeDrafts || w.status === 'published')
+    if (filter.kind) out = out.filter((w) => w.kind === filter.kind)
+    if (filter.tag) out = out.filter((w) => w.tags.includes(filter.tag!))
+    if (filter.featured) out = out.filter((w) => w.featuredOrder !== null)
+    out = [...out].sort((a, b) => (a.featuredOrder ?? 1e9) - (b.featuredOrder ?? 1e9))
+    return filter.limit ? out.slice(0, filter.limit) : out
   }
 )
 
@@ -54,7 +63,9 @@ export const getWorkItem = cachedQuery(
     }).lean()
 
     return (doc ?? null) as unknown as Work | null
-  }
+  },
+  (slug: string) =>
+    seedWork.find((w) => w.slug === slug || w.previousSlugs.includes(slug)) ?? null
 )
 
 /** Slugs for generateStaticParams. Cheap projection, no bodies. */
@@ -64,5 +75,6 @@ export const getWorkSlugs = cachedQuery(
   async (): Promise<string[]> => {
     const docs = await WorkModel.find({ status: 'published' }, { slug: 1, _id: 0 }).lean()
     return docs.map((d) => (d as { slug: string }).slug)
-  }
+  },
+  () => seedWork.map((w) => w.slug)
 )

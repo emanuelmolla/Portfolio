@@ -1,5 +1,6 @@
 import { PageModel, type Page } from '@/lib/models'
 import { TAGS, cachedQuery } from './_util'
+import { seedPages } from './_seed'
 
 export const getPage = cachedQuery(
   ['pages', 'item'],
@@ -13,7 +14,9 @@ export const getPage = cachedQuery(
     }).lean()
 
     return (doc ?? null) as unknown as Page | null
-  }
+  },
+  (slug: string) =>
+    seedPages.find((p) => p.slug === slug || p.previousSlugs.includes(slug)) ?? null
 )
 
 /** Nav membership is data. This is what makes adding a page a CMS edit. */
@@ -29,7 +32,12 @@ export const getNavPages = cachedQuery(
       .lean()
 
     return docs as unknown as Pick<Page, 'slug' | 'title' | 'navOrder'>[]
-  }
+  },
+  () =>
+    seedPages
+      .filter((p) => p.status === 'published' && p.inNav)
+      .sort((a, b) => a.navOrder - b.navOrder)
+      .map(({ slug, title, navOrder }) => ({ slug, title, navOrder }))
 )
 
 export const getPageSlugs = cachedQuery(
@@ -38,5 +46,6 @@ export const getPageSlugs = cachedQuery(
   async (): Promise<string[]> => {
     const docs = await PageModel.find({ status: 'published' }, { slug: 1, _id: 0 }).lean()
     return docs.map((d) => (d as { slug: string }).slug)
-  }
+  },
+  () => seedPages.map((p) => p.slug)
 )
