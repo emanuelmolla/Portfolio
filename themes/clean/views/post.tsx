@@ -26,23 +26,33 @@ export function PostSummary({ post }: { post: Post }) {
 }
 
 /**
- * Renders nothing when there are no posts.
+ * The dedicated /blog page.
  *
- * An empty section advertises abandonment, and "coming soon" placeholders were
- * one of the clearest tells in the portfolio research. A missing section is
- * better than a hollow one.
+ * Note the difference from the home page, which hides its writing section
+ * entirely when empty: a hollow section on a page about something else
+ * advertises abandonment, but a page the visitor navigated to deliberately
+ * must say something. A blank page reads as broken.
+ *
+ * What it must not say is "coming soon", which was one of the clearest tells
+ * in the research. Stating the position plainly is honest and costs nothing.
  */
 export function PostIndex({ items, heading }: { items: Post[]; heading?: string }) {
-  if (items.length === 0) return null
-
   return (
-    <section className="pb-22">
+    <section className="pt-20 pb-22">
       <SectionLabel>{heading ?? 'Writing'}</SectionLabel>
-      <div className="flex flex-col gap-7">
-        {items.map((post) => (
-          <PostSummary key={post.slug} post={post} />
-        ))}
-      </div>
+
+      {items.length === 0 ? (
+        <p className="max-w-[34rem] text-[15px] leading-relaxed text-[var(--muted)]">
+          Nothing published here yet. Most of what I build is backend work, so writing it
+          up is the only way to show it. That is the next thing on the list.
+        </p>
+      ) : (
+        <div className="flex flex-col gap-7">
+          {items.map((post) => (
+            <PostSummary key={post.slug} post={post} />
+          ))}
+        </div>
+      )}
     </section>
   )
 }

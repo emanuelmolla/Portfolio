@@ -24,6 +24,17 @@ export function Shell({
 }) {
   return (
     <div className="min-h-screen px-6">
+      {/* Keyboard users land here first. Hidden until focused, then it appears
+          in the corner. Every page starts with the same masthead and nav, so
+          without this a keyboard visitor tabs through the same links on every
+          single page before reaching the content. */}
+      <a
+        href="#content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:border focus:border-[var(--rule)] focus:bg-[var(--raised)] focus:px-3 focus:py-2 focus:font-mono focus:text-xs"
+      >
+        Skip to content
+      </a>
+
       <div className="mx-auto flex min-h-screen max-w-[60rem] flex-col">
         <header className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 pt-20">
           <Link
@@ -58,7 +69,9 @@ export function Shell({
           </div>
         </header>
 
-        <main className="flex-1">{children}</main>
+        <main id="content" className="flex-1">
+          {children}
+        </main>
 
         <footer className="mt-24 flex flex-wrap items-center justify-between gap-x-8 gap-y-4 border-t border-[var(--rule)] py-10 font-mono text-[11px] text-[var(--faint)]">
           <span>Surrey, BC</span>

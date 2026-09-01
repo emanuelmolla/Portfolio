@@ -24,7 +24,7 @@ import { getExperience } from './experience'
 
 export { getProfile } from './profile'
 export { getPage, getNavPages, getPageSlugs } from './pages'
-export { getWork, getWorkItem, getWorkSlugs, type WorkFilter } from './work'
+export { getWork, getWorkItem, getWorkSlugs, getAdjacentWork, type WorkFilter } from './work'
 export { getPosts, getPost, getPostSlugs, getPostTags, type PostFilter } from './posts'
 export { getExperience, type ExperienceFilter } from './experience'
 export { getTech, getTopTech, getTechByIds } from './tech'

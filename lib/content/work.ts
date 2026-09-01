@@ -68,6 +68,36 @@ export const getWorkItem = cachedQuery(
     seedWork.find((w) => w.slug === slug || w.previousSlugs.includes(slug)) ?? null
 )
 
+/**
+ * The item before and after this one, in the same order the index uses.
+ *
+ * Returns nulls at the ends rather than wrapping around. A "next" link that
+ * silently loops back to the first item makes a short list feel infinite and
+ * hides from the visitor that they have seen everything.
+ */
+export const getAdjacentWork = cachedQuery(
+  ['work', 'adjacent'],
+  [TAGS.work],
+  async (slug: string): Promise<{ prev: Work | null; next: Work | null }> => {
+    const all = (await WorkModel.find({ status: 'published' })
+      .sort({ featuredOrder: 1, startDate: -1 })
+      .lean()) as unknown as Work[]
+
+    const i = all.findIndex((w) => w.slug === slug)
+    if (i === -1) return { prev: null, next: null }
+
+    return { prev: all[i - 1] ?? null, next: all[i + 1] ?? null }
+  },
+  (slug: string) => {
+    const all = [...seedWork]
+      .filter((w) => w.status === 'published')
+      .sort((a, b) => (a.featuredOrder ?? 1e9) - (b.featuredOrder ?? 1e9))
+    const i = all.findIndex((w) => w.slug === slug)
+    if (i === -1) return { prev: null, next: null }
+    return { prev: all[i - 1] ?? null, next: all[i + 1] ?? null }
+  }
+)
+
 /** Slugs for generateStaticParams. Cheap projection, no bodies. */
 export const getWorkSlugs = cachedQuery(
   ['work', 'slugs'],

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getTechByIds, getWorkItem } from '@/lib/content'
+import { getAdjacentWork, getTechByIds, getWorkItem } from '@/lib/content'
 import { ThemedPage, resolveView } from '@/components/ThemedPage'
 import { getProfile } from '@/lib/content'
 import { workJsonLd } from '@/lib/jsonld'
@@ -42,16 +42,17 @@ export default async function WorkItemPage({ params }: { params: Promise<{ slug:
   const work = await getWorkItem(slug)
   if (!work) notFound()
 
-  const [tech, View, profile] = await Promise.all([
+  const [tech, View, profile, adjacent] = await Promise.all([
     getTechByIds(work.techRefs ?? []),
     resolveView('work', 'full'),
     getProfile(),
+    getAdjacentWork(work.slug),
   ])
 
   return (
     <ThemedPage path={`/work/${work.slug}`}>
       <JsonLd data={workJsonLd(work, profile)} />
-      <View work={work} tech={tech} />
+      <View work={work} tech={tech} adjacent={adjacent} />
     </ThemedPage>
   )
 }

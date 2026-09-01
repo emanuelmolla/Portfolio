@@ -41,21 +41,32 @@ export function WorkSummary({ work }: { work: Work }) {
 }
 
 export function WorkIndex({ items, heading }: { items: Work[]; heading?: string }) {
-  if (items.length === 0) return null
-
   return (
-    <section className="pb-22">
+    <section className="pt-20 pb-22">
       <SectionLabel>{heading ?? 'Work'}</SectionLabel>
-      <div className="flex flex-col gap-11">
-        {items.map((work) => (
-          <WorkSummary key={work.slug} work={work} />
-        ))}
-      </div>
+
+      {items.length === 0 ? (
+        <p className="max-w-[34rem] text-[15px] text-[var(--muted)]">Nothing here yet.</p>
+      ) : (
+        <div className="flex flex-col gap-11">
+          {items.map((work) => (
+            <WorkSummary key={work.slug} work={work} />
+          ))}
+        </div>
+      )}
     </section>
   )
 }
 
-export function WorkItem({ work, tech }: { work: Work; tech: Tech[] }) {
+export function WorkItem({
+  work,
+  tech,
+  adjacent,
+}: {
+  work: Work
+  tech: Tech[]
+  adjacent?: { prev: Work | null; next: Work | null }
+}) {
   const body = renderMarkdown(work.body)
 
   return (
@@ -133,12 +144,49 @@ export function WorkItem({ work, tech }: { work: Work; tech: Tech[] }) {
         </section>
       )}
 
-      <Link
-        href="/work"
-        className="font-mono text-xs text-[var(--muted)] hover:text-[var(--accent)]"
-      >
-        ← all work
-      </Link>
+      {/* Neighbours, so a reader who finishes one project has somewhere to go
+          other than back. No wrap-around at the ends: a "next" that loops to
+          the first item hides the fact that they have seen everything. */}
+      {(adjacent?.prev || adjacent?.next) && (
+        <nav
+          aria-label="More work"
+          className="mt-16 grid grid-cols-1 gap-6 border-t border-[var(--rule)] pt-8 sm:grid-cols-2"
+        >
+          <div>
+            {adjacent?.prev && (
+              <Link href={`/work/${adjacent.prev.slug}`} className="group block">
+                <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--faint)]">
+                  Previous
+                </span>
+                <span className="mt-1 block font-medium transition-colors group-hover:text-[var(--accent)]">
+                  {adjacent.prev.title}
+                </span>
+              </Link>
+            )}
+          </div>
+          <div className="sm:text-right">
+            {adjacent?.next && (
+              <Link href={`/work/${adjacent.next.slug}`} className="group block">
+                <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--faint)]">
+                  Next
+                </span>
+                <span className="mt-1 block font-medium transition-colors group-hover:text-[var(--accent)]">
+                  {adjacent.next.title}
+                </span>
+              </Link>
+            )}
+          </div>
+        </nav>
+      )}
+
+      <div className="mt-10">
+        <Link
+          href="/work"
+          className="font-mono text-xs text-[var(--muted)] hover:text-[var(--accent)]"
+        >
+          ← all work
+        </Link>
+      </div>
     </article>
   )
 }

@@ -151,7 +151,9 @@ export function Shell({
                 close
               </Link>
             </div>
-            <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4 sm:px-9">{children}</div>
+            <div id="content" className="min-h-0 flex-1 overflow-y-auto px-5 py-4 sm:px-9">
+              {children}
+            </div>
           </div>
         </div>
       )}
