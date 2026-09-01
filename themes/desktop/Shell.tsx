@@ -160,26 +160,35 @@ export function Shell({
         <div className="relative z-0 mt-auto px-6 pb-16 sm:px-10">{children}</div>
       )}
 
-      {/* Taskbar. Start-equivalent on the left, running apps in the middle,
-          system tray on the right. */}
-      <div className="absolute inset-x-0 bottom-0 z-20 flex h-11 items-center gap-1 border-t border-[var(--rule)] bg-[var(--chrome)]/95 px-2 backdrop-blur-md">
-        <Link
-          href="/"
-          aria-label="Desktop"
-          aria-current={onDesktop ? 'page' : undefined}
-          className={`flex items-center gap-2 rounded px-2.5 py-1.5 font-mono text-[11px] tracking-[0.04em] transition-colors ${
-            onDesktop
-              ? 'bg-[var(--selection)] text-[var(--accent)]'
-              : 'text-[var(--muted)] hover:bg-[var(--selection)] hover:text-[var(--ink)]'
-          }`}
+      {/* Clock in the top-right corner rather than the dock. A centred dock has
+          no natural edge to pin a tray to, and the menu-bar corner is where a
+          clock is looked for on a desktop anyway. */}
+      <div className="absolute right-6 top-8 z-20 sm:right-10">
+        <Clock />
+      </div>
+
+      {/* The dock: a centred floating pill, not a full-width bar. */}
+      <div className="absolute inset-x-0 bottom-0 z-20 flex justify-center px-3 pb-4">
+        <nav
+          aria-label="Applications"
+          className="flex max-w-full items-center gap-1 overflow-x-auto rounded-xl border border-[var(--rule)] bg-[var(--chrome)]/90 px-2 py-1.5 shadow-[var(--shadow)] backdrop-blur-md"
         >
-          <GridIcon className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">Desktop</span>
-        </Link>
+          <Link
+            href="/"
+            aria-label="Desktop"
+            aria-current={onDesktop ? 'page' : undefined}
+            className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 font-mono text-[11px] tracking-[0.04em] transition-colors ${
+              onDesktop
+                ? 'bg-[var(--selection)] text-[var(--accent)]'
+                : 'text-[var(--muted)] hover:bg-[var(--selection)] hover:text-[var(--ink)]'
+            }`}
+          >
+            <GridIcon className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Desktop</span>
+          </Link>
 
-        <span aria-hidden className="mx-1 h-5 w-px bg-[var(--rule)]" />
+          <span aria-hidden className="mx-0.5 h-5 w-px shrink-0 bg-[var(--rule)]" />
 
-        <nav aria-label="Open applications" className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
           {TASKBAR.map((item) => {
             const active = isActive(path, item.href)
             return (
@@ -187,7 +196,7 @@ export function Shell({
                 key={item.href}
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
-                className={`shrink-0 rounded px-3 py-1.5 text-[12px] transition-colors ${
+                className={`shrink-0 rounded-lg px-3.5 py-2 text-[12px] transition-colors ${
                   active
                     ? 'bg-[var(--selection)] text-[var(--accent)] shadow-[inset_0_-2px_0_var(--accent)]'
                     : 'text-[var(--muted)] hover:bg-[var(--selection)] hover:text-[var(--ink)]'
@@ -197,12 +206,11 @@ export function Shell({
               </Link>
             )
           })}
-        </nav>
 
-        <div className="flex shrink-0 items-center gap-1 border-l border-[var(--rule)] pl-2">
-          {appearance}
-          <Clock />
-        </div>
+          <span aria-hidden className="mx-0.5 h-5 w-px shrink-0 bg-[var(--rule)]" />
+
+          <div className="shrink-0">{appearance}</div>
+        </nav>
       </div>
     </div>
   )
