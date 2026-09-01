@@ -79,6 +79,46 @@ export const ThemeManifest = z.object({
 export type ThemeManifest = z.infer<typeof ThemeManifest>
 
 /**
+ * The runtime half of the contract. The manifest is data; this is code.
+ *
+ * A theme is a Shell (chrome that wraps every page) plus a set of views keyed
+ * by ContentKind and RenderContext. Routes look up the view and hand it data;
+ * views never fetch. That is what keeps the same route file working for every
+ * theme.
+ */
+export interface ThemeViews {
+  home?: React.ComponentType<Record<string, unknown>>
+  profile?: Partial<Record<RenderContext, React.ComponentType<Record<string, unknown>>>>
+  page?: Partial<Record<RenderContext, React.ComponentType<Record<string, unknown>>>>
+  work?: Partial<Record<RenderContext, React.ComponentType<Record<string, unknown>>>>
+  post?: Partial<Record<RenderContext, React.ComponentType<Record<string, unknown>>>>
+  experience?: Partial<Record<RenderContext, React.ComponentType<Record<string, unknown>>>>
+  contact?: Partial<Record<RenderContext, React.ComponentType<Record<string, unknown>>>>
+}
+
+export interface ThemeModule {
+  manifest: ThemeManifest
+  Shell: React.ComponentType<{
+    children: React.ReactNode
+    nav: NavLink[]
+    siteName: string
+    /** Current pathname. Themes need it for active states and for the
+     *  appearance links, which redirect back to where the visitor was. */
+    path: string
+    appearance?: React.ReactNode
+    /** Optional: themes that show identity in their chrome (the desktop
+     *  theme keeps it visible behind the window) can use it. */
+    headline?: string
+  }>
+  views: ThemeViews
+}
+
+export interface NavLink {
+  href: string
+  label: string
+}
+
+/**
  * The anti-drift check. Every ContentKind must be either rendered or explicitly
  * omitted by every theme. Run this in CI: when a new content type is added, the
  * build fails on all themes until each one either implements it or declines it.

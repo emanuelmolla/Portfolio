@@ -1,0 +1,144 @@
+import Link from 'next/link'
+import type { Tech, Work } from '@/lib/models'
+import { renderMarkdown } from '@/lib/markdown'
+import { SectionLabel } from '../Shell'
+import { workDateLine, workRoleLine } from '../format'
+
+/**
+ * Work as a typographic index, not a card grid.
+ *
+ * Three reasons this is a list. The work is mostly backend, so a card grid
+ * wants screenshots of UI that does not exist. Rows are separated by space
+ * rather than hairline rules. And there is no 01/02/03 numbering, because these
+ * projects are not a sequence and numbering that is not ordinal is decoration
+ * dressed up as structure.
+ */
+
+export function WorkSummary({ work }: { work: Work }) {
+  return (
+    <Link
+      href={`/work/${work.slug}`}
+      className="group grid grid-cols-1 items-baseline gap-x-8 gap-y-2 sm:grid-cols-[minmax(0,1fr)_8rem]"
+    >
+      <span className="text-xl font-medium tracking-[-0.015em] transition-colors group-hover:text-[var(--accent)]">
+        {work.title}
+      </span>
+      <span className="tabular font-mono text-xs text-[var(--faint)] sm:text-right">
+        {workDateLine(work)} · {workRoleLine(work)}
+      </span>
+      <p className="max-w-[34rem] text-[15px] leading-relaxed text-[var(--muted)] sm:col-span-1">
+        {work.summary}
+      </p>
+      {work.details?.kind === 'software' && work.details.stack.length > 0 && (
+        <ul className="flex flex-wrap gap-x-3 gap-y-1.5 font-mono text-[11px] text-[var(--faint)] sm:col-span-2">
+          {work.details.stack.slice(0, 6).map((item) => (
+            <li key={item}>{item.toLowerCase()}</li>
+          ))}
+        </ul>
+      )}
+    </Link>
+  )
+}
+
+export function WorkIndex({ items, heading }: { items: Work[]; heading?: string }) {
+  if (items.length === 0) return null
+
+  return (
+    <section className="pb-22">
+      <SectionLabel>{heading ?? 'Work'}</SectionLabel>
+      <div className="flex flex-col gap-11">
+        {items.map((work) => (
+          <WorkSummary key={work.slug} work={work} />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+export function WorkItem({ work, tech }: { work: Work; tech: Tech[] }) {
+  const body = renderMarkdown(work.body)
+
+  return (
+    <article className="pt-20 pb-8">
+      <p className="tabular mb-5 font-mono text-xs text-[var(--faint)]">
+        {workDateLine(work)} · {workRoleLine(work)}
+        {work.teamSize ? ` · team of ${work.teamSize}` : ''}
+      </p>
+
+      <h1 className="mb-6 max-w-[20ch] text-4xl font-medium leading-[1.08] tracking-[-0.035em] text-balance sm:text-5xl">
+        {work.title}
+      </h1>
+
+      <p className="prose mb-10 text-[17px] leading-relaxed text-[var(--muted)]">
+        {work.summary}
+      </p>
+
+      {work.links.length > 0 && (
+        <ul className="mb-14 flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs">
+          {work.links.map((link) => (
+            <li key={link.url}>
+              <a
+                href={link.url}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="text-[var(--ink)] underline decoration-[var(--rule)] underline-offset-4 hover:text-[var(--accent)] hover:decoration-[var(--accent)]"
+              >
+                {link.label ?? link.kind} ↗
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* Rendered only when written. An empty "Problem" heading is worse than
+          no heading, and inventing one would be worse still. */}
+      {work.problem && (
+        <section className="mb-12">
+          <SectionLabel>Why it exists</SectionLabel>
+          <p className="prose text-[var(--muted)]">{work.problem}</p>
+        </section>
+      )}
+
+      {work.outcome && (
+        <section className="mb-12">
+          <SectionLabel>Outcome</SectionLabel>
+          <p className="prose text-[var(--muted)]">{work.outcome}</p>
+        </section>
+      )}
+
+      {body && (
+        <div className="prose mb-12" dangerouslySetInnerHTML={{ __html: body }} />
+      )}
+
+      {tech.length > 0 && (
+        <section className="mb-12">
+          <SectionLabel>Built with</SectionLabel>
+          <ul className="flex flex-wrap gap-x-5 gap-y-2 font-mono text-xs text-[var(--muted)]">
+            {tech.map((t) => (
+              <li key={t.slug}>{t.name}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {work.details?.kind === 'software' && work.details.architectureNotes && (
+        <section className="mb-12">
+          <SectionLabel>How it is put together</SectionLabel>
+          <div
+            className="prose"
+            dangerouslySetInnerHTML={{
+              __html: renderMarkdown(work.details.architectureNotes),
+            }}
+          />
+        </section>
+      )}
+
+      <Link
+        href="/work"
+        className="font-mono text-xs text-[var(--muted)] hover:text-[var(--accent)]"
+      >
+        ← all work
+      </Link>
+    </article>
+  )
+}

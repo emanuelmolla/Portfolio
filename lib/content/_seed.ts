@@ -409,21 +409,13 @@ export const seedExperience: Experience[] = [
   },
 ] as unknown as Experience[]
 
-export const seedPages: Page[] = [
-  {
-    slug: 'about',
-    previousSlugs: [],
-    title: 'About',
-    body: '',
-    bodyFormat: 'markdown',
-    sections: [],
-    status: 'published',
-    inNav: true,
-    navOrder: 3,
-    showUpdatedAt: false,
-    seo: { title: null, description: null, ogImage: null, canonicalUrl: null, noindex: false },
-  },
-] as unknown as Page[]
+/**
+ * Empty for now. /about, /work, /blog and /contact are core content kinds with
+ * their own routes, so they are not Page rows. This collection is for the
+ * genuinely arbitrary ones (/uses, /colophon, /now) which are added from the
+ * admin without a deploy. That is the whole point of the collection existing.
+ */
+export const seedPages: Page[] = []
 
 /**
  * Empty on purpose. The real posts live in the v1 Atlas `Blog` collection and

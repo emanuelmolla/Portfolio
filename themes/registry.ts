@@ -1,35 +1,44 @@
-import type { ThemeManifest } from '@/lib/theme/contract'
+import type { ThemeModule } from '@/lib/theme/contract'
 import { assertThemeCoverage } from '@/lib/theme/contract'
-import cleanManifest from './clean/manifest'
+import clean from './clean'
+import desktop from './desktop'
 
 /**
  * The theme registry.
  *
- * Every entry uses a LITERAL import path. Never `import(`./themes/${id}`)`:
- * a dynamic expression makes the bundler build a context module that enumerates
+ * Every entry uses a LITERAL import path. Never `import(`./themes/${id}`)`: a
+ * dynamic expression makes the bundler build a context module that enumerates
  * every file under the tree (webpack's inferred pattern defaults to /.*​/ and is
- * recursive), and Turbopack's handling of it is undocumented. One line per theme
- * is the price, and it is the right price, because themes are code. The
- * requirement is that adding a theme touches no model, no content function, and
- * no admin screen.
+ * recursive), and Turbopack's handling of it is undocumented. One line per
+ * theme is the price, and it is the right price, because themes are code. The
+ * requirement is that adding a theme touches no model, no content function and
+ * no admin screen, not that it touches zero files.
  */
 
-export const themes = {
-  clean: cleanManifest,
-  // chess:   → themes/chess/manifest
-  // desktop: → themes/desktop/manifest  (port of the v1 dock UI, see tag v1-final)
-} satisfies Record<string, ThemeManifest>
+export const themeModules = {
+  clean,
+  desktop,
+  // chess: → themes/chess  (board as navigation, see OPEN_QUESTIONS Q9)
+} satisfies Record<string, ThemeModule>
 
-export type ThemeId = keyof typeof themes
+export type ThemeId = keyof typeof themeModules
+
+/** Manifests only, for anything that needs metadata without pulling components. */
+export const themes = Object.fromEntries(
+  Object.entries(themeModules).map(([id, mod]) => [id, mod.manifest])
+) as Record<ThemeId, ThemeModule['manifest']>
 
 export const DEFAULT_THEME: ThemeId = 'clean'
 
-/** Validated at import time, so a malformed or drifted theme fails the build. */
-for (const manifest of Object.values(themes)) {
-  assertThemeCoverage(manifest)
+/* ------------------------------------------------- build-time drift checks --- */
+/* These run at import, so a drifted theme fails the build rather than 404ing
+   for a visitor months later. Silent gaps are the failure mode here.          */
+
+for (const mod of Object.values(themeModules)) {
+  assertThemeCoverage(mod.manifest)
 }
 
-const canonicals = Object.values(themes).filter((t) => t.canonical)
+const canonicals = Object.values(themeModules).filter((m) => m.manifest.canonical)
 if (canonicals.length !== 1) {
   throw new Error(
     `Exactly one theme must set canonical: true (found ${canonicals.length}). ` +
@@ -43,15 +52,17 @@ if (canonicals.length !== 1) {
  * That makes the canonical theme the bottom of the cascade: it has to render
  * everything, or the fallback has nowhere to land.
  */
-if (canonicals[0].omits.length > 0) {
+if (canonicals[0].manifest.omits.length > 0) {
   throw new Error(
-    `Canonical theme "${canonicals[0].id}" cannot omit any content kind ` +
-      `(omits: ${canonicals[0].omits.join(', ')}). It is the fallback for every ` +
-      `other theme, so it must render all of them.`
+    `Canonical theme "${canonicals[0].manifest.id}" cannot omit any content kind ` +
+      `(omits: ${canonicals[0].manifest.omits.join(', ')}). It is the fallback for ` +
+      `every other theme, so it must render all of them.`
   )
 }
 
-export function getTheme(id: string | undefined): ThemeManifest {
-  if (id && id in themes) return themes[id as ThemeId]
-  return themes[DEFAULT_THEME]
+export function getThemeModule(id: string | undefined): ThemeModule {
+  if (id && id in themeModules) return themeModules[id as ThemeId]
+  return themeModules[DEFAULT_THEME]
 }
+
+export const canonicalModule = canonicals[0]
