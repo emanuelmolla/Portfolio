@@ -15,12 +15,14 @@ export function Shell({
   nav,
   siteName,
   appearance,
+  location,
 }: {
   children: React.ReactNode
   nav: NavLink[]
   siteName: string
   path?: string
   appearance?: React.ReactNode
+  location?: string
 }) {
   return (
     <div className="min-h-screen px-6">
@@ -74,7 +76,7 @@ export function Shell({
         </main>
 
         <footer className="mt-24 flex flex-wrap items-center justify-between gap-x-8 gap-y-4 border-t border-[var(--rule)] py-10 font-mono text-[11px] text-[var(--faint)]">
-          <span>Surrey, BC</span>
+          <span>{location ?? 'Vancouver'}</span>
           <span>{new Date().getFullYear()}</span>
         </footer>
       </div>

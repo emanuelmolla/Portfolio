@@ -4,7 +4,7 @@ import type { Experience, Page, Post, Profile, Tech, Work } from '@/lib/models'
 import { renderMarkdown } from '@/lib/markdown'
 import { formatDate, workDateLine, workRoleLine } from '../clean/format'
 import { WindowSection } from './Shell'
-import { ContactForm } from '@/components/ContactForm'
+import { ContactForm } from './ContactForm'
 
 /**
  * Desktop views.

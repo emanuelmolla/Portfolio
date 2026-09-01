@@ -109,6 +109,8 @@ export interface ThemeModule {
     /** Optional: themes that show identity in their chrome (the desktop
      *  theme keeps it visible behind the window) can use it. */
     headline?: string
+    /** "Vancouver". Comes from profile.location, never hardcoded in a theme. */
+    location?: string
   }>
   views: ThemeViews
 }

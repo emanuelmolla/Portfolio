@@ -54,41 +54,47 @@
 }
 
 /* -------------------------------------------------------- desktop, dark --- */
-/* The v1 motif lived here. Warm near-black rather than pure black, and the
-   amber the old site used for the active dock item, kept because it was a real
-   choice rather than a default. */
+/*
+  Carried over from v1 rather than invented. The old site ran zinc-900 through
+  black with #ce9c13 on the active dock item, and that gold was a real choice,
+  so it stays as the accent. Much darker and cooler than the clean theme's
+  neutrals: the two should not be mistakable for each other at a glance, which
+  is the entire reason for having separate themes.
+*/
 [data-theme='desktop'] {
-  --ground: #101014;
-  --raised: #17171d;
-  --ink: #e8e6e3;
-  --muted: #9a968f;
-  --faint: #6e6a64;
-  --rule: #26262e;
-  --accent: #d99e28;
-  --accent-contrast: #101014;
-  --selection: #d99e2833;
-  --shadow: 0 8px 30px #00000059;
-  --window: #14141a;
-  --chrome: #1c1c23;
+  --ground: #08080a;
+  --raised: #131317;
+  --ink: #f4f4f5;
+  --muted: #a1a1aa;
+  --faint: #71717a;
+  --rule: #27272a;
+  --accent: #ce9c13;
+  --accent-contrast: #08080a;
+  --selection: #ce9c1326;
+  --shadow: 0 12px 40px #000000a6;
+  --window: #101013;
+  --chrome: #18181b;
   color-scheme: dark;
 }
 
 /* ------------------------------------------------------- desktop, light --- */
-/* Light desktop is a real requirement, not an afterthought: the whole point of
-   the contract is that every theme supports both. Same furniture, daylight. */
+/* Every theme must support both modes; that is what makes dark mode a property
+   rather than a theme. This is the same furniture under daylight: a grey
+   desktop, white windows, and the gold darkened until it passes contrast on a
+   light ground. */
 [data-theme='desktop'][data-scheme='light'] {
-  --ground: #d8d7d2;
+  --ground: #9ca3ad;
   --raised: #ffffff;
-  --ink: #1b1a18;
-  --muted: #5f5c57;
-  --faint: #8d8983;
-  --rule: #c2c0ba;
-  --accent: #8a5a05;
+  --ink: #18181b;
+  --muted: #52525b;
+  --faint: #71717a;
+  --rule: #c7cbd1;
+  --accent: #7a5c06;
   --accent-contrast: #ffffff;
-  --selection: #8a5a0526;
-  --shadow: 0 8px 30px #0000001f;
-  --window: #f7f6f4;
-  --chrome: #e8e6e2;
+  --selection: #7a5c0621;
+  --shadow: 0 12px 40px #0000002e;
+  --window: #fbfbfc;
+  --chrome: #e7e9ec;
   color-scheme: light;
 }
 

@@ -162,7 +162,7 @@ export const seedProfile: Profile = {
   headline: 'Backend developer',
   bio: {
     short:
-      'Backend developer in Surrey, BC. Computer Systems Technology at BCIT, working mostly on the server side.',
+      'Backend developer based in Vancouver. Computer Systems Technology at BCIT, working mostly on the server side.',
     long: [
       'I love solving real problems with code, building tools that help people, and constantly learning how technology works behind the scenes.',
       '',
@@ -171,7 +171,7 @@ export const seedProfile: Profile = {
       'My faith through the Ethiopian Orthodox Church plays a huge role in shaping who I am. It guides my values, keeps me grounded, and reminds me to approach life with gratitude and purpose.',
     ].join('\n'),
   },
-  location: { city: 'Surrey', region: 'BC', country: 'Canada' },
+  location: { city: 'Vancouver', region: 'BC', country: 'Canada' },
   avatar: {
     url: '/image.jpg',
     alt: 'Emanuel Molla',
@@ -194,7 +194,7 @@ export const seedProfile: Profile = {
   seo: {
     title: 'Emanuel Molla',
     description:
-      'Backend developer in Surrey, BC. Computer Systems Technology at BCIT.',
+      'Backend developer based in Vancouver. Computer Systems Technology at BCIT.',
     ogImage: null,
     canonicalUrl: null,
     noindex: false,

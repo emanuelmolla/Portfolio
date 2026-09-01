@@ -72,22 +72,33 @@ export function cachedQuery<Args extends unknown[], Result>(
   fn: (...args: Args) => Promise<Result>,
   seed?: (...args: Args) => Result
 ) {
-  return unstable_cache(
+  const cached = unstable_cache(
     async (...args: Args) => {
-      if (!hasDatabase()) {
-        if (!seed) {
-          throw new Error(
-            `No MONGODB_URI and no seed fallback for [${keyParts.join('/')}]. ` +
-              `Either set MONGODB_URI in .env.local or add a seed resolver.`
-          )
-        }
-        return toPlain(seed(...args))
-      }
-
       await connectDB()
       return toPlain(await fn(...args))
     },
     keyParts,
     { tags }
   )
+
+  return async (...args: Args): Promise<Result> => {
+    if (hasDatabase()) return cached(...args)
+
+    if (!seed) {
+      throw new Error(
+        `No MONGODB_URI and no seed fallback for [${keyParts.join('/')}]. ` +
+          `Either set MONGODB_URI in .env.local or add a seed resolver.`
+      )
+    }
+
+    /**
+     * The seed path is NOT cached, deliberately.
+     *
+     * unstable_cache persists to .next, so a cached seed read survives a server
+     * restart: editing _seed.ts appeared to do nothing until .next was deleted,
+     * which is a genuinely confusing way to lose half an hour. Seed data is an
+     * in-memory array, so caching it saves nothing and costs that.
+     */
+    return toPlain(seed(...args))
+  }
 }

@@ -44,6 +44,7 @@ export async function ThemedPage({
       siteName={profile?.name ?? 'Emanuel Molla'}
       path={path}
       headline={profile?.headline}
+      location={profile?.location?.city}
       appearance={
         <AppearanceMenu
           path={path}

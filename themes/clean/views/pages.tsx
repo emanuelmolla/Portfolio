@@ -6,7 +6,7 @@ import { SectionLabel } from '../Shell'
 import { formatDate } from '../format'
 import { WorkSummary } from './work'
 import { PostSummary } from './post'
-import { ContactForm } from '@/components/ContactForm'
+import { ContactForm } from './ContactForm'
 
 /* ------------------------------------------------------------------ home --- */
 
