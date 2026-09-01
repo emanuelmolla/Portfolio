@@ -4,6 +4,7 @@ import type { Experience, Page, Post, Profile, Tech, Work } from '@/lib/models'
 import { renderMarkdown } from '@/lib/markdown'
 import { formatDate, workDateLine, workRoleLine } from '../clean/format'
 import { WindowSection } from './Shell'
+import { ContactForm } from '@/components/ContactForm'
 
 /**
  * Desktop views.
@@ -299,9 +300,12 @@ export function Contact({ profile }: { profile: Profile | null }) {
   return (
     <div className="pt-6">
       <h1 className="mb-6 text-3xl font-medium tracking-[-0.03em]">Contact</h1>
-      <p className="prose mb-10 text-[var(--muted)]">
-        The fastest way to reach me is email. I read everything.
+      <p className="prose mb-8 text-[var(--muted)]">
+        Send a message here, or use any of the links below. I read everything.
       </p>
+      <div className="mb-12">
+        <ContactForm />
+      </div>
       <ul className="flex flex-col gap-3">
         {profile.links
           .filter((l) => l.visible)

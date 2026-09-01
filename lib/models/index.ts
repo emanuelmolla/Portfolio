@@ -18,3 +18,4 @@ export { ExperienceModel, zExperience, type Experience, SECTIONS } from './exper
 export { TechModel, zTech, type Tech, TECH_CATEGORIES } from './tech'
 export { PageModel, zPage, type Page, PAGE_STATUS } from './page'
 export { RedirectModel, zRedirect, type Redirect } from './redirect'
+export { MessageModel, zMessageInput, type MessageInput } from './message'

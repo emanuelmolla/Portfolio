@@ -6,6 +6,7 @@ import { SectionLabel } from '../Shell'
 import { formatDate } from '../format'
 import { WorkSummary } from './work'
 import { PostSummary } from './post'
+import { ContactForm } from '@/components/ContactForm'
 
 /* ------------------------------------------------------------------ home --- */
 
@@ -267,9 +268,13 @@ export function Contact({ profile }: { profile: Profile | null }) {
       <h1 className="mb-8 text-4xl font-medium leading-[1.1] tracking-[-0.03em]">
         Contact
       </h1>
-      <p className="prose mb-12 text-[var(--muted)]">
-        The fastest way to reach me is email. I read everything.
+      <p className="prose mb-10 text-[var(--muted)]">
+        Send a message here, or use any of the links below. I read everything.
       </p>
+
+      <div className="mb-14">
+        <ContactForm />
+      </div>
 
       <ul className="flex flex-col gap-4">
         {visible.map((link) => (
