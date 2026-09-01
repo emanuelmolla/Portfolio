@@ -2,7 +2,7 @@ import { getNavPages, getProfile } from '@/lib/content'
 import { resolveColorScheme, resolveTheme } from '@/lib/theme/resolve'
 import { getThemeModule, canonicalModule } from '@/themes/registry'
 import type { ContentKind, NavLink, RenderContext } from '@/lib/theme/contract'
-import { AppearanceControls } from './AppearanceControls'
+import { AppearanceMenu } from './AppearanceMenu'
 
 /**
  * Wraps a page in the active theme's chrome.
@@ -45,7 +45,15 @@ export async function ThemedPage({
       path={path}
       headline={profile?.headline}
       appearance={
-        <AppearanceControls path={path} currentTheme={theme.id} currentScheme={scheme} />
+        <AppearanceMenu
+          path={path}
+          currentTheme={theme.id}
+          currentScheme={scheme}
+          // The desktop taskbar sits at the bottom of the viewport, so its menu
+          // has to open upward or it renders off-screen.
+          align={theme.id === 'desktop' ? 'up' : 'down'}
+          label={theme.id === 'desktop' ? 'Settings' : 'Appearance'}
+        />
       }
     >
       {children}

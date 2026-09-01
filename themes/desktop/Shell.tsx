@@ -1,31 +1,42 @@
 import Link from 'next/link'
 import type { NavLink } from '@/lib/theme/contract'
+import { Clock } from './Clock'
+import { DocIcon, FolderIcon, GridIcon, LinkIcon, MailIcon, PdfIcon, PersonIcon } from './icons'
 
 /**
- * Desktop chrome: a dock along the bottom, content in a window above it.
+ * A desktop: wallpaper, icons you can open, a taskbar, and windows.
  *
- * What survives from v1: the dock, the window metaphor, the dark character,
- * and the amber the old site used for the active item, which was a real choice
- * rather than a default.
+ * The constraint that shapes all of it: every icon and every taskbar button is
+ * a real <a href> to a real URL, and window content is in the server HTML
+ * before any JavaScript runs. Google only discovers anchors, and it will not
+ * load content that appears on click. So this is an OS metaphor rendered over
+ * a genuinely navigable site, rather than an app that paints content in.
  *
- * What changed, and why:
- *  - Every dock item is a real <a href> to a real URL. Google only discovers
- *    links that are anchors, and the v1 dock was <button onClick={navigate}>.
- *  - Window content is server-rendered before any JS. Google will not load
- *    content that appears on click, which is exactly what v1 did.
- *  - The animated fire-gradient border is gone. It was the loudest thing on
- *    the old page and it fought everything else for attention.
- *  - No fake traffic-light buttons. Realistic OS chrome creates false
- *    affordances: on a well-known macOS-simulation portfolio, visitors hit
- *    Cmd+W expecting to close a fake window and closed their actual browser
- *    tab. The close control here is a labelled link home.
- *  - The name and headline sit on the desktop itself, always visible behind
- *    the window. The single strongest criticism of this genre is "I played
- *    with it for a few minutes and never saw his work or who made it".
+ * What is deliberately NOT copied from a real OS: traffic-light buttons and
+ * pixel-accurate chrome. Realistic chrome creates false affordances. On a
+ * well-known macOS-simulation portfolio, visitors pressed Cmd+W expecting to
+ * close a fake window and closed their actual browser tab.
  */
 
-const DOCK: NavLink[] = [
-  { href: '/work', label: 'Work' },
+interface DesktopFile {
+  href: string
+  label: string
+  icon: React.ComponentType<{ className?: string }>
+  external?: boolean
+  download?: boolean
+}
+
+const FILES: DesktopFile[] = [
+  { href: '/work', label: 'Projects', icon: FolderIcon },
+  { href: '/blog', label: 'Writing', icon: FolderIcon },
+  { href: '/about', label: 'About me', icon: PersonIcon },
+  { href: '/contact', label: 'Contact', icon: MailIcon },
+  { href: '/resume.pdf', label: 'Resume.pdf', icon: PdfIcon, external: true, download: true },
+  { href: 'https://github.com/emanuelmolla', label: 'GitHub', icon: LinkIcon, external: true },
+]
+
+const TASKBAR: NavLink[] = [
+  { href: '/work', label: 'Projects' },
   { href: '/blog', label: 'Writing' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
@@ -33,6 +44,43 @@ const DOCK: NavLink[] = [
 
 function isActive(path: string, href: string) {
   return path === href || path.startsWith(`${href}/`)
+}
+
+function DesktopIcon({ file }: { file: DesktopFile }) {
+  const Icon = file.icon
+  const content = (
+    <>
+      <span className="flex h-14 w-14 items-center justify-center rounded-md bg-[var(--chrome)]/70 text-[var(--ink)] ring-1 ring-[var(--rule)] transition-colors group-hover:bg-[var(--selection)] group-hover:text-[var(--accent)] group-hover:ring-[var(--accent)]">
+        <Icon className="h-7 w-7" />
+      </span>
+      <span className="max-w-[5.5rem] rounded px-1 py-0.5 text-center text-[11px] leading-tight text-[var(--ink)] group-hover:bg-[var(--selection)]">
+        {file.label}
+      </span>
+    </>
+  )
+
+  const cls =
+    'group flex w-[5.75rem] flex-col items-center gap-1.5 rounded p-1 focus-visible:outline-2 focus-visible:outline-[var(--accent)]'
+
+  if (file.external) {
+    return (
+      <a
+        href={file.href}
+        className={cls}
+        target={file.download ? undefined : '_blank'}
+        rel="noreferrer noopener"
+        download={file.download}
+      >
+        {content}
+      </a>
+    )
+  }
+
+  return (
+    <Link href={file.href} className={cls}>
+      {content}
+    </Link>
+  )
 }
 
 export function Shell({
@@ -50,92 +98,112 @@ export function Shell({
   headline?: string
 }) {
   const onDesktop = path === '/'
+  const openApp = TASKBAR.find((t) => isActive(path, t.href))
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden">
-      {/* The desktop itself. Always present, always readable behind the window. */}
-      <div className="pointer-events-none absolute inset-0 flex items-start px-6 pt-20 sm:px-10">
-        <div className="mx-auto w-full max-w-[60rem]">
-          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--faint)]">
-            {siteName}
-          </p>
-          {headline && (
-            <h2
-              className={`mt-3 max-w-[20ch] text-2xl font-medium leading-tight tracking-[-0.02em] sm:text-3xl ${
-                onDesktop ? 'text-[var(--ink)]' : 'text-[var(--faint)]'
-              }`}
-            >
-              {headline}
-            </h2>
-          )}
+    <div className="relative flex h-screen flex-col overflow-hidden">
+      {/* Wallpaper. A soft radial wash off the accent rather than a photo, so
+          it stays legible in both modes and adds no weight. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(120% 90% at 78% 8%, var(--selection) 0%, transparent 58%), radial-gradient(90% 70% at 12% 95%, var(--selection) 0%, transparent 55%)',
+        }}
+      />
+
+      {/* Desktop surface: identity plus the icon grid. Both stay visible
+          behind an open window, so the person never disappears behind the
+          interface. That is the single most common failure of this genre. */}
+      <div className="relative z-0 px-6 pt-8 sm:px-10">
+        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--faint)]">
+          {siteName}
+        </p>
+        {headline && (
+          <h2 className="mt-2 max-w-[24ch] text-xl font-medium leading-snug tracking-[-0.02em] text-[var(--ink)] sm:text-2xl">
+            {headline}
+          </h2>
+        )}
+
+        <div className="mt-7 flex flex-wrap gap-x-2 gap-y-4 sm:max-w-[7rem] sm:flex-col">
+          {FILES.map((file) => (
+            <DesktopIcon key={file.href} file={file} />
+          ))}
         </div>
       </div>
 
-      {/* The window. On the home route there is no window: the desktop is the page. */}
-      <main className="relative z-10 flex flex-1 items-stretch px-3 pb-28 pt-6 sm:px-6 sm:pb-32 sm:pt-10">
-        {onDesktop ? (
-          <div className="mx-auto w-full max-w-[60rem] self-end pb-6">{children}</div>
-        ) : (
-          <div className="mx-auto flex w-full max-w-[62rem] flex-col overflow-hidden rounded-lg border border-[var(--rule)] bg-[var(--window)] shadow-[var(--shadow)]">
-            <div className="flex items-center justify-between gap-4 border-b border-[var(--rule)] bg-[var(--chrome)] px-4 py-2.5">
-              <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--muted)]">
-                {DOCK.find((d) => isActive(path, d.href))?.label ?? 'Window'}
+      {/* Window layer. On the home route nothing is open, and the desktop is
+          the page. */}
+      {!onDesktop && (
+        <div className="pointer-events-none absolute inset-x-0 bottom-14 top-6 z-10 flex justify-center px-3 sm:px-6">
+          <div className="pointer-events-auto flex w-full max-w-[58rem] flex-col overflow-hidden rounded-lg border border-[var(--rule)] bg-[var(--window)] shadow-[var(--shadow)] sm:ml-[7rem]">
+            <div className="flex shrink-0 items-center justify-between gap-4 border-b border-[var(--rule)] bg-[var(--chrome)] px-4 py-2.5">
+              <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--muted)]">
+                <DocIcon className="h-3.5 w-3.5" />
+                {openApp?.label ?? 'Window'}
               </span>
               <Link
                 href="/"
-                className="rounded-sm px-2 py-1 font-mono text-[11px] text-[var(--muted)] transition-colors hover:bg-[var(--selection)] hover:text-[var(--accent)]"
+                aria-label="Close window"
+                className="rounded px-2.5 py-1 font-mono text-[11px] text-[var(--muted)] transition-colors hover:bg-[var(--selection)] hover:text-[var(--accent)]"
               >
                 close
               </Link>
             </div>
-            <div className="flex-1 overflow-y-auto px-5 py-2 sm:px-10">{children}</div>
+            <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4 sm:px-9">{children}</div>
           </div>
-        )}
-      </main>
+        </div>
+      )}
 
-      {/* The dock. Real links, keyboard reachable, active state from the URL. */}
-      <nav
-        aria-label="Primary"
-        className="fixed inset-x-0 bottom-0 z-20 flex justify-center px-3 pb-4"
-      >
-        <div className="flex max-w-full items-center gap-1 overflow-x-auto rounded-xl border border-[var(--rule)] bg-[var(--chrome)]/90 px-2 py-1.5 shadow-[var(--shadow)] backdrop-blur-md">
-          {DOCK.map((item) => {
+      {onDesktop && (
+        <div className="relative z-0 mt-auto px-6 pb-16 sm:px-10">{children}</div>
+      )}
+
+      {/* Taskbar. Start-equivalent on the left, running apps in the middle,
+          system tray on the right. */}
+      <div className="absolute inset-x-0 bottom-0 z-20 flex h-11 items-center gap-1 border-t border-[var(--rule)] bg-[var(--chrome)]/95 px-2 backdrop-blur-md">
+        <Link
+          href="/"
+          aria-label="Desktop"
+          aria-current={onDesktop ? 'page' : undefined}
+          className={`flex items-center gap-2 rounded px-2.5 py-1.5 font-mono text-[11px] tracking-[0.04em] transition-colors ${
+            onDesktop
+              ? 'bg-[var(--selection)] text-[var(--accent)]'
+              : 'text-[var(--muted)] hover:bg-[var(--selection)] hover:text-[var(--ink)]'
+          }`}
+        >
+          <GridIcon className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">Desktop</span>
+        </Link>
+
+        <span aria-hidden className="mx-1 h-5 w-px bg-[var(--rule)]" />
+
+        <nav aria-label="Open applications" className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
+          {TASKBAR.map((item) => {
             const active = isActive(path, item.href)
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
-                className={`rounded-lg px-3.5 py-2 font-mono text-xs tracking-[0.03em] transition-colors ${
+                className={`shrink-0 rounded px-3 py-1.5 text-[12px] transition-colors ${
                   active
-                    ? 'bg-[var(--selection)] text-[var(--accent)]'
-                    : 'text-[var(--muted)] hover:text-[var(--ink)]'
+                    ? 'bg-[var(--selection)] text-[var(--accent)] shadow-[inset_0_-2px_0_var(--accent)]'
+                    : 'text-[var(--muted)] hover:bg-[var(--selection)] hover:text-[var(--ink)]'
                 }`}
               >
-                {item.label.toLowerCase()}
+                {item.label}
               </Link>
             )
           })}
+        </nav>
 
-          <span aria-hidden className="mx-1 h-5 w-px bg-[var(--rule)]" />
-
-          <Link
-            href="/"
-            aria-current={onDesktop ? 'page' : undefined}
-            className={`rounded-lg px-3.5 py-2 font-mono text-xs tracking-[0.03em] transition-colors ${
-              onDesktop
-                ? 'bg-[var(--selection)] text-[var(--accent)]'
-                : 'text-[var(--muted)] hover:text-[var(--ink)]'
-            }`}
-          >
-            home
-          </Link>
+        <div className="flex shrink-0 items-center gap-1 border-l border-[var(--rule)] pl-2">
+          {appearance}
+          <Clock />
         </div>
-      </nav>
-
-      {appearance && (
-        <div className="fixed bottom-4 right-4 z-20 hidden lg:block">{appearance}</div>
-      )}
+      </div>
     </div>
   )
 }
@@ -148,8 +216,8 @@ export function WindowSection({
   children: React.ReactNode
 }) {
   return (
-    <section className="pb-14">
-      <h2 className="mb-8 border-b border-[var(--rule)] pb-3 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--faint)]">
+    <section className="pb-12">
+      <h2 className="mb-6 border-b border-[var(--rule)] pb-2.5 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--faint)]">
         {label}
       </h2>
       {children}
