@@ -1,17 +1,25 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getTechByIds, getWorkItem, getWorkSlugs } from '@/lib/content'
+import { getTechByIds, getWorkItem } from '@/lib/content'
 import { ThemedPage, resolveView } from '@/components/ThemedPage'
 import { getProfile } from '@/lib/content'
 import { workJsonLd } from '@/lib/jsonld'
 import { JsonLd } from '@/components/JsonLd'
 
-export const revalidate = 3600
-
-export async function generateStaticParams() {
-  const slugs = await getWorkSlugs()
-  return slugs.map((slug) => ({ slug }))
-}
+/**
+ * Rendered on demand, not prerendered.
+ *
+ * Theme resolution reads a cookie in the root layout, which makes every route
+ * dynamic. generateStaticParams cannot coexist with that: Next attempts a
+ * static render, hits the cookie access, and unknown slugs fail with
+ * DYNAMIC_SERVER_USAGE instead of returning a 404.
+ *
+ * This costs less than it sounds. Crawlers still receive fully server-rendered
+ * HTML, which was the whole point of the migration, and every read is wrapped
+ * in a tagged cache so a request is a render rather than a database round trip.
+ * Making this static again would mean giving up server-side theme selection.
+ */
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({
   params,
