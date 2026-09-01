@@ -1,0 +1,8 @@
+# The api/ folder is the archived Express service, kept in git as a reference snapshot
+# after the PortfolioAPI history was merged into this repo. It is not part of the build.
+#
+# Without this, Vercel would auto-bundle everything under a top-level /api directory as
+# Serverless Functions, which fails here: the code is CommonJS under a "type": "module"
+# root, its dependencies live in api/package.json rather than the root manifest, and
+# index.js starts a listening server instead of exporting a handler.
+api/
