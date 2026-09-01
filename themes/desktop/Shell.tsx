@@ -113,10 +113,10 @@ export function Shell({
         }}
       />
 
-      {/* Desktop surface: identity plus the icon grid. Both stay visible
-          behind an open window, so the person never disappears behind the
-          interface. That is the single most common failure of this genre. */}
-      <div className="relative z-0 px-6 pt-8 sm:px-10">
+      {/* Identity. Stays visible behind an open window, so the person never
+          disappears behind the interface: the single most common failure of
+          this genre. */}
+      <div className="relative z-0 shrink-0 px-6 pt-8 sm:px-10">
         <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--faint)]">
           {siteName}
         </p>
@@ -125,18 +125,29 @@ export function Shell({
             {headline}
           </h2>
         )}
+      </div>
 
-        <div className="mt-7 flex flex-wrap gap-x-2 gap-y-4 sm:max-w-[7rem] sm:flex-col">
+      {/*
+        The desktop surface. min-h-0 on a flex child is what lets its children
+        scroll instead of overflowing: without it a flex item refuses to shrink
+        below its content and the bottom simply gets clipped by the h-screen
+        parent, which is what was cutting the work panel in half.
+      */}
+      <div className="relative z-0 flex min-h-0 flex-1 flex-col gap-6 px-6 pb-20 pt-6 sm:flex-row sm:px-10">
+        <div className="flex shrink-0 flex-wrap content-start gap-x-2 gap-y-4 sm:max-w-[7rem] sm:flex-col sm:flex-nowrap sm:overflow-y-auto">
           {FILES.map((file) => (
             <DesktopIcon key={file.href} file={file} />
           ))}
         </div>
+
+        {onDesktop && (
+          <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
+        )}
       </div>
 
-      {/* Window layer. On the home route nothing is open, and the desktop is
-          the page. */}
+      {/* Window layer, drawn over the desktop. */}
       {!onDesktop && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-14 top-6 z-10 flex justify-center px-3 sm:px-6">
+        <div className="pointer-events-none absolute inset-x-0 bottom-20 top-28 z-10 flex justify-center px-3 sm:px-6">
           <div className="pointer-events-auto flex w-full max-w-[58rem] flex-col overflow-hidden rounded-lg border border-[var(--rule)] bg-[var(--window)] shadow-[var(--shadow)] sm:ml-[7rem]">
             <div className="flex shrink-0 items-center justify-between gap-4 border-b border-[var(--rule)] bg-[var(--chrome)] px-4 py-2.5">
               <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--muted)]">
@@ -158,10 +169,6 @@ export function Shell({
         </div>
       )}
 
-      {onDesktop && (
-        <div className="relative z-0 mt-auto px-6 pb-16 sm:px-10">{children}</div>
-      )}
-
       {/* Clock in the top-right corner rather than the dock. A centred dock has
           no natural edge to pin a tray to, and the menu-bar corner is where a
           clock is looked for on a desktop anyway. */}
@@ -169,11 +176,15 @@ export function Shell({
         <Clock />
       </div>
 
-      {/* The dock: a centred floating pill, not a full-width bar. */}
+      {/* The dock: a centred floating pill, not a full-width bar.
+          The scrolling region is the app list ALONE. The settings menu sits
+          outside it: an ancestor with overflow-x-auto clips any child that
+          extends past its box, which is what was cutting the open menu off. */}
       <div className="absolute inset-x-0 bottom-0 z-20 flex justify-center px-3 pb-4">
+        <div className="flex max-w-full items-center gap-1 rounded-xl border border-[var(--rule)] bg-[var(--chrome)]/90 px-2 py-1.5 shadow-[var(--shadow)] backdrop-blur-md">
         <nav
           aria-label="Applications"
-          className="flex max-w-full items-center gap-1 overflow-x-auto rounded-xl border border-[var(--rule)] bg-[var(--chrome)]/90 px-2 py-1.5 shadow-[var(--shadow)] backdrop-blur-md"
+          className="flex min-w-0 items-center gap-1 overflow-x-auto"
         >
           <Link
             href="/"
@@ -209,10 +220,12 @@ export function Shell({
             )
           })}
 
+        </nav>
+
           <span aria-hidden className="mx-0.5 h-5 w-px shrink-0 bg-[var(--rule)]" />
 
           <div className="shrink-0">{appearance}</div>
-        </nav>
+        </div>
       </div>
     </div>
   )
