@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getPost, getPostSlugs } from '@/lib/content'
+import { getPost, getPostSlugs, getProfile } from '@/lib/content'
 import { ThemedPage, resolveView } from '@/components/ThemedPage'
+import { postJsonLd } from '@/lib/jsonld'
+import { JsonLd } from '@/components/JsonLd'
 
 export const revalidate = 3600
 
@@ -32,10 +34,11 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   const post = await getPost(slug)
   if (!post) notFound()
 
-  const View = await resolveView('post', 'full')
+  const [View, profile] = await Promise.all([resolveView('post', 'full'), getProfile()])
 
   return (
     <ThemedPage path={`/blog/${post.slug}`}>
+      <JsonLd data={postJsonLd(post, profile)} />
       <View post={post} />
     </ThemedPage>
   )

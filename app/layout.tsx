@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Instrument_Sans, IBM_Plex_Mono } from 'next/font/google'
 import { getProfile } from '@/lib/content'
 import { resolveColorScheme, resolveTheme } from '@/lib/theme/resolve'
+import { websiteJsonLd } from '@/lib/jsonld'
+import { JsonLd } from '@/components/JsonLd'
 import './globals.css'
 
 /*
@@ -64,7 +66,11 @@ const schemeScript = `
 `
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const [theme, scheme] = await Promise.all([resolveTheme(), resolveColorScheme()])
+  const [theme, scheme, profile] = await Promise.all([
+    resolveTheme(),
+    resolveColorScheme(),
+    getProfile(),
+  ])
 
   return (
     <html
@@ -78,6 +84,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: schemeScript }} />
+        <JsonLd data={websiteJsonLd(profile)} />
       </head>
       <body>{children}</body>
     </html>
