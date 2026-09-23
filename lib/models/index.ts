@@ -12,9 +12,23 @@
 export * from './shared'
 
 export { ProfileModel, zProfile, type Profile, AVAILABILITY } from './profile'
-export { WorkModel, zWork, type Work, WORK_KINDS, LIFECYCLE, type WorkKind } from './work'
+export {
+  WorkModel,
+  zWork,
+  type Work,
+  WORK_KINDS,
+  LIFECYCLE,
+  DATE_PRECISION,
+  type WorkKind,
+} from './work'
 export { PostModel, zPost, type Post } from './post'
-export { ExperienceModel, zExperience, type Experience, SECTIONS } from './experience'
+export {
+  ExperienceModel,
+  zExperience,
+  type Experience,
+  SECTIONS,
+  SORT_MODES,
+} from './experience'
 export { TechModel, zTech, type Tech, TECH_CATEGORIES } from './tech'
 export { PageModel, zPage, type Page, PAGE_STATUS } from './page'
 export { RedirectModel, zRedirect, type Redirect } from './redirect'
