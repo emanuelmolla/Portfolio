@@ -236,9 +236,6 @@ export function Shell({
             })}
           </nav>
 
-          <span aria-hidden className="mx-0.5 h-5 w-px shrink-0 bg-[var(--rule)]" />
-
-          <div className="shrink-0">{appearance}</div>
         </div>
       </div>
     </div>

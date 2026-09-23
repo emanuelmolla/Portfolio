@@ -46,29 +46,20 @@ export function Shell({
             {siteName}
           </Link>
 
-          <div className="flex items-baseline gap-6">
-            <nav aria-label="Primary">
-              <ul className="flex flex-wrap gap-6 font-mono text-xs tracking-[0.04em]">
-                {nav.map((item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className="text-[var(--muted)] hover:text-[var(--accent)]"
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-
-            {/* In the header, not the footer. A dropdown anchored to the bottom
-                of a long page opens into nothing: the panel renders below the
-                fold and the visitor has to scroll to reach what they just
-                clicked. Top-right is where a settings control is looked for
-                anyway. */}
-            {appearance}
-          </div>
+          <nav aria-label="Primary">
+            <ul className="flex flex-wrap gap-6 font-mono text-xs tracking-[0.04em]">
+              {nav.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="text-[var(--muted)] hover:text-[var(--accent)]"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </header>
 
         <main id="content" className="flex-1">
