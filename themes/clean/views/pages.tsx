@@ -338,9 +338,9 @@ export function PageView({ page }: { page: Page }) {
 /**
  * Contact.
  *
- * The links come first and the form second, because the rows are now legible
- * enough to be the primary path: a visitor who wants email should not have to
- * read past a form to find it.
+ * Form first, links beneath it. The form is what the page is for; the links
+ * are the alternative. Leading with a list of addresses and putting the form
+ * underneath reads as though the form is an afterthought.
  *
  * Deliberately not cards. A row of cards is the reflex layout for "make these
  * stand out", and it would fight the typographic character of the theme. Rows
@@ -359,8 +359,14 @@ export function Contact({ profile }: { profile: Profile | null }) {
         Email is the fastest way to reach me. The form lands in the same inbox.
       </p>
 
+
+      <section>
+        <SectionLabel>Send a message</SectionLabel>
+        <ContactForm />
+      </section>
+
       {visible.length > 0 && (
-        <section className="mb-20">
+        <section className="mt-20">
           <SectionLabel>Reach me</SectionLabel>
           <ul className="-mx-3 flex flex-col">
             {visible.map((link) => {
@@ -398,11 +404,6 @@ export function Contact({ profile }: { profile: Profile | null }) {
           </ul>
         </section>
       )}
-
-      <section>
-        <SectionLabel>Send a message</SectionLabel>
-        <ContactForm />
-      </section>
     </div>
   )
 }
