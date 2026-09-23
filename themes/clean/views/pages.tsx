@@ -323,43 +323,86 @@ export function PageView({ page }: { page: Page }) {
 
 /* --------------------------------------------------------------- contact --- */
 
+/**
+ * Contact.
+ *
+ * The email is set at display size and is the loudest thing on the page, which
+ * is the point: it is the action a visitor is most likely to want and the one
+ * that was previously hardest to spot in a label/value list.
+ *
+ * The rest are full-width rows with a hairline between them, an arrow that
+ * moves on hover, and a tinted hover band, so they read as targets rather than
+ * as a definition list. Deliberately not cards: a row of cards is the reflex
+ * layout here and it fights the rest of the theme.
+ */
 export function Contact({ profile }: { profile: Profile | null }) {
   if (!profile) return null
+
   const visible = profile.links.filter((l) => l.visible)
+  const email = visible.find((l) => l.kind === 'email')
+  const rest = visible.filter((l) => l.kind !== 'email')
 
   return (
     <div className="pt-20 pb-8">
-      <h1 className="mb-8 text-4xl font-medium leading-[1.1] tracking-[-0.03em]">
-        Contact
-      </h1>
-      <p className="prose mb-10 text-[var(--muted)]">
-        Send a message here, or use any of the links below. I read everything.
+      <h1 className="mb-6 text-4xl font-medium leading-[1.1] tracking-[-0.03em]">Contact</h1>
+
+      {email && (
+        <a
+          href={email.url}
+          className="group inline-flex max-w-full items-baseline gap-3 text-[clamp(1.375rem,4vw,2rem)] font-medium tracking-[-0.02em] text-[var(--ink)] transition-colors hover:text-[var(--accent)]"
+        >
+          <span className="truncate underline decoration-[var(--rule)] decoration-2 underline-offset-[7px] transition-colors group-hover:decoration-[var(--accent)]">
+            {email.handle ?? email.url.replace('mailto:', '')}
+          </span>
+          <span
+            aria-hidden
+            className="shrink-0 text-[0.6em] text-[var(--faint)] transition-transform group-hover:translate-x-1 group-hover:text-[var(--accent)]"
+          >
+            &#8594;
+          </span>
+        </a>
+      )}
+
+      <p className="prose mt-6 mb-14 text-[var(--muted)]">
+        Email is the fastest way to reach me. The form below lands in the same inbox.
       </p>
 
-      <div className="mb-14">
-        <ContactForm />
-      </div>
+      <ContactForm />
 
-      <ul className="flex flex-col gap-4">
-        {visible.map((link) => (
-          <li
-            key={link.url}
-            className="grid grid-cols-1 items-baseline gap-x-8 sm:grid-cols-[7rem_minmax(0,1fr)]"
-          >
-            <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--faint)]">
-              {link.kind}
-            </span>
-            <a
-              href={link.url}
-              target={link.url.startsWith('http') ? '_blank' : undefined}
-              rel="noreferrer noopener"
-              className="text-[15px] underline decoration-[var(--rule)] underline-offset-4 hover:text-[var(--accent)] hover:decoration-[var(--accent)]"
-            >
-              {link.handle ?? link.label ?? link.url}
-            </a>
-          </li>
-        ))}
-      </ul>
+      {rest.length > 0 && (
+        <section className="mt-20">
+          <SectionLabel>Elsewhere</SectionLabel>
+          <ul className="-mx-3 flex flex-col">
+            {rest.map((link) => {
+              const isDownload = link.kind === 'resume'
+              return (
+                <li key={link.url} className="border-b border-[var(--rule)] last:border-b-0">
+                  <a
+                    href={link.url}
+                    target={!isDownload && link.url.startsWith('http') ? '_blank' : undefined}
+                    rel="noreferrer noopener"
+                    download={isDownload || undefined}
+                    className="group flex items-center gap-4 rounded px-3 py-4 transition-colors hover:bg-[var(--selection)]"
+                  >
+                    <span className="w-[5.5rem] shrink-0 font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--faint)]">
+                      {link.kind}
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-[17px] text-[var(--ink)] transition-colors group-hover:text-[var(--accent)]">
+                      {link.handle ?? link.label ?? link.url}
+                    </span>
+                    <span
+                      aria-hidden
+                      className="shrink-0 font-mono text-xs text-[var(--faint)] transition-transform group-hover:text-[var(--accent)] group-hover:translate-x-0.5"
+                    >
+                      {isDownload ? String.fromCharCode(8595) : String.fromCharCode(8599)}
+                    </span>
+                  </a>
+                </li>
+              )
+            })}
+          </ul>
+        </section>
+      )}
     </div>
   )
 }
