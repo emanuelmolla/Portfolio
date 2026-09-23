@@ -2,10 +2,10 @@
 
 import { FormShell } from '@/components/admin/FormShell'
 import { LinkRows, type LinkRow } from '@/components/admin/LinkRows'
+import { ImageFields } from '@/components/admin/ImageFields'
 import {
   Area,
   Fieldset,
-  Num,
   Row,
   Select,
   Text,
@@ -222,43 +222,13 @@ export function ProfileForm({
             />
           </Fieldset>
 
-          <Fieldset
-            legend="Photo"
-            hint="Width and height are required if a URL is set, so the page reserves the space before the image loads."
-          >
-            <Text
-              label="Image URL"
-              name="avatar.url"
-              defaultValue={values.avatar?.url}
-              error={err('avatar.url')}
-              hint="A path like /me.jpg works if the file is in public/."
+          <Fieldset legend="Photo">
+            <ImageFields
+              prefix="avatar"
+              value={values.avatar}
+              err={err}
+              legendHint="The photo on /about. The size fills itself in once a URL is entered."
             />
-            <Text
-              label="Alt text"
-              name="avatar.alt"
-              defaultValue={values.avatar?.alt}
-              error={err('avatar.alt')}
-            />
-            <Row cols={3}>
-              <Num
-                label="Width"
-                name="avatar.width"
-                defaultValue={values.avatar?.width}
-                error={err('avatar.width')}
-              />
-              <Num
-                label="Height"
-                name="avatar.height"
-                defaultValue={values.avatar?.height}
-                error={err('avatar.height')}
-              />
-              <Text
-                label="Caption"
-                name="avatar.caption"
-                defaultValue={values.avatar?.caption}
-                error={err('avatar.caption')}
-              />
-            </Row>
           </Fieldset>
 
           <SeoFieldset values={values.seo} err={err} />

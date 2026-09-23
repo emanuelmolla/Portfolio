@@ -6,6 +6,7 @@ import { FormShell } from '@/components/admin/FormShell'
 import { MarkdownEditor } from '@/components/admin/MarkdownEditor'
 import { SlugField } from '@/components/admin/SlugField'
 import { DeleteButton } from '@/components/admin/DeleteButton'
+import { ImageFields } from '@/components/admin/ImageFields'
 import { PreviewLink } from '@/components/admin/PreviewLink'
 import { LinkRows, type LinkRow } from '@/components/admin/LinkRows'
 import {
@@ -405,43 +406,13 @@ export function WorkForm({
             />
           </Fieldset>
 
-          <Fieldset
-            legend="Cover image"
-            hint="Optional. Width and height are required if a URL is set, so the page can reserve the space before the image arrives."
-          >
-            <Text
-              label="Image URL"
-              name="coverImage.url"
-              type="url"
-              defaultValue={values.coverImage?.url}
-              error={err('coverImage.url')}
+          <Fieldset legend="Cover image">
+            <ImageFields
+              prefix="coverImage"
+              value={values.coverImage}
+              err={err}
+              legendHint="Optional. The size fills itself in once a URL is entered; it is required because the page has to reserve the space before the image arrives."
             />
-            <Text
-              label="Alt text"
-              name="coverImage.alt"
-              defaultValue={values.coverImage?.alt}
-              error={err('coverImage.alt')}
-            />
-            <Row cols={3}>
-              <Num
-                label="Width"
-                name="coverImage.width"
-                defaultValue={values.coverImage?.width}
-                error={err('coverImage.width')}
-              />
-              <Num
-                label="Height"
-                name="coverImage.height"
-                defaultValue={values.coverImage?.height}
-                error={err('coverImage.height')}
-              />
-              <Text
-                label="Caption"
-                name="coverImage.caption"
-                defaultValue={values.coverImage?.caption}
-                error={err('coverImage.caption')}
-              />
-            </Row>
           </Fieldset>
 
           <SeoFieldset values={values.seo} err={err} />

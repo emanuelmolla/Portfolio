@@ -1,3 +1,7 @@
+/* eslint-disable @next/next/no-html-link-for-pages --
+   /resume is a route handler returning a PDF, not a page. next/link would ask
+   for an RSC payload that does not exist, so these have to be plain anchors.
+   The rule cannot tell the difference. */
 import { MAX_RESUME_BYTES } from '@/lib/models'
 import { readProfile, readResumeMeta } from '@/lib/admin/read'
 import { resumeFilename } from '@/lib/resume'
@@ -40,15 +44,9 @@ export default async function ResumePage() {
           </dl>
 
           <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[var(--a-line)] pt-4">
-            {/* Plain anchors, not <Link>. /resume is a route handler returning a
-                PDF, so there is no React tree to navigate to: a client-side
-                transition would fetch an RSC payload that does not exist. The
-                lint rule assumes any internal href is a page. */}
-            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a href="/resume" target="_blank" rel="noreferrer" className="a-btn">
               View
             </a>
-            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a href="/resume?download" className="a-btn">
               Download
             </a>
