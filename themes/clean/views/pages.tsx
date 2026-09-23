@@ -14,12 +14,16 @@ export function Home({
   profile,
   work,
   posts,
+  experience,
 }: {
   profile: Profile | null
   work: Work[]
   posts: Post[]
+  experience?: Experience[]
 }) {
   if (!profile) return null
+
+  const roles = (experience ?? []).filter((e) => e.section === 'work' || e.section === 'coop')
 
   return (
     <>
@@ -31,12 +35,36 @@ export function Home({
           {profile.bio.short}
         </p>
 
+        {/* Resume up front, as a real call to action.
+            53.3% of job-seeker portfolios expose a resume and recruiters' own
+            systems still want the PDF, so burying it in a footer link costs
+            something for no benefit. It is the only filled control on the page,
+            which is what makes it read as the primary action without needing a
+            colour to shout. */}
+        <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4">
+          <a
+            href={profile.resumeUrl}
+            download
+            className="inline-flex items-center gap-2.5 border border-[var(--ink)] bg-[var(--ink)] px-5 py-2.5 font-mono text-xs tracking-[0.04em] text-[var(--ground)] transition-colors hover:border-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--accent-contrast)]"
+          >
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden>
+              <path d="M7 1v9M3.5 6.5 7 10l3.5-3.5" stroke="currentColor" strokeWidth="1.4" />
+              <path d="M1.5 12.5h11" stroke="currentColor" strokeWidth="1.4" />
+            </svg>
+            Download resume
+          </a>
+
+          <Link
+            href="/contact"
+            className="font-mono text-xs tracking-[0.04em] text-[var(--muted)] underline decoration-[var(--rule)] underline-offset-[6px] hover:text-[var(--accent)] hover:decoration-[var(--accent)]"
+          >
+            get in touch
+          </Link>
+        </div>
+
         {profile.availability.status !== 'not-looking' && (
-          <p className="mt-10 inline-flex items-center gap-2 font-mono text-xs tracking-[0.03em] text-[var(--muted)]">
-            <span
-              aria-hidden
-              className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]"
-            />
+          <p className="mt-8 inline-flex items-center gap-2 font-mono text-xs tracking-[0.03em] text-[var(--muted)]">
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
             {profile.availability.note ??
               (profile.availability.status === 'open'
                 ? 'Open to new roles'
@@ -45,8 +73,44 @@ export function Home({
         )}
       </section>
 
+      {/* Where he works, above the projects. A current role is the single
+          fastest answer to "is this person actually employed doing this", and
+          it was previously only reachable on /about. */}
+      {roles.length > 0 && (
+        <section className="pb-20">
+          <SectionLabel>Experience</SectionLabel>
+          <div className="flex flex-col gap-6">
+            {roles.map((entry) => (
+              <div
+                key={entry.slug}
+                className="grid grid-cols-1 items-baseline gap-x-8 gap-y-1 sm:grid-cols-[minmax(0,1fr)_10rem]"
+              >
+                <span className="text-[17px] font-medium">{entry.role}</span>
+                <span className="tabular whitespace-nowrap font-mono text-xs text-[var(--faint)] sm:text-right">
+                  {entry.current
+                    ? `${formatDate(entry.startDate, 'month')} to now`
+                    : [formatDate(entry.startDate, 'month'), formatDate(entry.endDate, 'month')]
+                        .filter(Boolean)
+                        .join(' to ')}
+                </span>
+                <span className="text-[15px] text-[var(--muted)]">
+                  {entry.org}
+                  {entry.employmentType ? ` · ${entry.employmentType}` : ''}
+                </span>
+              </div>
+            ))}
+          </div>
+          <Link
+            href="/about"
+            className="mt-8 inline-block font-mono text-xs text-[var(--muted)] hover:text-[var(--accent)]"
+          >
+            more about me →
+          </Link>
+        </section>
+      )}
+
       {work.length > 0 && (
-        <section className="pb-22">
+        <section className="pb-20">
           <SectionLabel>Selected work</SectionLabel>
           <div className="flex flex-col gap-11">
             {work.map((item) => (
@@ -63,8 +127,8 @@ export function Home({
       )}
 
       {posts.length > 0 && (
-        <section className="pb-22">
-          <SectionLabel>Writing</SectionLabel>
+        <section className="pb-20">
+          <SectionLabel>Selected writing</SectionLabel>
           <div className="flex flex-col gap-7">
             {posts.map((post) => (
               <PostSummary key={post.slug} post={post} />

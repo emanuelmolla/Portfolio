@@ -33,8 +33,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     // A title template rather than a bare title, so every page reads
-    // "DevNest — Emanuel Molla" without each route repeating the name.
-    title: { default: name, template: `%s — ${name}` },
+    // "DevNest · Emanuel Molla" without each route repeating the name.
+    title: { default: name, template: `%s · ${name}` },
     description: profile?.seo?.description ?? profile?.bio?.short,
     metadataBase: new URL('https://emanuelmolla.dev'),
     alternates: { canonical: '/' },

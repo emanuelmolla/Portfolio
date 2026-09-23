@@ -13,8 +13,9 @@
   - clean's neutrals carry a slight blue bias rather than being pure grey, and
     the ground is deliberately NOT the warm cream that currently reads as
     machine-generated.
-  - the single accent is a deep pine green. It appears in exactly three places
-    (links on hover, the availability dot, focus rings) and nowhere else.
+  - green is the identity, shared across themes and set at very different
+    intensities: restrained and deep in clean, vivid in desktop. The themes
+    differ by type, chrome and layout rather than by hue.
   - desktop keeps the v1 site's dark character but drops the animated fire
     gradient border, which was the loudest thing on the old page.
 */
@@ -31,9 +32,12 @@
   --muted: #6b747e;
   --faint: #99a1aa;
   --rule: #e2e6ea;
-  --accent: #0b6e4f;
+  /* A true green, not the previous #0b6e4f which sat at hue ~160 and read
+     teal. This is hue ~143: unmistakably green, dark enough to pass contrast
+     as link text on the light ground. */
+  --accent: #17763c;
   --accent-contrast: #ffffff;
-  --selection: #0b6e4f1f;
+  --selection: #17763c1a;
   --shadow: 0 1px 2px #14171b0a;
   color-scheme: light;
 }
@@ -46,21 +50,15 @@
   --muted: #949ca5;
   --faint: #6b747e;
   --rule: #242a30;
-  --accent: #46c495;
+  /* Same hue, lifted for a dark ground. */
+  --accent: #41d67c;
   --accent-contrast: #0f1215;
-  --selection: #46c4952e;
+  --selection: #41d67c29;
   --shadow: 0 1px 2px #00000040;
   color-scheme: dark;
 }
 
 /* -------------------------------------------------------- desktop, dark --- */
-/*
-  Carried over from v1 rather than invented. The old site ran zinc-900 through
-  black with #ce9c13 on the active dock item, and that gold was a real choice,
-  so it stays as the accent. Much darker and cooler than the clean theme's
-  neutrals: the two should not be mistakable for each other at a glance, which
-  is the entire reason for having separate themes.
-*/
 [data-theme='desktop'] {
   /*
     Three clearly separated depth levels, which the previous values did not
@@ -80,11 +78,16 @@
   --muted: #9aa1ac;
   --faint: #6b7280;
   --rule: #2b303a;
-  /* The v1 gold lifted a little. #ce9c13 is mixed for a dark UI: against a
-     near-black ground it reads muddy rather than warm. */
-  --accent: #e2b03a;
-  --accent-contrast: #0a0c10;
-  --selection: #e2b03a26;
+  /*
+     Vivid green rather than the v1 gold. The gold read muddy against
+     near-black and it tinted the whole UI amber. A saturated green on a deep
+     cool ground is the combination that reads expensive, and it is the same
+     hue family as the clean theme, so green is the identity and the two themes
+     differ by everything else: type, chrome, layout.
+  */
+  --accent: #34e27d;
+  --accent-contrast: #06180f;
+  --selection: #34e27d1f;
   --shadow: 0 16px 48px #000000b3;
   color-scheme: dark;
 }
@@ -92,7 +95,7 @@
 /* ------------------------------------------------------- desktop, light --- */
 /* Every theme must support both modes; that is what makes dark mode a property
    rather than a theme. This is the same furniture under daylight: a grey
-   desktop, white windows, and the gold darkened until it passes contrast on a
+   desktop, white windows, and the green darkened until it passes contrast on a
    light ground. */
 [data-theme='desktop'][data-scheme='light'] {
   --ground: #9ca3ad;
@@ -101,9 +104,9 @@
   --muted: #52525b;
   --faint: #71717a;
   --rule: #c7cbd1;
-  --accent: #7a5c06;
+  --accent: #0f7038;
   --accent-contrast: #ffffff;
-  --selection: #7a5c0621;
+  --selection: #0f70381f;
   --shadow: 0 12px 40px #0000002e;
   --window: #fbfbfc;
   --chrome: #e7e9ec;

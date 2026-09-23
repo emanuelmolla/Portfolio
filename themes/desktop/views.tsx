@@ -105,7 +105,16 @@ function FileHeader({
  * portfolios is that the interface becomes the artifact and the person
  * disappears, so recent work sits in plain sight rather than one click deep.
  */
-export function Home({ work, profile }: { work: Work[]; profile: Profile | null }) {
+export function Home({
+  work,
+  profile,
+  experience,
+}: {
+  work: Work[]
+  profile: Profile | null
+  experience?: Experience[]
+}) {
+  const roles = (experience ?? []).filter((e) => e.section === 'work' || e.section === 'coop')
   return (
     <div className="rounded-lg border border-[var(--rule)] bg-[var(--window)]/80 p-4 backdrop-blur-sm sm:p-5">
       <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--faint)]">
@@ -121,9 +130,32 @@ export function Home({ work, profile }: { work: Work[]; profile: Profile | null 
           icon: DocIcon,
         }))}
       />
+      {roles.length > 0 && (
+        <div className="mt-4 border-t border-[var(--rule)] pt-3">
+          <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--faint)]">
+            Currently
+          </p>
+          <ul className="flex flex-col gap-1.5">
+            {roles.map((e) => (
+              <li key={e.slug} className="flex flex-wrap items-baseline gap-x-2 text-[13px]">
+                <span className="text-[var(--ink)]">{e.role}</span>
+                <span className="text-[var(--muted)]">{e.org}</span>
+                <span className="tabular font-mono text-[11px] text-[var(--faint)]">
+                  {e.current ? `${formatDate(e.startDate, 'month')} to now` : formatDate(e.endDate, 'year')}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {profile && (
         <p className="mt-4 border-t border-[var(--rule)] pt-3 font-mono text-[11px] text-[var(--faint)]">
-          {work.length} item{work.length === 1 ? '' : 's'} · open a folder from the dock
+          <a href={profile.resumeUrl} download className="hover:text-[var(--accent)]">
+            resume.pdf
+          </a>
+          {' · '}
+          {work.length} item{work.length === 1 ? '' : 's'}
         </p>
       )}
     </div>

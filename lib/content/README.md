@@ -1,4 +1,4 @@
-# lib/content — the data access layer
+# lib/content: the data access layer
 
 This directory is the **theme-facing contract**. Themes import from here and from
 nowhere else in the data stack. Freeze this interface before writing any theme.

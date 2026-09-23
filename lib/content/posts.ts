@@ -6,6 +6,8 @@ export interface PostFilter {
   tag?: string
   limit?: number
   includeDrafts?: boolean
+  /** Only posts with a featuredOrder. Used by the home page. */
+  featured?: boolean
 }
 
 export const getPosts = cachedQuery(
@@ -15,8 +17,9 @@ export const getPosts = cachedQuery(
     const query: Record<string, unknown> = {}
     if (!filter.includeDrafts) query.status = 'published'
     if (filter.tag) query.tags = filter.tag
+    if (filter.featured) query.featuredOrder = { $ne: null }
 
-    let q = PostModel.find(query).sort({ publishedAt: -1 }).lean()
+    let q = PostModel.find(query).sort({ featuredOrder: 1, publishedAt: -1 }).lean()
     if (filter.limit) q = q.limit(filter.limit)
 
     return (await q) as unknown as Post[]
@@ -24,6 +27,8 @@ export const getPosts = cachedQuery(
   (filter: PostFilter = {}) => {
     let out = seedPosts.filter((p) => filter.includeDrafts || p.status === 'published')
     if (filter.tag) out = out.filter((p) => p.tags.includes(filter.tag!))
+    if (filter.featured) out = out.filter((p) => p.featuredOrder !== null)
+    out = [...out].sort((a, b) => (a.featuredOrder ?? 1e9) - (b.featuredOrder ?? 1e9))
     return filter.limit ? out.slice(0, filter.limit) : out
   }
 )

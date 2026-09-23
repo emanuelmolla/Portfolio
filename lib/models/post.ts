@@ -40,6 +40,8 @@ export const zPost = z.object({
   publishedAt: z.date().nullable().default(null),
   /** Computed on save, not at render. */
   readingMinutes: z.number().int().default(0),
+  /** Nullable so a pinned post escapes date order. Same mechanism as work. */
+  featuredOrder: z.number().int().nullable().default(null),
   /** The other half of the case-study link on work. */
   relatedWorkRef: z.string().nullable().default(null),
   /** Set when cross-posted, so the canonical stays here. */
@@ -62,6 +64,7 @@ const PostSchema = new Schema(
     status: { type: String, enum: PUBLISH_STATUS, default: 'draft' },
     publishedAt: { type: Date, default: null },
     readingMinutes: { type: Number, default: 0 },
+    featuredOrder: { type: Number, default: null },
     relatedWorkRef: { type: Schema.Types.ObjectId, ref: 'Work', default: null },
     canonicalUrl: { type: String, default: null },
     stats: {
