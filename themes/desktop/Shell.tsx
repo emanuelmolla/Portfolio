@@ -109,14 +109,24 @@ export function Shell({
 
   return (
     <div className="relative flex h-screen flex-col overflow-hidden bg-[var(--ground)]">
-      {/* Wallpaper. A gradient wash rather than a photo, so it stays legible in
-          both modes and costs nothing to load. */}
+      {/*
+        Wallpaper: a flat ground with a faint grain, and no gradient.
+
+        This was previously two radial washes in the accent colour, which is
+        exactly the "radial orbs / harsh gradient" decoration that reads as
+        machine-generated, and it tinted the whole screen yellow. A real desktop
+        wallpaper is a photograph or a flat colour, never a glow.
+
+        The grain is generated SVG turbulence, inline, so it costs no request
+        and no image asset. At 3.5% opacity it is not visible as texture; it
+        just stops a large flat area from looking like an empty div.
+      */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 opacity-[0.035] mix-blend-overlay"
         style={{
-          background:
-            'radial-gradient(110% 80% at 80% 0%, var(--selection) 0%, transparent 55%), radial-gradient(90% 70% at 8% 100%, var(--selection) 0%, transparent 50%)',
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E\")",
         }}
       />
 
