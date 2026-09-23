@@ -73,15 +73,15 @@ const zDetails = z.discriminatedUnion('kind', [
 ])
 
 export const zWork = z.object({
-  slug: z.string(),
+  slug: z.string().min(1, 'A slug is required.'),
   /** Renaming a slug without a 301 burns accumulated ranking, and old slugs
    *  cannot be reconstructed after the fact. One array now, unrecoverable later. */
   previousSlugs: z.array(z.string()).default([]),
 
   kind: z.enum(WORK_KINDS),
-  title: z.string(),
+  title: z.string().min(1, 'A title is required.'),
   /** Card-safe, one or two sentences. */
-  summary: z.string(),
+  summary: z.string().min(1, 'Write a one-line summary. It is the card text on the index.'),
   body: z.string().default(''),
   bodyFormat: zBodyFormat,
 

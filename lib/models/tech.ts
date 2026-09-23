@@ -26,8 +26,8 @@ export const TECH_CATEGORIES = [
 ] as const
 
 export const zTech = z.object({
-  slug: z.string(),
-  name: z.string(),
+  slug: z.string().min(1, 'A slug is required.'),
+  name: z.string().min(1, 'A name is required.'),
   category: z.enum(TECH_CATEGORIES),
   /** Year, not a Date: "2024" is the honest precision here. */
   firstEncounter: z.number().int().nullable().default(null),

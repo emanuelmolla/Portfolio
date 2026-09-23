@@ -16,9 +16,9 @@ import { SeoSchema, slugField, zBodyFormat, zSeo } from './shared'
 export const PAGE_STATUS = ['draft', 'published', 'unlisted'] as const
 
 export const zPage = z.object({
-  slug: z.string(),
+  slug: z.string().min(1, 'A slug is required.'),
   previousSlugs: z.array(z.string()).default([]),
-  title: z.string(),
+  title: z.string().min(1, 'A title is required.'),
   body: z.string().default(''),
   bodyFormat: zBodyFormat,
 

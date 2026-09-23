@@ -19,25 +19,25 @@ import { LinkSchema, MediaSchema, SeoSchema, zLink, zMedia, zSeo } from './share
 export const AVAILABILITY = ['open', 'selective', 'not-looking'] as const
 
 export const zProfile = z.object({
-  name: z.string(),
+  name: z.string().min(1, 'A name is required.'),
   givenName: z.string(),
   familyName: z.string(),
   /** Google's ProfilePage docs: real name in `name`, handles in `alternateName`. */
   alternateName: z.string().nullable().default(null),
 
   /** Stated plainly. The first thing a hiring manager reads. */
-  headline: z.string(),
+  headline: z.string().min(1, 'A headline is required. It is the first thing a hiring manager reads.'),
 
   bio: z.object({
     /** Doubles as the meta description, hence the cap. */
-    short: z.string().max(155),
+    short: z.string().min(1, 'A short bio is required. It doubles as the meta description.').max(155, 'Keep this under 155 characters.'),
     long: z.string().default(''),
   }),
 
   location: z.object({
-    city: z.string(),
+    city: z.string().min(1, 'Which city?'),
     region: z.string().nullable().default(null),
-    country: z.string(),
+    country: z.string().min(1, 'Which country?'),
   }),
 
   avatar: zMedia.nullable().default(null),

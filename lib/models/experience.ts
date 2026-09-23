@@ -23,12 +23,12 @@ export const SECTIONS = ['work', 'education', 'coop', 'award', 'certificate', 'v
 export const SORT_MODES = ['date-desc', 'alpha'] as const
 
 export const zExperience = z.object({
-  slug: z.string(),
+  slug: z.string().min(1, 'A slug is required.'),
   section: z.enum(SECTIONS),
   sortMode: z.enum(SORT_MODES).default('date-desc'),
 
-  org: z.string(),
-  role: z.string(),
+  org: z.string().min(1, 'Which organisation?'),
+  role: z.string().min(1, 'What was the role called?'),
   location: z.string().nullable().default(null),
   employmentType: z.string().nullable().default(null),
   url: z.string().nullable().default(null),

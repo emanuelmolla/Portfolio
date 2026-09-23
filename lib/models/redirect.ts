@@ -16,8 +16,8 @@ import { z } from 'zod'
  */
 
 export const zRedirect = z.object({
-  from: z.string(),
-  to: z.string(),
+  from: z.string().min(1, 'Which path is moving?'),
+  to: z.string().min(1, 'Where should it go?'),
   statusCode: z.union([z.literal(301), z.literal(302)]).default(301),
   note: z.string().nullable().default(null),
 })

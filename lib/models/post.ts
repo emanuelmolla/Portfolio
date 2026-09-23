@@ -28,10 +28,10 @@ import {
  */
 
 export const zPost = z.object({
-  slug: z.string(),
+  slug: z.string().min(1, 'A slug is required.'),
   previousSlugs: z.array(z.string()).default([]),
-  title: z.string(),
-  excerpt: z.string(),
+  title: z.string().min(1, 'A title is required.'),
+  excerpt: z.string().min(1, 'Write an excerpt. It is the card text and the fallback meta description.'),
   body: z.string().default(''),
   bodyFormat: zBodyFormat,
   coverImage: zMedia.nullable().default(null),
