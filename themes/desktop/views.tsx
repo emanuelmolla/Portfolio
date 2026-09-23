@@ -425,37 +425,92 @@ export function PageView({ page }: { page: Page }) {
   )
 }
 
+/**
+ * Contact, as a mail client: composer on the left, contact card on the right.
+ *
+ * The card is a real <details>. On mobile it starts collapsed behind a
+ * "Contact card" row, so the composer is the first thing you see. From the sm
+ * breakpoint up, CSS hides the summary and forces the panel visible regardless
+ * of open state, which gives a permanently-docked sidebar without duplicating
+ * the markup or needing JavaScript.
+ */
 export function Contact({ profile }: { profile: Profile | null }) {
   if (!profile) return null
 
+  const email =
+    profile.links.find((l) => l.kind === 'email')?.handle ?? 'emanuelmolla@outlook.com'
+  const visible = profile.links.filter((l) => l.visible)
+
   return (
     <div className="pt-4">
-      <FileHeader name="contact" meta={[profile.location.city, 'reply within a few days']} />
-      <div className="mb-9">
-        <ContactForm />
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
+        <div className="min-w-0 flex-1">
+          <ContactForm toName={profile.name} toEmail={email} />
+        </div>
+
+        <details
+          open
+          className="group shrink-0 overflow-hidden rounded-md border border-[var(--rule)] bg-[var(--window)] lg:w-[17rem] [&[open]_summary_svg]:rotate-180 sm:[&>div]:!block sm:[&>summary]:hidden"
+        >
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-2 border-b border-[var(--rule)] bg-[var(--chrome)] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] [&::-webkit-details-marker]:hidden">
+            Contact card
+            <svg width="9" height="9" viewBox="0 0 8 8" fill="none" aria-hidden className="transition-transform">
+              <path d="M1 2.5 4 5.5 7 2.5" stroke="currentColor" strokeWidth="1.2" />
+            </svg>
+          </summary>
+
+          <div>
+            <div className="hidden border-b border-[var(--rule)] bg-[var(--chrome)] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--muted)] sm:block">
+              Contact card
+            </div>
+
+            <div className="flex items-center gap-3 border-b border-[var(--rule)] px-4 py-4">
+              {profile.avatar && (
+                <Image
+                  src={profile.avatar.url}
+                  alt={profile.avatar.alt}
+                  width={profile.avatar.width}
+                  height={profile.avatar.height}
+                  sizes="48px"
+                  className="h-12 w-12 shrink-0 rounded-full object-cover"
+                  style={{ objectPosition: '50% 22%' }}
+                />
+              )}
+              <div className="min-w-0">
+                <p className="truncate text-[13px] font-medium text-[var(--ink)]">
+                  {profile.name}
+                </p>
+                <p className="truncate text-[12px] text-[var(--muted)]">{profile.headline}</p>
+              </div>
+            </div>
+
+            <ul className="flex flex-col py-1">
+              {visible.map((link) => (
+                <li key={link.url}>
+                  <a
+                    href={link.url}
+                    target={link.url.startsWith('http') ? '_blank' : undefined}
+                    rel="noreferrer noopener"
+                    download={link.kind === 'resume' ? true : undefined}
+                    className="flex items-baseline gap-3 px-4 py-2 text-[13px] hover:bg-[var(--selection)]"
+                  >
+                    <span className="w-[4.25rem] shrink-0 font-mono text-[11px] text-[var(--faint)]">
+                      {link.kind}
+                    </span>
+                    <span className="truncate text-[var(--muted)]">
+                      {link.handle ?? link.label ?? link.url}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            <p className="border-t border-[var(--rule)] px-4 py-2.5 font-mono text-[11px] text-[var(--faint)]">
+              {profile.location.city}, {profile.location.region}
+            </p>
+          </div>
+        </details>
       </div>
-      <ul className="flex flex-col gap-2.5">
-        {profile.links
-          .filter((l) => l.visible)
-          .map((link) => (
-            <li
-              key={link.url}
-              className="grid grid-cols-1 items-baseline gap-x-6 sm:grid-cols-[6rem_minmax(0,1fr)]"
-            >
-              <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--faint)]">
-                {link.kind}
-              </span>
-              <a
-                href={link.url}
-                target={link.url.startsWith('http') ? '_blank' : undefined}
-                rel="noreferrer noopener"
-                className="text-[13px] underline decoration-[var(--rule)] underline-offset-4 hover:text-[var(--accent)]"
-              >
-                {link.handle ?? link.label ?? link.url}
-              </a>
-            </li>
-          ))}
-      </ul>
     </div>
   )
 }

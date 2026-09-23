@@ -4,119 +4,150 @@ import { useActionState } from 'react'
 import { submitMessage, type ContactState } from '@/app/contact/actions'
 
 /**
- * The desktop theme's contact form, as an OS dialog.
+ * The desktop theme's contact form, as a mail composer.
  *
- * Same server action as the clean theme, completely different presentation:
- * label column on the left, inset sunken fields, a chunky raised button, and a
- * status strip along the bottom the way a real dialog reports what it is doing.
- * That difference is the point of having themes at all.
+ * Same server action as the clean theme; completely different presentation.
+ * A mail client is the right metaphor here because the thing being done really
+ * is composing a message: addressed header rows with the recipient fixed, a
+ * plain body area with no visible box, and a toolbar footer carrying the
+ * status and the send button.
+ *
+ * The header rows use a hairline under each field rather than a bordered
+ * input, which is how every mail client renders To/From: the label is the
+ * chrome, the field is just where you type.
  */
 
 const initial: ContactState = { ok: false }
 
-const field =
-  'w-full rounded-[3px] border border-[var(--rule)] bg-[var(--ground)] px-2.5 py-1.5 ' +
-  'text-[13px] text-[var(--ink)] outline-none shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] ' +
-  'focus:border-[var(--accent)]'
+const row = 'grid grid-cols-[4.5rem_minmax(0,1fr)] items-baseline gap-3 border-b border-[var(--rule)] px-4 py-2.5'
+const label = 'font-mono text-[11px] text-[var(--faint)]'
+const input =
+  'w-full border-0 bg-transparent p-0 text-[13px] text-[var(--ink)] outline-none placeholder:text-[var(--faint)]'
 
-function Row({
-  htmlFor,
-  label,
-  error,
-  children,
-}: {
-  htmlFor: string
-  label: string
-  error?: string
-  children: React.ReactNode
-}) {
-  return (
-    <div className="grid grid-cols-1 items-start gap-1.5 sm:grid-cols-[6rem_minmax(0,1fr)] sm:gap-3">
-      <label
-        htmlFor={htmlFor}
-        className="pt-1.5 font-mono text-[11px] text-[var(--muted)] sm:text-right"
-      >
-        {label}
-      </label>
-      <div>
-        {children}
-        {error && <p className="mt-1 font-mono text-[11px] text-[var(--accent)]">{error}</p>}
-      </div>
-    </div>
-  )
-}
-
-export function ContactForm() {
+export function ContactForm({ toName, toEmail }: { toName: string; toEmail: string }) {
   const [state, formAction, pending] = useActionState(submitMessage, initial)
 
-  return (
-    <div className="max-w-[34rem] overflow-hidden rounded-md border border-[var(--rule)] bg-[var(--chrome)]">
-      <div className="border-b border-[var(--rule)] px-3.5 py-2 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--muted)]">
-        New message
-      </div>
-
-      {state.ok ? (
-        <div className="px-4 py-6">
-          <p className="text-[13px] text-[var(--ink)]">Message sent.</p>
-          <p className="mt-1 text-[13px] text-[var(--muted)]">
+  if (state.ok) {
+    return (
+      <div className="overflow-hidden rounded-md border border-[var(--rule)] bg-[var(--window)]">
+        <div className="border-b border-[var(--rule)] bg-[var(--chrome)] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--muted)]">
+          Sent
+        </div>
+        <div className="px-4 py-8">
+          <p className="text-[13px] text-[var(--ink)]">Message sent to {toName}.</p>
+          <p className="mt-1.5 text-[13px] text-[var(--muted)]">
             I read everything and usually reply within a couple of days.
           </p>
         </div>
-      ) : (
-        <form action={formAction}>
-          <div className="flex flex-col gap-3 px-4 py-4">
-            <Row htmlFor="name" label="Name" error={state.fieldErrors?.name}>
-              <input id="name" name="name" required className={field} autoComplete="name" />
-            </Row>
+      </div>
+    )
+  }
 
-            <Row htmlFor="email" label="Email" error={state.fieldErrors?.email}>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                className={field}
-                autoComplete="email"
-              />
-            </Row>
+  return (
+    <form
+      action={formAction}
+      className="overflow-hidden rounded-md border border-[var(--rule)] bg-[var(--window)]"
+    >
+      <div className="flex items-center justify-between gap-3 border-b border-[var(--rule)] bg-[var(--chrome)] px-4 py-2">
+        <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--muted)]">
+          New message
+        </span>
+      </div>
 
-            <Row htmlFor="message" label="Message" error={state.fieldErrors?.message}>
-              <textarea id="message" name="message" required rows={6} className={field} />
-            </Row>
+      {/* Recipient is fixed. Showing it as a disabled-looking row rather than
+          omitting it is what makes this read as mail instead of a web form. */}
+      <div className={row}>
+        <span className={label}>To</span>
+        <span className="truncate text-[13px] text-[var(--muted)]">
+          {toName} <span className="text-[var(--faint)]">&lt;{toEmail}&gt;</span>
+        </span>
+      </div>
 
-            {/* Honeypot: offered to bots, hidden from people and assistive tech. */}
-            <div aria-hidden className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
-              <label htmlFor="website">Website</label>
-              <input id="website" name="website" tabIndex={-1} autoComplete="off" />
-            </div>
+      <div className={row}>
+        <label className={label} htmlFor="name">
+          From
+        </label>
+        <div>
+          <input
+            id="name"
+            name="name"
+            required
+            autoComplete="name"
+            placeholder="Your name"
+            className={input}
+          />
+          {state.fieldErrors?.name && (
+            <p className="mt-1 font-mono text-[11px] text-[var(--accent)]">
+              {state.fieldErrors.name}
+            </p>
+          )}
+        </div>
+      </div>
 
-            <div className="sm:pl-[6.75rem]">
-              <label className="flex items-start gap-2 text-[12px] text-[var(--muted)]">
-                <input
-                  type="checkbox"
-                  name="contactConsent"
-                  className="mt-0.5 accent-[var(--accent)]"
-                />
-                <span>Keep my details on file to reply.</span>
-              </label>
-            </div>
-          </div>
+      <div className={row}>
+        <label className={label} htmlFor="email">
+          Reply to
+        </label>
+        <div>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            placeholder="you@example.com"
+            className={input}
+          />
+          {state.fieldErrors?.email && (
+            <p className="mt-1 font-mono text-[11px] text-[var(--accent)]">
+              {state.fieldErrors.email}
+            </p>
+          )}
+        </div>
+      </div>
 
-          {/* Status strip: dialogs report what they are doing along the bottom. */}
-          <div className="flex items-center justify-between gap-4 border-t border-[var(--rule)] bg-[var(--window)] px-3.5 py-2.5">
-            <span className="font-mono text-[11px] text-[var(--faint)]">
-              {state.error ?? (pending ? 'Sending…' : 'Ready')}
-            </span>
-            <button
-              type="submit"
-              disabled={pending}
-              className="rounded-[3px] border border-[var(--rule)] bg-[var(--chrome)] px-4 py-1.5 font-mono text-[11px] text-[var(--ink)] shadow-[0_1px_0_rgba(255,255,255,0.06)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] active:translate-y-px disabled:opacity-50"
-            >
-              Send
-            </button>
-          </div>
-        </form>
-      )}
-    </div>
+      {/* Body: no border, no box. A mail body is just the page. */}
+      <div className="px-4 py-3">
+        <textarea
+          id="message"
+          name="message"
+          required
+          rows={9}
+          placeholder="Write your message…"
+          className={`${input} resize-y leading-relaxed`}
+        />
+        {state.fieldErrors?.message && (
+          <p className="mt-1 font-mono text-[11px] text-[var(--accent)]">
+            {state.fieldErrors.message}
+          </p>
+        )}
+      </div>
+
+      {/* Honeypot: offered to bots, hidden from people and assistive tech. */}
+      <div aria-hidden className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
+        <label htmlFor="website">Website</label>
+        <input id="website" name="website" tabIndex={-1} autoComplete="off" />
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--rule)] bg-[var(--chrome)] px-4 py-2.5">
+        <label className="flex items-center gap-2 text-[12px] text-[var(--muted)]">
+          <input type="checkbox" name="contactConsent" className="accent-[var(--accent)]" />
+          <span>Keep my details to reply</span>
+        </label>
+
+        <div className="flex items-center gap-3">
+          <span className="font-mono text-[11px] text-[var(--faint)]">
+            {state.error ?? (pending ? 'Sending…' : '')}
+          </span>
+          <button
+            type="submit"
+            disabled={pending}
+            className="rounded-[3px] border border-[var(--accent)] bg-[var(--accent)] px-4 py-1.5 font-mono text-[11px] text-[var(--accent-contrast)] transition-opacity hover:opacity-90 active:translate-y-px disabled:opacity-50"
+          >
+            Send
+          </button>
+        </div>
+      </div>
+    </form>
   )
 }
