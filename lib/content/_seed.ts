@@ -271,6 +271,7 @@ export const seedWork: Work[] = [
     links: [
       { kind: 'repo', label: 'Repository', url: 'https://github.com/emanuelmolla/Scholiast' },
       { kind: 'live', label: 'Live', url: 'https://sholiast.webios.link' },
+      { kind: 'demo', label: 'Demo video', url: 'https://youtu.be/aUjmIdcZkuk' },
     ],
     coverImage: null,
     mediaRefs: [],
@@ -370,6 +371,29 @@ export const seedWork: Work[] = [
 
 export const seedExperience: Experience[] = [
   {
+    slug: 'caracal',
+    section: 'work',
+    sortMode: 'date-desc',
+    org: 'Caracal',
+    role: 'Software Developer',
+    location: null,
+    // One entry, not three. The arrangement changed (part-time, then full-time
+    // through the co-op term, then part-time again) but the employer and the
+    // work did not. Splitting a continuous run into three rows makes a long
+    // tenure read as three short jobs, which is strictly worse.
+    employmentType: 'Part-time, full-time during co-op',
+    url: null,
+    startDate: new Date('2025-11-01'),
+    endDate: null,
+    current: true,
+    summary: null,
+    highlights: [],
+    techRefs: [],
+    links: [],
+    order: 1,
+    status: 'published',
+  },
+  {
     slug: 'bcit-cst',
     section: 'education',
     sortMode: 'date-desc',
@@ -378,14 +402,34 @@ export const seedExperience: Experience[] = [
     location: 'Burnaby, BC',
     employmentType: null,
     url: 'https://www.bcit.ca',
-    startDate: null,
+    // January 2025, confirmed from his own post "Starting My Journey at BCIT".
+    startDate: new Date('2025-01-01'),
     endDate: null,
     current: true,
     summary: null,
     highlights: [],
     techRefs: [],
     links: [],
-    order: 1,
+    order: 2,
+    status: 'published',
+  },
+  {
+    slug: 'scholiast-bcit-awards',
+    section: 'award',
+    sortMode: 'date-desc',
+    org: 'BCIT',
+    role: 'Most Innovative and Best Teamwork',
+    location: null,
+    employmentType: null,
+    url: null,
+    startDate: new Date('2025-06-30'),
+    endDate: new Date('2025-06-30'),
+    current: false,
+    summary: 'Two of three award categories for Scholiast, across all student projects that term.',
+    highlights: [],
+    techRefs: [],
+    links: [{ kind: 'demo', label: 'Demo', url: 'https://youtu.be/aUjmIdcZkuk' }],
+    order: 3,
     status: 'published',
   },
   {
@@ -404,7 +448,7 @@ export const seedExperience: Experience[] = [
     highlights: [],
     techRefs: [T('cpp')],
     links: [],
-    order: 2,
+    order: 4,
     status: 'published',
   },
 ] as unknown as Experience[]
@@ -418,8 +462,90 @@ export const seedExperience: Experience[] = [
 export const seedPages: Page[] = []
 
 /**
- * Empty on purpose. The real posts live in the v1 Atlas `Blog` collection and
- * arrive via the migration. Inventing post titles to fill a section would be
- * exactly the kind of thing this project is trying not to do.
+ * Real posts, pulled from the live v1 API (api.emanuelmolla.dev/blogs/public)
+ * on 2026-08-31. Bodies were `content: [String]` arrays of paragraphs; joining
+ * with blank lines makes each a markdown paragraph, which is lossless for what
+ * v1 could represent. Inline JSX anchors were converted to markdown links.
+ *
+ * Nothing here is written by anyone but Emanuel.
  */
-export const seedPosts: Post[] = []
+export const seedPosts: Post[] = [
+  {
+    slug: "devnest",
+    previousSlugs: [],
+    title: "DevNest: My 6-Week Journey Building a Sprint Planner",
+    excerpt: "Over 6 weeks and 4 iterations, I built DevNest, a sprint-based project management app designed for developers. What started as a simple task manager grew into a tool with JWT/",
+    body: "Over 6 weeks and 4 iterations, I built **DevNest**, a sprint-based project management app designed for developers. What started as a simple task manager grew into a tool with **JWT/Auth0 authentication,** Markdown notes, and **Gemini API** integration for auto-generating sprint tasks and feature goals.\n\nThis project taught me to think more like an engineer, making system design decisions, structuring a database that could scale, and balancing frontend vs backend responsibilities. Just as importantly, I learned to accept user feedback and turn it into real improvements, which made DevNest better after each iteration.\n\nA big thank-you to everyone who tested and shared feedback, you helped shape this project into something I\u2019m proud of.\n\n\ud83d\udc49 Try it live: [https://devnest.molla.dev](https://devnest.molla.dev)",
+    bodyFormat: 'markdown',
+    coverImage: {
+      url: "https://res.cloudinary.com/dbcdlkfty/image/upload/v1755934899/landing_hhto35.png",
+      alt: "DevNest: My 6-Week Journey Building a Sprint Planner",
+      // v1 stored a bare Cloudinary URL with no dimensions. These are the
+      // OG default until the real ones are read at migration time.
+      width: 1200,
+      height: 630,
+      blurDataURL: null,
+      caption: null,
+    },
+    tags: [],
+    status: 'published',
+    publishedAt: new Date('2025-08-13T07:33:21.466Z'),
+    readingMinutes: 1,
+    relatedWorkRef: null,
+    canonicalUrl: null,
+    stats: { views: 49, likes: 27 },
+    seo: { title: null, description: null, ogImage: null, canonicalUrl: null, noindex: false },
+  },
+  {
+    slug: "scholiast-bcit-award",
+    previousSlugs: [],
+    title: "Scholiast: Winning at Innovation and Teamwork",
+    excerpt: "June 30th was a huge day for our team, our project Scholiast officially made it into the BCIT spotlight.",
+    body: "June 30th was a huge day for our team, our project *Scholiast* officially made it into the BCIT spotlight.\n\nWe were awarded **Most Innovative** and **Best Teamwork** out of all the student projects this term. Competing against some really talented teams, winning 2 out of 3 award categories was surreal.\n\nScholiast is a productivity-focused learning assistant. It transforms raw study materials into quizzes, flashcards, and structured summaries using active recall and spaced repetition. We built it from the ground up with React on the frontend and Express on the backend.\n\nPersonally, I focused heavily on the backend: designing RESTful API routes, managing database logic, and ensuring smooth communication between the client and server. It was my first time owning an entire backend module in a real group setting.\n\nWhat made this project so memorable wasn\u2019t just the tech, it was the team. Everyone pushed their limits, communicated well, and stayed committed till the last sprint. We weren\u2019t just coding, we were building something real together.\n\nScholiast taught me a lot about what it takes to work in a high-performing team, and I\u2019ll carry those lessons into every future project I touch.\n\nProject Demo: [https://youtu.be/aUjmIdcZkuk ](https://youtu.be/aUjmIdcZkuk)",
+    bodyFormat: 'markdown',
+    coverImage: {
+      url: "https://res.cloudinary.com/dbcdlkfty/image/upload/v1752438250/bcit-news_mc0xee.png",
+      alt: "Scholiast: Winning at Innovation and Teamwork",
+      // v1 stored a bare Cloudinary URL with no dimensions. These are the
+      // OG default until the real ones are read at migration time.
+      width: 1200,
+      height: 630,
+      blurDataURL: null,
+      caption: null,
+    },
+    tags: [],
+    status: 'published',
+    publishedAt: new Date('2025-06-30T20:19:02.936Z'),
+    readingMinutes: 1,
+    relatedWorkRef: null,
+    canonicalUrl: null,
+    stats: { views: 110, likes: 64 },
+    seo: { title: null, description: null, ogImage: null, canonicalUrl: null, noindex: false },
+  },
+  {
+    slug: "starting-my-journey-at-bcit-where-learning-gets-real",
+    previousSlugs: [],
+    title: "Starting My Journey at BCIT: Where Learning Gets Real",
+    excerpt: "In January 2025, I began the Computer Systems Technology program at BCIT, and it\u2019s already been a game-changer.",
+    body: "In January 2025, I began the Computer Systems Technology program at BCIT, and it\u2019s already been a game-changer.\n\nAfter years of theory and self-taught projects, I wanted something more practical. BCIT delivered. From day one, it\u2019s been about building real projects, working in teams, and solving problems that feel like actual industry work.\n\nThe program is fast-paced and intense, but that\u2019s what I love about it. Every deadline, bug, and group project is helping me grow into the developer I want to become.\n\nWhat really stands out is how the instructors focus on why things work, not just how to use them. You\u2019re expected to think deeply and take ownership of your learning, and that\u2019s exactly what I was looking for.\n\nThis is just the beginning, but I\u2019m already confident: I\u2019m in the right place.",
+    bodyFormat: 'markdown',
+    coverImage: {
+      url: "https://res.cloudinary.com/dbcdlkfty/image/upload/v1752264749/bcit_blog_ywskd4.png",
+      alt: "Starting My Journey at BCIT: Where Learning Gets Real",
+      // v1 stored a bare Cloudinary URL with no dimensions. These are the
+      // OG default until the real ones are read at migration time.
+      width: 1200,
+      height: 630,
+      blurDataURL: null,
+      caption: null,
+    },
+    tags: [],
+    status: 'published',
+    publishedAt: new Date('2025-02-11T19:57:18.859Z'),
+    readingMinutes: 1,
+    relatedWorkRef: null,
+    canonicalUrl: null,
+    stats: { views: 66, likes: 46 },
+    seo: { title: null, description: null, ogImage: null, canonicalUrl: null, noindex: false },
+  },
+] as unknown as Post[]

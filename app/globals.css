@@ -62,18 +62,30 @@
   is the entire reason for having separate themes.
 */
 [data-theme='desktop'] {
-  --ground: #08080a;
-  --raised: #131317;
-  --ink: #f4f4f5;
-  --muted: #a1a1aa;
-  --faint: #71717a;
-  --rule: #27272a;
-  --accent: #ce9c13;
-  --accent-contrast: #08080a;
-  --selection: #ce9c1326;
-  --shadow: 0 12px 40px #000000a6;
-  --window: #101013;
-  --chrome: #18181b;
+  /*
+    Three clearly separated depth levels, which the previous values did not
+    have: ground #08080a, window #101013 and chrome #18181b were within a few
+    points of each other, so a window never looked like it was sitting ON the
+    desktop, it looked like a slightly different shade of the same surface.
+
+    Now the wallpaper is the darkest and faintly cool, windows step up a
+    visible amount and are neutral, and chrome steps up again. Hue does some of
+    the work as well as lightness, so the separation survives on a cheap panel.
+  */
+  --ground: #0a0c10;
+  --window: #15181d;
+  --chrome: #1d2027;
+  --raised: #1d2027;
+  --ink: #e9ebee;
+  --muted: #9aa1ac;
+  --faint: #6b7280;
+  --rule: #2b303a;
+  /* The v1 gold lifted a little. #ce9c13 is mixed for a dark UI: against a
+     near-black ground it reads muddy rather than warm. */
+  --accent: #e2b03a;
+  --accent-contrast: #0a0c10;
+  --selection: #e2b03a26;
+  --shadow: 0 16px 48px #000000b3;
   color-scheme: dark;
 }
 

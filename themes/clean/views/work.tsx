@@ -18,24 +18,34 @@ export function WorkSummary({ work }: { work: Work }) {
   return (
     <Link
       href={`/work/${work.slug}`}
-      className="group grid grid-cols-1 items-baseline gap-x-8 gap-y-2 sm:grid-cols-[minmax(0,1fr)_8rem]"
+      className="group grid grid-cols-1 items-baseline gap-x-8 gap-y-2 sm:grid-cols-[minmax(0,1fr)_10rem]"
     >
       <span className="text-xl font-medium tracking-[-0.015em] transition-colors group-hover:text-[var(--accent)]">
         {work.title}
       </span>
-      <span className="tabular font-mono text-xs text-[var(--faint)] sm:text-right">
-        {workDateLine(work)} · {workRoleLine(work)}
+
+      {/* Date alone in the right column, and nowrap.
+          It previously carried "date · role" in an 8rem column, which wrapped
+          to two lines on anything with a longer range. Dates in a column only
+          read as a column if they all sit on one line; the role moved down to
+          the meta row where it has the full width. */}
+      <span className="tabular whitespace-nowrap font-mono text-xs text-[var(--faint)] sm:text-right">
+        {workDateLine(work)}
       </span>
+
       <p className="max-w-[34rem] text-[15px] leading-relaxed text-[var(--muted)] sm:col-span-1">
         {work.summary}
       </p>
-      {work.details?.kind === 'software' && work.details.stack.length > 0 && (
-        <ul className="flex flex-wrap gap-x-3 gap-y-1.5 font-mono text-[11px] text-[var(--faint)] sm:col-span-2">
-          {work.details.stack.slice(0, 6).map((item) => (
-            <li key={item}>{item.toLowerCase()}</li>
+
+      <ul className="flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[11px] text-[var(--faint)] sm:col-span-2">
+        <li className="text-[var(--muted)]">{workRoleLine(work)}</li>
+        {work.details?.kind === 'software' &&
+          work.details.stack.slice(0, 5).map((item) => (
+            <li key={item} className="before:mr-3 before:content-['·']">
+              {item.toLowerCase()}
+            </li>
           ))}
-        </ul>
-      )}
+      </ul>
     </Link>
   )
 }
