@@ -5,6 +5,7 @@ import { FormShell } from '@/components/admin/FormShell'
 import { MarkdownEditor } from '@/components/admin/MarkdownEditor'
 import { SlugField } from '@/components/admin/SlugField'
 import { DeleteButton } from '@/components/admin/DeleteButton'
+import { PreviewLink } from '@/components/admin/PreviewLink'
 import { SectionRows, type SectionRow } from '@/components/admin/SectionRows'
 import { Check, Fieldset, Num, Row, Select, Text, enumOptions } from '@/components/admin/fields'
 import { SeoFieldset } from '../../posts/[id]/PostForm'
@@ -44,9 +45,10 @@ export function PageForm({
       aside={
         !isNew && (
           <>
+            <PreviewLink to={`/${values.slug}`} />
             {values.status !== 'draft' && (
               <Link href={`/${values.slug}`} target="_blank" rel="noreferrer" className="a-btn">
-                View
+                View live
               </Link>
             )}
             <DeleteButton action={deletePage} id={values._id as string} />

@@ -1,7 +1,11 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 import { getPage } from '@/lib/content'
+import { previewPage } from '@/lib/content/preview'
+import { findRedirect } from '@/lib/content/redirects'
+import { isPreview } from '@/lib/preview'
 import { ThemedPage, resolveView } from '@/components/ThemedPage'
+import { PreviewBanner } from '@/components/PreviewBanner'
 
 /**
  * Arbitrary slash pages: /uses, /colophon, /now, whatever gets added later.
@@ -29,27 +33,47 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const page = await getPage(slug)
+  const preview = await isPreview()
+  const page = preview ? await previewPage(slug) : await getPage(slug)
   if (!page) return {}
 
   return {
     title: page.seo?.title ?? page.title,
     description: page.seo?.description,
     alternates: { canonical: `/${page.slug}` },
-    robots: page.seo?.noindex ? { index: false, follow: true } : undefined,
+    robots:
+      preview || page.seo?.noindex ? { index: false, follow: !preview } : undefined,
   }
 }
 
 export default async function SlashPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const page = await getPage(slug)
-  if (!page) notFound()
+
+  const preview = await isPreview()
+  const page = preview ? await previewPage(slug) : await getPage(slug)
+  if (!page) {
+    // No live document. The redirect table is the last chance before a 404, and
+    // covers retired pages and v1 paths that have no record to hang history on.
+    const moved = await findRedirect(`/${slug}`)
+    if (moved) permanentRedirect(moved.to)
+    notFound()
+  }
+
+  // Reached through an old slug. Serving the content here as well would put the
+  // same page at two URLs returning 200, which splits its ranking between them.
+  // Preview is exempt: bouncing mid-edit would be confusing and nothing is
+  // indexing a preview anyway.
+  if (!preview && page.slug !== slug) permanentRedirect(`/${page.slug}`)
 
   const View = await resolveView('page', 'full')
+  const path = `/${page.slug}`
 
   return (
-    <ThemedPage path={`/${page.slug}`}>
-      <View page={page} />
-    </ThemedPage>
+    <>
+      {preview && <PreviewBanner status={page.status} path={path} />}
+      <ThemedPage path={path}>
+        <View page={page} />
+      </ThemedPage>
+    </>
   )
 }

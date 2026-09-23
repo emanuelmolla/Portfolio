@@ -6,6 +6,7 @@ import { FormShell } from '@/components/admin/FormShell'
 import { MarkdownEditor } from '@/components/admin/MarkdownEditor'
 import { SlugField } from '@/components/admin/SlugField'
 import { DeleteButton } from '@/components/admin/DeleteButton'
+import { PreviewLink } from '@/components/admin/PreviewLink'
 import { LinkRows, type LinkRow } from '@/components/admin/LinkRows'
 import {
   Area,
@@ -104,9 +105,10 @@ export function WorkForm({
       aside={
         !isNew && (
           <>
+            <PreviewLink to={`/work/${values.slug}`} />
             {values.status === 'published' && (
               <Link href={`/work/${values.slug}`} target="_blank" rel="noreferrer" className="a-btn">
-                View
+                View live
               </Link>
             )}
             <DeleteButton action={deleteWork} id={values._id as string} />

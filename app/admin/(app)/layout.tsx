@@ -38,6 +38,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: '/admin/pages', label: 'Pages' },
     { href: '/admin/profile', label: 'Profile' },
     { href: '/admin/resume', label: 'Resume' },
+    { href: '/admin/redirects', label: 'Redirects' },
   ]
 
   return (

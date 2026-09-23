@@ -6,6 +6,7 @@ import {
   PageModel,
   PostModel,
   ProfileModel,
+  RedirectModel,
   ResumeModel,
   TechModel,
   WorkModel,
@@ -13,6 +14,7 @@ import {
   type Page,
   type Post,
   type Profile,
+  type Redirect,
   type Tech,
   type Work,
 } from '@/lib/models'
@@ -173,6 +175,20 @@ export async function readMessage(id: string): Promise<StoredMessage | null> {
   if (!(await ready())) return null
   const doc = await MessageModel.findById(id).lean()
   return doc ? (toPlain(doc) as unknown as StoredMessage) : null
+}
+
+/* ------------------------------------------------------------ redirects --- */
+
+export async function listRedirects(): Promise<Doc<Redirect>[]> {
+  if (!(await ready())) return []
+  const docs = await RedirectModel.find().sort({ from: 1 }).lean()
+  return toPlain(docs) as unknown as Doc<Redirect>[]
+}
+
+export async function readRedirect(id: string): Promise<Doc<Redirect> | null> {
+  if (!(await ready())) return null
+  const doc = await RedirectModel.findById(id).lean()
+  return doc ? (toPlain(doc) as unknown as Doc<Redirect>) : null
 }
 
 /* --------------------------------------------------------------- resume --- */

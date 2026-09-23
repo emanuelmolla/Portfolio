@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { readCounts, listMessages } from '@/lib/admin/read'
 import { PageHeader, formatDateTime } from '@/components/admin/page-parts'
+import { Diagnostics } from './Diagnostics'
 
 export const dynamic = 'force-dynamic'
 
@@ -82,6 +83,8 @@ export default async function Dashboard() {
           <CountRow href="/admin/tech" label="Tech" total={counts.tech} />
         </ul>
       </section>
+
+      <Diagnostics />
     </>
   )
 }

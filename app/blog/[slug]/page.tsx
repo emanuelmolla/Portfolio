@@ -1,7 +1,11 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 import { getPost, getProfile } from '@/lib/content'
+import { previewPost } from '@/lib/content/preview'
+import { findRedirect } from '@/lib/content/redirects'
+import { isPreview } from '@/lib/preview'
 import { ThemedPage, resolveView } from '@/components/ThemedPage'
+import { PreviewBanner } from '@/components/PreviewBanner'
 import { postJsonLd } from '@/lib/jsonld'
 import { JsonLd } from '@/components/JsonLd'
 
@@ -26,10 +30,13 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const post = await getPost(slug)
+  const preview = await isPreview()
+  const post = preview ? await previewPost(slug) : await getPost(slug)
   if (!post) return {}
 
   return {
+    // A draft must never be indexable, whatever its own seo settings say.
+    robots: preview ? { index: false, follow: false } : undefined,
     title: post.seo?.title ?? post.title,
     description: post.seo?.description ?? post.excerpt,
     alternates: { canonical: post.canonicalUrl ?? `/blog/${post.slug}` },
@@ -39,15 +46,37 @@ export async function generateMetadata({
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const post = await getPost(slug)
-  if (!post) notFound()
+
+  // Preview reads bypass both the status filter and the cache. The cookie behind
+  // isPreview() is signed, so this cannot be reached by setting a cookie by hand.
+  const preview = await isPreview()
+  const post = preview ? await previewPost(slug) : await getPost(slug)
+  if (!post) {
+    // No live document. The redirect table is the last chance before a 404, and
+    // covers retired pages and v1 paths that have no record to hang history on.
+    const moved = await findRedirect(`/blog/${slug}`)
+    if (moved) permanentRedirect(moved.to)
+    notFound()
+  }
+
+  // Reached through an old slug. Serving the content here as well would put the
+  // same page at two URLs returning 200, which splits its ranking between them.
+  // Preview is exempt: bouncing mid-edit would be confusing and nothing is
+  // indexing a preview anyway.
+  if (!preview && post.slug !== slug) permanentRedirect(`/blog/${post.slug}`)
 
   const [View, profile] = await Promise.all([resolveView('post', 'full'), getProfile()])
+  const path = `/blog/${post.slug}`
 
   return (
-    <ThemedPage path={`/blog/${post.slug}`}>
-      <JsonLd data={postJsonLd(post, profile)} />
-      <View post={post} />
-    </ThemedPage>
+    <>
+      {preview && <PreviewBanner status={post.status} path={path} />}
+      <ThemedPage path={path}>
+        {/* No structured data for an unpublished page. JSON-LD describing a draft
+            as a BlogPosting is a claim about something that does not exist yet. */}
+        {!preview && <JsonLd data={postJsonLd(post, profile)} />}
+        <View post={post} />
+      </ThemedPage>
+    </>
   )
 }

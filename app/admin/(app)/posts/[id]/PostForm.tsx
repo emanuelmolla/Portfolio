@@ -5,6 +5,7 @@ import { FormShell } from '@/components/admin/FormShell'
 import { MarkdownEditor } from '@/components/admin/MarkdownEditor'
 import { SlugField } from '@/components/admin/SlugField'
 import { DeleteButton } from '@/components/admin/DeleteButton'
+import { PreviewLink } from '@/components/admin/PreviewLink'
 import { Area, Check, Fieldset, Num, Row, Select, Text, enumOptions } from '@/components/admin/fields'
 import { savePost, deletePost } from '../actions'
 
@@ -62,6 +63,10 @@ export function PostForm({
       aside={
         !isNew && (
           <>
+            {/* Preview works whatever the status, which is the point: it is how a
+                draft gets looked at in the real theme without being published to
+                do it. Save first, though, since it renders what is stored. */}
+            <PreviewLink to={`/blog/${values.slug}`} />
             {values.status === 'published' && (
               <Link
                 href={`/blog/${values.slug}`}
@@ -69,7 +74,7 @@ export function PostForm({
                 rel="noreferrer"
                 className="a-btn"
               >
-                View
+                View live
               </Link>
             )}
             <DeleteButton action={deletePost} id={values._id as string} />
