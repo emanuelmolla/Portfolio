@@ -12,6 +12,8 @@
  * Blog and Message collections are read in place, not copied from elsewhere.
  */
 
+import { readFile } from 'node:fs/promises'
+import path from 'node:path'
 import mongoose from 'mongoose'
 import { connectDB } from '../lib/db'
 import {
@@ -19,8 +21,10 @@ import {
   PageModel,
   PostModel,
   ProfileModel,
+  ResumeModel,
   TechModel,
   WorkModel,
+  looksLikePdf,
 } from '../lib/models'
 import {
   seedExperience,
@@ -106,11 +110,61 @@ async function main() {
     )
   }
 
+  /* --- the committed resume PDF ------------------------------------------ */
+  await importResume()
+
   /* --- v1 blogs -> posts ------------------------------------------------- */
   await migrateBlogs()
 
   console.log('\ndone')
   await mongoose.disconnect()
+}
+
+/**
+ * Move public/resume.pdf into the database, once.
+ *
+ * Only if nothing is stored yet, so re-running the seed never overwrites a newer
+ * file uploaded through the admin with the older one still sitting in the repo.
+ * That is the failure this guard exists for: seeding is meant to be safe to run
+ * twice, and silently reverting the resume would make it the one operation that
+ * is not.
+ *
+ * Once this has run, /resume serves it under the right download name and the
+ * committed copy is only a fallback.
+ */
+async function importResume() {
+  const existing = await ResumeModel.findById('current', { data: 0 }).lean()
+  if (existing) {
+    log('resume', 'already stored, leaving it alone')
+    return
+  }
+
+  const file = path.join(process.cwd(), 'public', 'resume.pdf')
+
+  let bytes: Buffer
+  try {
+    bytes = await readFile(file)
+  } catch {
+    log('resume', 'no public/resume.pdf to import')
+    return
+  }
+
+  if (!looksLikePdf(bytes)) {
+    log('resume', 'public/resume.pdf is not a PDF, skipping')
+    return
+  }
+
+  log('resume', `importing public/resume.pdf (${(bytes.byteLength / 1024).toFixed(0)} KB)`)
+  if (DRY) return
+
+  await ResumeModel.create({
+    _id: 'current',
+    data: bytes,
+    contentType: 'application/pdf',
+    size: bytes.byteLength,
+    originalName: 'resume.pdf',
+    indexable: false,
+  })
 }
 
 /**

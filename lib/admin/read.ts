@@ -6,6 +6,7 @@ import {
   PageModel,
   PostModel,
   ProfileModel,
+  ResumeModel,
   TechModel,
   WorkModel,
   type Experience,
@@ -172,6 +173,34 @@ export async function readMessage(id: string): Promise<StoredMessage | null> {
   if (!(await ready())) return null
   const doc = await MessageModel.findById(id).lean()
   return doc ? (toPlain(doc) as unknown as StoredMessage) : null
+}
+
+/* --------------------------------------------------------------- resume --- */
+
+export interface ResumeMeta {
+  size: number
+  originalName: string | null
+  indexable: boolean
+  updatedAt: Date
+}
+
+/**
+ * Everything about the stored resume EXCEPT the bytes.
+ *
+ * The projection is not an optimisation, it is a correctness requirement.
+ * toPlain() walks objects key by key, and a Buffer walked that way comes back as
+ * an object with a hundred thousand numeric keys, which is both useless and large
+ * enough to matter in a server-component payload. The file itself is only ever
+ * read by app/resume/route.ts, which does not go through this module.
+ */
+export async function readResumeMeta(): Promise<ResumeMeta | null> {
+  if (!(await ready())) return null
+
+  const doc = await ResumeModel.findById('current', {
+    data: 0,
+  }).lean()
+
+  return doc ? (toPlain(doc) as unknown as ResumeMeta) : null
 }
 
 /* ------------------------------------------------------------ dashboard --- */

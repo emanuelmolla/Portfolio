@@ -24,7 +24,7 @@ const blank: ProfileFormValues = {
   avatar: null,
   links: [],
   availability: { status: 'not-looking', availableFrom: '', note: null },
-  resumeUrl: '/resume.pdf',
+  resumeUrl: '/resume',
   knowsAbout: [],
   knowsLanguage: [],
   inLanguage: 'en',

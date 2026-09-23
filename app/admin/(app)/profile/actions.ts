@@ -82,7 +82,7 @@ export async function saveProfile(_prev: ActionState, formData: FormData): Promi
       note: optText(formData, 'availability.note'),
     },
 
-    resumeUrl: text(formData, 'resumeUrl') || '/resume.pdf',
+    resumeUrl: text(formData, 'resumeUrl') || '/resume',
 
     knowsAbout: tokens(formData, 'knowsAbout'),
     knowsLanguage: tokens(formData, 'knowsLanguage'),

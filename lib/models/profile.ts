@@ -53,8 +53,12 @@ export const zProfile = z.object({
     note: z.string().nullable().default(null),
   }),
 
-  /** A link field, not a generated document. Recruiters' systems still want a PDF. */
-  resumeUrl: z.string().default('/resume.pdf'),
+  /**
+   * A link field, not a generated document. Recruiters' systems still want a PDF.
+   * Defaults to /resume, the route handler, rather than to the static file: that
+   * is what serves it under a name worth saving. See lib/resume.ts.
+   */
+  resumeUrl: z.string().default('/resume'),
 
   knowsAbout: z.array(z.string()).default([]),
   knowsLanguage: z.array(z.string()).default([]),
@@ -99,7 +103,7 @@ const ProfileSchema = new Schema(
       availableFrom: { type: Date, default: null },
       note: { type: String, default: null },
     },
-    resumeUrl: { type: String, default: '/resume.pdf' },
+    resumeUrl: { type: String, default: '/resume' },
     knowsAbout: { type: [String], default: [] },
     knowsLanguage: { type: [String], default: [] },
     inLanguage: { type: String, default: 'en' },

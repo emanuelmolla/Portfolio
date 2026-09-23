@@ -31,7 +31,7 @@ const FILES: DesktopFile[] = [
   { href: '/blog', label: 'Writing', icon: FolderIcon },
   { href: '/about', label: 'About me', icon: PersonIcon },
   { href: '/contact', label: 'Contact', icon: MailIcon },
-  { href: '/resume.pdf', label: 'Resume.pdf', icon: PdfIcon, external: true, download: true },
+  { href: '/resume', label: 'Resume.pdf', icon: PdfIcon, external: true, download: true },
   { href: 'https://github.com/emanuelmolla', label: 'GitHub', icon: LinkIcon, external: true },
 ]
 
