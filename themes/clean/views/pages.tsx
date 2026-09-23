@@ -335,51 +335,42 @@ export function PageView({ page }: { page: Page }) {
  * as a definition list. Deliberately not cards: a row of cards is the reflex
  * layout here and it fights the rest of the theme.
  */
+/**
+ * Contact.
+ *
+ * The links come first and the form second, because the rows are now legible
+ * enough to be the primary path: a visitor who wants email should not have to
+ * read past a form to find it.
+ *
+ * Deliberately not cards. A row of cards is the reflex layout for "make these
+ * stand out", and it would fight the typographic character of the theme. Rows
+ * with a real hover band, a mono gutter and a directional arrow get the same
+ * affordance with none of the template signal.
+ */
 export function Contact({ profile }: { profile: Profile | null }) {
   if (!profile) return null
 
   const visible = profile.links.filter((l) => l.visible)
-  const email = visible.find((l) => l.kind === 'email')
-  const rest = visible.filter((l) => l.kind !== 'email')
 
   return (
     <div className="pt-20 pb-8">
       <h1 className="mb-6 text-4xl font-medium leading-[1.1] tracking-[-0.03em]">Contact</h1>
-
-      {email && (
-        <a
-          href={email.url}
-          className="group inline-flex max-w-full items-baseline gap-3 text-[clamp(1.375rem,4vw,2rem)] font-medium tracking-[-0.02em] text-[var(--ink)] transition-colors hover:text-[var(--accent)]"
-        >
-          <span className="truncate underline decoration-[var(--rule)] decoration-2 underline-offset-[7px] transition-colors group-hover:decoration-[var(--accent)]">
-            {email.handle ?? email.url.replace('mailto:', '')}
-          </span>
-          <span
-            aria-hidden
-            className="shrink-0 text-[0.6em] text-[var(--faint)] transition-transform group-hover:translate-x-1 group-hover:text-[var(--accent)]"
-          >
-            &#8594;
-          </span>
-        </a>
-      )}
-
-      <p className="prose mt-6 mb-14 text-[var(--muted)]">
-        Email is the fastest way to reach me. The form below lands in the same inbox.
+      <p className="prose mb-14 text-[var(--muted)]">
+        Email is the fastest way to reach me. The form lands in the same inbox.
       </p>
 
-      <ContactForm />
-
-      {rest.length > 0 && (
-        <section className="mt-20">
-          <SectionLabel>Elsewhere</SectionLabel>
+      {visible.length > 0 && (
+        <section className="mb-20">
+          <SectionLabel>Reach me</SectionLabel>
           <ul className="-mx-3 flex flex-col">
-            {rest.map((link) => {
+            {visible.map((link) => {
               const isDownload = link.kind === 'resume'
+              const isExternal = !isDownload && link.url.startsWith('http')
               return (
                 <li key={link.url} className="border-b border-[var(--rule)] last:border-b-0">
                   <a
                     href={link.url}
-                    target={!isDownload && link.url.startsWith('http') ? '_blank' : undefined}
+                    target={isExternal ? '_blank' : undefined}
                     rel="noreferrer noopener"
                     download={isDownload || undefined}
                     className="group flex items-center gap-4 rounded px-3 py-4 transition-colors hover:bg-[var(--selection)]"
@@ -392,9 +383,13 @@ export function Contact({ profile }: { profile: Profile | null }) {
                     </span>
                     <span
                       aria-hidden
-                      className="shrink-0 font-mono text-xs text-[var(--faint)] transition-transform group-hover:text-[var(--accent)] group-hover:translate-x-0.5"
+                      className="shrink-0 font-mono text-xs text-[var(--faint)] transition-transform group-hover:translate-x-0.5 group-hover:text-[var(--accent)]"
                     >
-                      {isDownload ? String.fromCharCode(8595) : String.fromCharCode(8599)}
+                      {isDownload
+                        ? String.fromCharCode(8595)
+                        : isExternal
+                          ? String.fromCharCode(8599)
+                          : String.fromCharCode(8594)}
                     </span>
                   </a>
                 </li>
@@ -403,6 +398,11 @@ export function Contact({ profile }: { profile: Profile | null }) {
           </ul>
         </section>
       )}
+
+      <section>
+        <SectionLabel>Send a message</SectionLabel>
+        <ContactForm />
+      </section>
     </div>
   )
 }
