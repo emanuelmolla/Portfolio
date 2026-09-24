@@ -231,7 +231,15 @@ export const seedWork: Work[] = [
       { kind: 'repo', label: 'Repository', url: 'https://github.com/emanuelmolla/DevNest' },
       { kind: 'live', label: 'Live', url: 'https://devnest.molla.dev' },
     ],
-    coverImage: null,
+    coverImage: {
+      url: 'https://res.cloudinary.com/dbcdlkfty/image/upload/v1755926825/DevNestLanding_falgbg.png',
+      alt: 'The DevNest landing page: sprint board with task columns.',
+      // Real pixel dimensions, read from the file rather than assumed.
+      width: 1479,
+      height: 998,
+      blurDataURL: null,
+      caption: null,
+    },
     mediaRefs: [],
     relatedPostRef: null,
     details: {
@@ -273,7 +281,15 @@ export const seedWork: Work[] = [
       { kind: 'live', label: 'Live', url: 'https://sholiast.webios.link' },
       { kind: 'demo', label: 'Demo video', url: 'https://youtu.be/aUjmIdcZkuk' },
     ],
-    coverImage: null,
+    coverImage: {
+      url: 'https://res.cloudinary.com/dbcdlkfty/image/upload/v1751948132/scholiast_fqni1l.png',
+      alt: 'The Scholiast study dashboard showing flashcards and weekly goals.',
+      // Real pixel dimensions, read from the file rather than assumed.
+      width: 1826,
+      height: 1198,
+      blurDataURL: null,
+      caption: null,
+    },
     mediaRefs: [],
     relatedPostRef: null,
     details: {
@@ -314,7 +330,15 @@ export const seedWork: Work[] = [
       { kind: 'repo', label: 'Repository', url: 'https://github.com/emanuelmolla/BookPinion-API' },
       { kind: 'live', label: 'Live', url: 'https://bookpinion-api.onrender.com' },
     ],
-    coverImage: null,
+    coverImage: {
+      url: 'https://res.cloudinary.com/dbcdlkfty/image/upload/v1751948333/bookPinion_o5ojtv.png',
+      alt: 'The BookPinion API documentation page listing the review endpoints.',
+      // Real pixel dimensions, read from the file rather than assumed.
+      width: 1826,
+      height: 1198,
+      blurDataURL: null,
+      caption: null,
+    },
     mediaRefs: [],
     relatedPostRef: null,
     details: {
@@ -355,7 +379,15 @@ export const seedWork: Work[] = [
       { kind: 'repo', label: 'Repository', url: 'https://github.com/emanuelmolla/Portfolio' },
       { kind: 'live', label: 'Live', url: 'https://emanuelmolla.dev' },
     ],
-    coverImage: null,
+    coverImage: {
+      url: 'https://res.cloudinary.com/dbcdlkfty/image/upload/v1751948436/port_r5p04y.png',
+      alt: 'The v1 portfolio rendered as a desktop, with app icons and a dock.',
+      // Real pixel dimensions, read from the file rather than assumed.
+      width: 1721,
+      height: 1186,
+      blurDataURL: null,
+      caption: null,
+    },
     mediaRefs: [],
     relatedPostRef: null,
     details: {
@@ -480,10 +512,12 @@ export const seedPosts: Post[] = [
     coverImage: {
       url: "https://res.cloudinary.com/dbcdlkfty/image/upload/v1755934899/landing_hhto35.png",
       alt: "DevNest: My 6-Week Journey Building a Sprint Planner",
-      // v1 stored a bare Cloudinary URL with no dimensions. These are the
-      // OG default until the real ones are read at migration time.
-      width: 1200,
-      height: 630,
+      // Real pixel dimensions, read from the file. v1 stored a bare URL
+      // with no dimensions and the migration assumed 1200x630, which none
+      // of these are: a wrong ratio causes exactly the layout shift the
+      // required width/height exists to prevent.
+      width: 1477,
+      height: 793,
       blurDataURL: null,
       caption: null,
     },
@@ -507,10 +541,12 @@ export const seedPosts: Post[] = [
     coverImage: {
       url: "https://res.cloudinary.com/dbcdlkfty/image/upload/v1752438250/bcit-news_mc0xee.png",
       alt: "Scholiast: Winning at Innovation and Teamwork",
-      // v1 stored a bare Cloudinary URL with no dimensions. These are the
-      // OG default until the real ones are read at migration time.
-      width: 1200,
-      height: 630,
+      // Real pixel dimensions, read from the file. v1 stored a bare URL
+      // with no dimensions and the migration assumed 1200x630, which none
+      // of these are: a wrong ratio causes exactly the layout shift the
+      // required width/height exists to prevent.
+      width: 1648,
+      height: 709,
       blurDataURL: null,
       caption: null,
     },
@@ -534,10 +570,12 @@ export const seedPosts: Post[] = [
     coverImage: {
       url: "https://res.cloudinary.com/dbcdlkfty/image/upload/v1752264749/bcit_blog_ywskd4.png",
       alt: "Starting My Journey at BCIT: Where Learning Gets Real",
-      // v1 stored a bare Cloudinary URL with no dimensions. These are the
-      // OG default until the real ones are read at migration time.
-      width: 1200,
-      height: 630,
+      // Real pixel dimensions, read from the file. v1 stored a bare URL
+      // with no dimensions and the migration assumed 1200x630, which none
+      // of these are: a wrong ratio causes exactly the layout shift the
+      // required width/height exists to prevent.
+      width: 1949,
+      height: 805,
       blurDataURL: null,
       caption: null,
     },

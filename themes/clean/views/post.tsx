@@ -2,6 +2,7 @@ import Link from 'next/link'
 import type { Post } from '@/lib/models'
 import { renderMarkdown } from '@/lib/markdown'
 import { SectionLabel } from '../Shell'
+import { Cover } from './Cover'
 import { formatDate } from '../format'
 
 export function PostSummary({ post }: { post: Post }) {
@@ -68,6 +69,8 @@ export function PostItem({ post }: { post: Post }) {
       <h1 className="mb-8 max-w-[24ch] text-4xl font-medium leading-[1.1] tracking-[-0.03em] text-balance">
         {post.title}
       </h1>
+
+      {post.coverImage && <Cover media={post.coverImage} priority />}
 
       <div
         className="prose"

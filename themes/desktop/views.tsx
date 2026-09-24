@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import type { Experience, Page, Post, Profile, Tech, Work } from '@/lib/models'
+import type { Experience, Media, Page, Post, Profile, Tech, Work } from '@/lib/models'
 import { renderMarkdown } from '@/lib/markdown'
 import { formatDate, workDateLine, workRoleLine } from '../clean/format'
 import { WindowSection } from './Shell'
@@ -14,6 +14,41 @@ import { DocIcon, PdfIcon, PersonIcon } from './icons'
  * "Jul 2025" is a locale decision, not a design one. Everything else here,
  * layout, chrome, hierarchy, is this theme's own.
  */
+
+/**
+ * A screenshot, framed as a preview pane.
+ *
+ * NOT the clean theme's Cover component. Sharing one would be the same mistake
+ * the contact form made before it was split: a theme's whole job is to own its
+ * own markup, and two themes that render identical chrome are one theme with a
+ * different palette. This one sits in a window-coloured frame with a mono
+ * filename strip, because in this metaphor an image is a file being previewed.
+ *
+ * width and height come straight from the media record so the browser reserves
+ * the box before the bytes arrive and the document below does not jump.
+ */
+function Preview({ media, name }: { media: Media; name: string }) {
+  return (
+    <figure className="mb-8 overflow-hidden rounded-md border border-[var(--rule)] bg-[var(--window)]">
+      <div className="border-b border-[var(--rule)] bg-[var(--chrome)] px-3 py-1.5 font-mono text-[11px] text-[var(--muted)]">
+        {name}
+      </div>
+      <Image
+        src={media.url}
+        alt={media.alt}
+        width={media.width}
+        height={media.height}
+        sizes="(min-width: 768px) 42rem, 100vw"
+        className="h-auto w-full"
+      />
+      {media.caption && (
+        <figcaption className="border-t border-[var(--rule)] px-3 py-1.5 font-mono text-[11px] text-[var(--faint)]">
+          {media.caption}
+        </figcaption>
+      )}
+    </figure>
+  )
+}
 
 /* --------------------------------------------------------- file listing --- */
 
@@ -222,6 +257,8 @@ export function WorkItem({
         </ul>
       )}
 
+      {work.coverImage && <Preview media={work.coverImage} name={`${work.slug}.png`} />}
+
       {work.problem && (
         <WindowSection label="Why it exists">
           <p className="prose text-[var(--muted)]">{work.problem}</p>
@@ -308,6 +345,7 @@ export function PostItem({ post }: { post: Post }) {
         ]}
       />
       <h2 className="mb-6 text-2xl font-medium tracking-[-0.02em]">{post.title}</h2>
+      {post.coverImage && <Preview media={post.coverImage} name={`${post.slug}.png`} />}
       <div className="prose" dangerouslySetInnerHTML={{ __html: renderMarkdown(post.body) }} />
     </article>
   )

@@ -2,16 +2,22 @@ import Link from 'next/link'
 import type { Tech, Work } from '@/lib/models'
 import { renderMarkdown } from '@/lib/markdown'
 import { SectionLabel } from '../Shell'
+import { Cover } from './Cover'
 import { workDateLine, workRoleLine } from '../format'
 
 /**
  * Work as a typographic index, not a card grid.
  *
- * Three reasons this is a list. The work is mostly backend, so a card grid
- * wants screenshots of UI that does not exist. Rows are separated by space
- * rather than hairline rules. And there is no 01/02/03 numbering, because these
- * projects are not a sequence and numbering that is not ordinal is decoration
- * dressed up as structure.
+ * Two reasons this is a list. Rows are separated by space rather than hairline
+ * rules, and there is no 01/02/03 numbering, because these projects are not a
+ * sequence and numbering that is not ordinal is decoration dressed up as
+ * structure.
+ *
+ * A third reason used to be stated here and was wrong: that the work is mostly
+ * backend so a card grid would want screenshots of UI that does not exist. There
+ * are screenshots for every project. They are on the detail pages, which is where
+ * a full-width screenshot belongs; whether the index should carry thumbnails as
+ * well is a separate design call, not a fact about the data.
  */
 
 export function WorkSummary({ work }: { work: Work }) {
@@ -110,6 +116,9 @@ export function WorkItem({
           ))}
         </ul>
       )}
+
+      {/* After the summary and links: what it is, then what it looks like. */}
+      {work.coverImage && <Cover media={work.coverImage} priority />}
 
       {/* Rendered only when written. An empty "Problem" heading is worse than
           no heading, and inventing one would be worse still. */}

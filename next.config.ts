@@ -1,6 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  images: {
+    /**
+     * Scoped to the one Cloudinary account rather than all of res.cloudinary.com.
+     * remotePatterns is an allow-list for the image optimiser, and the optimiser
+     * will fetch and re-serve anything it matches; a wildcard host turns it into
+     * an open proxy someone else can push traffic through.
+     */
+    remotePatterns: [
+      { protocol: 'https', hostname: 'res.cloudinary.com', pathname: '/dbcdlkfty/**' },
+    ],
+  },
+
   experimental: {
     /**
      * Server actions cap request bodies at 1MB by default, which is the right
