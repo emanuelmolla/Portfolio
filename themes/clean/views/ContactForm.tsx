@@ -7,23 +7,60 @@ import { submitMessage, type ContactState } from '@/app/contact/actions'
  * The clean theme's contact form.
  *
  * Deliberately owned by this theme rather than shared. The server action is
- * shared, because validating and storing a message is logic; how the form
- * LOOKS is presentation, and presentation belongs to a theme. A form component
- * imported by every theme is the same leak as a formatted date coming out of
- * the data layer.
+ * shared, because validating and storing a message is logic; how the form LOOKS
+ * is presentation, and presentation belongs to a theme. A form component imported
+ * by every theme is the same leak as a formatted date coming out of the data
+ * layer.
  *
- * This one is editorial to match the rest: labels above fields, hairline
- * rules instead of boxes, generous spacing, no filled buttons.
+ * FLOATING LABELS, and the reason is a real bug rather than fashion.
+ *
+ * The previous version put a small mono label above an input that had no box, no
+ * background and no placeholder: just a hairline underneath. So the only thing on
+ * screen that looked like an object was the label, and the field itself was
+ * invisible. Emanuel clicked the labels repeatedly and concluded nothing was
+ * happening. The click was in fact focusing the input, which is worse than it
+ * failing, because the caret appeared somewhere he was not looking.
+ *
+ * Now the label starts where the text will be, so the thing that looks like a
+ * field is the field, and it rises out of the way once there is content. Two
+ * details make that work:
+ *
+ *   - `placeholder=" "`, a single space. :placeholder-shown is the only way CSS
+ *     can ask "is this empty", and an input with no placeholder attribute never
+ *     matches it. The space is invisible and never shown, because the label is
+ *     sitting on top of it.
+ *   - `pointer-events-none` on the label. It overlaps the input, so without this
+ *     it would swallow exactly the clicks that are aimed at the field, which is
+ *     the original complaint reintroduced in a new shape.
+ *
+ * No JavaScript: it is peer-placeholder-shown and peer-focus. The state lives in
+ * the input, which is where it already was.
  */
 
 const initial: ContactState = { ok: false }
 
-const field =
-  'w-full border-0 border-b border-[var(--rule)] bg-transparent px-0 py-2.5 text-[15px] ' +
-  'text-[var(--ink)] outline-none transition-colors placeholder:text-[var(--faint)] ' +
-  'focus:border-[var(--accent)]'
+const group = 'relative'
 
-const label = 'font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--faint)]'
+/** Top padding leaves the raised label its own line. */
+const field =
+  'peer w-full border-0 border-b border-[var(--rule)] bg-transparent px-0 pt-6 pb-2 text-[15px] ' +
+  'text-[var(--ink)] outline-none transition-colors focus:border-[var(--accent)]'
+
+/**
+ * Resting state reads as placeholder text sitting on the type line. Raised state
+ * is the mono uppercase label the rest of the theme uses, so the field ends up
+ * looking like it always did once it has something in it.
+ */
+const floating =
+  'pointer-events-none absolute left-0 top-6 text-[15px] text-[var(--faint)] ' +
+  'transition-all duration-150 ease-out ' +
+  'peer-focus:top-0 peer-focus:font-mono peer-focus:text-[11px] peer-focus:uppercase ' +
+  'peer-focus:tracking-[0.1em] peer-focus:text-[var(--accent)] ' +
+  'peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:font-mono ' +
+  'peer-[:not(:placeholder-shown)]:text-[11px] peer-[:not(:placeholder-shown)]:uppercase ' +
+  'peer-[:not(:placeholder-shown)]:tracking-[0.1em]'
+
+const error = 'mt-1.5 text-xs text-[var(--accent)]'
 
 export function ContactForm() {
   const [state, formAction, pending] = useActionState(submitMessage, initial)
@@ -41,41 +78,50 @@ export function ContactForm() {
 
   return (
     <form action={formAction} className="flex max-w-[34rem] flex-col gap-7">
-      <div className="flex flex-col gap-1">
-        <label className={label} htmlFor="name">
-          Name
+      <div className={group}>
+        <input
+          id="name"
+          name="name"
+          required
+          placeholder=" "
+          autoComplete="name"
+          className={field}
+        />
+        <label className={floating} htmlFor="name">
+          Your name
         </label>
-        <input id="name" name="name" required className={field} autoComplete="name" />
-        {state.fieldErrors?.name && (
-          <p className="text-xs text-[var(--accent)]">{state.fieldErrors.name}</p>
-        )}
+        {state.fieldErrors?.name && <p className={error}>{state.fieldErrors.name}</p>}
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label className={label} htmlFor="email">
-          Email
-        </label>
+      <div className={group}>
         <input
           id="email"
           name="email"
           type="email"
           required
-          className={field}
+          placeholder=" "
           autoComplete="email"
+          className={field}
         />
-        {state.fieldErrors?.email && (
-          <p className="text-xs text-[var(--accent)]">{state.fieldErrors.email}</p>
-        )}
+        <label className={floating} htmlFor="email">
+          Your email
+        </label>
+        {state.fieldErrors?.email && <p className={error}>{state.fieldErrors.email}</p>}
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label className={label} htmlFor="message">
-          Message
+      <div className={group}>
+        <textarea
+          id="message"
+          name="message"
+          required
+          rows={5}
+          placeholder=" "
+          className={`${field} resize-y`}
+        />
+        <label className={floating} htmlFor="message">
+          Your message
         </label>
-        <textarea id="message" name="message" required rows={5} className={`${field} resize-y`} />
-        {state.fieldErrors?.message && (
-          <p className="text-xs text-[var(--accent)]">{state.fieldErrors.message}</p>
-        )}
+        {state.fieldErrors?.message && <p className={error}>{state.fieldErrors.message}</p>}
       </div>
 
       {/* Honeypot: offered to bots, hidden from people and assistive tech. */}
