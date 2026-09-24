@@ -178,6 +178,8 @@ export const seedProfile: Profile = {
       'I grew up in Ethiopia, where I developed my love for learning and problem-solving. At 21 I moved to Canada, and I could not be more grateful for the journey.',
       '',
       'My faith through the Ethiopian Orthodox Church plays a huge role in shaping who I am. It guides my values, keeps me grounded, and reminds me to approach life with gratitude and purpose.',
+      '',
+      'Away from a screen I play chess, which has been the constant one, and I have recently started cycling.',
     ].join('\n'),
   },
   location: { city: 'Vancouver', region: 'BC', country: 'Canada' },
