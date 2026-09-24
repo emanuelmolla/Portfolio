@@ -1,26 +1,42 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Emanuel Molla">
   <!--
-    A terminal prompt. The mark from the v1 site, redrawn as geometry rather than
-    carried over as a bitmap.
+    The favicon. Source of truth; app/favicon.ico and app/apple-icon.png are
+    generated from these same coordinates.
 
-    The v1 favicon was public/favIcon.png: pure #ffffff on transparency, which
-    made it invisible in any light-themed browser tab. That was true on the live
-    site too, not just here. The coordinates below are measured from that file, so
-    the shape is identical; only the colour and the format changed.
+    WHY A LETTER AND NOT THE OLD >_ PROMPT.
 
-    SVG because a favicon is asked for at 16px and at 512px and a single raster
-    cannot serve both. It also lets the mark answer prefers-color-scheme, which is
-    what actually fixes the invisibility: one asset, legible on a light tab strip
-    and a dark one.
+    The v1 mark was a terminal prompt in pure white on transparency. Two problems:
+    it was invisible on a light tab strip, and at 16px the underscore collapsed to
+    a 2px smear while the chevron read as a generic diagonal. Candidates were
+    rendered at true 16px and compared before choosing; the prompt does not
+    survive that size no matter how it is weighted, because it is two small shapes
+    separated by a gap and 16px has no room for a gap.
 
-    Green rather than neutral ink. It is the site's accent in both schemes
-    (--accent in app/globals.css), and a coloured mark is findable in a row of
-    twenty tabs in a way that a dark grey glyph is not.
+    The deeper reason is what the mark says. A terminal prompt says "a developer",
+    which is true of several million people. An E says Emanuel. A favicon's job is
+    recognition in a strip of twenty tabs, and being identifiably his beats being
+    thematically clever.
 
-    This file is the source. app/favicon.ico and app/apple-icon.png are derived
-    from these same coordinates, opaque because they have to be: the .ico serves
-    browsers with no SVG favicon support, and iOS composites transparency onto
-    black.
+    PROPORTIONS. Arms at the top, the true vertical centre, and the bottom, with
+    the middle arm shorter, which is what a drawn E does. An earlier attempt put
+    the middle arm at 46% of the height and it read as a broken C.
+
+    Optically centred: the ink spans x 146..366, so its midpoint is 256.
+    The three arms sit at y 106, 216 and 326, which leaves two counters of exactly
+    30px. An earlier version had the bottom arm at 326-20, which left a stub of
+    stem hanging below it and made the lower counter a third of the upper one.
+
+    GREEN rather than neutral ink. It is the site accent in both schemes (--accent
+    in app/globals.css), and a coloured mark is findable in a row of tabs where a
+    dark grey glyph is not.
+
+    prefers-color-scheme is what fixes the original invisibility: one asset, legible
+    on a light tab strip and a dark one.
+
+    The alternative that came second was the chevron alone, refined:
+      <path d="..."/> from stroking (152,126) -> (360,256) -> (152,386) at width 92.
+    It keeps the terminal association and is equally legible. Say the word and it
+    swaps back.
   -->
   <style>
     :root { --mark: #17763c; }
@@ -28,9 +44,9 @@
   </style>
 
   <g fill="var(--mark)">
-    <!-- The chevron: a thick stroke with a notch cut from its left edge. -->
-    <path d="M31 91 L245 178 L245 243 L31 330 L31 255 L164 210 L31 166 Z" />
-    <!-- The cursor. -->
-    <rect x="261" y="360" width="220" height="61" />
+    <rect x="146" y="106" width="80"  height="300" />
+    <rect x="146" y="106" width="220" height="80" />
+    <rect x="146" y="216" width="180" height="80" />
+    <rect x="146" y="326" width="220" height="80" />
   </g>
 </svg>
