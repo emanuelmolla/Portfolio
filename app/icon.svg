@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Emanuel Molla">
+  <!--
+    A terminal prompt. The mark from the v1 site, redrawn as geometry rather than
+    carried over as a bitmap.
+
+    The v1 favicon was public/favIcon.png: pure #ffffff on transparency, which
+    made it invisible in any light-themed browser tab. That was true on the live
+    site too, not just here. The coordinates below are measured from that file, so
+    the shape is identical; only the colour and the format changed.
+
+    SVG because a favicon is asked for at 16px and at 512px and a single raster
+    cannot serve both. It also lets the mark answer prefers-color-scheme, which is
+    what actually fixes the invisibility: one asset, legible on a light tab strip
+    and a dark one.
+
+    Green rather than neutral ink. It is the site's accent in both schemes
+    (--accent in app/globals.css), and a coloured mark is findable in a row of
+    twenty tabs in a way that a dark grey glyph is not.
+
+    This file is the source. app/favicon.ico and app/apple-icon.png are derived
+    from these same coordinates, opaque because they have to be: the .ico serves
+    browsers with no SVG favicon support, and iOS composites transparency onto
+    black.
+  -->
+  <style>
+    :root { --mark: #17763c; }
+    @media (prefers-color-scheme: dark) { :root { --mark: #41d67c; } }
+  </style>
+
+  <g fill="var(--mark)">
+    <!-- The chevron: a thick stroke with a notch cut from its left edge. -->
+    <path d="M31 91 L245 178 L245 243 L31 330 L31 255 L164 210 L31 166 Z" />
+    <!-- The cursor. -->
+    <rect x="261" y="360" width="220" height="61" />
+  </g>
+</svg>
