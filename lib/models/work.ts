@@ -117,6 +117,21 @@ export const zWork = z.object({
 
   links: z.array(zLink).default([]),
   coverImage: zMedia.nullable().default(null),
+
+  /**
+   * Further screenshots, in order. The cover is the lead image and is NOT
+   * repeated here.
+   *
+   * Embedded rather than an Image collection with mediaRefs, because these are
+   * only ever read as part of the project that owns them: nothing queries "all
+   * screenshots", and a join table would exist to serve no query. mediaRefs stays
+   * for the case that does turn up later.
+   *
+   * A project is a running application, so one still frame understates it. This
+   * is what a theme renders as a walkthrough.
+   */
+  gallery: z.array(zMedia).default([]),
+
   mediaRefs: z.array(z.string()).default([]),
 
   /** The case-study link. The single highest-value relationship in the model. */
@@ -162,6 +177,7 @@ const WorkSchema = new Schema(
 
     links: { type: [LinkSchema], default: [] },
     coverImage: { type: MediaSchema, default: null },
+    gallery: { type: [MediaSchema], default: [] },
     mediaRefs: [{ type: Schema.Types.ObjectId, ref: 'Image' }],
 
     relatedPostRef: { type: Schema.Types.ObjectId, ref: 'Post', default: null },

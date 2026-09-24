@@ -142,18 +142,14 @@ body {
 /*
   The wordmark.
 
-  Fraunces at opsz 9, the text cut, for the same reason the favicon uses it: the
-  display cut is drawn with fine hairlines that look right at 500px and thin to
-  nothing at 13px, which is the size this appears at in the header.
-
-  Letter-spacing is pulled in slightly because display serifs are drawn for large
-  sizes and set loose at small ones.
+  Unbounded 700, matching the favicon. Tracking is pulled in because display
+  faces are drawn for large sizes and set loose at the 15px the header uses, and
+  this one is wide to begin with.
 */
 .wordmark {
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 9;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-weight: 700;
+  letter-spacing: -0.03em;
 }
 
 /* Digits that sit in columns should line up. */

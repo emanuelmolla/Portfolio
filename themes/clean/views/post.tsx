@@ -2,7 +2,7 @@ import Link from 'next/link'
 import type { Post } from '@/lib/models'
 import { renderMarkdown } from '@/lib/markdown'
 import { SectionLabel } from '../Shell'
-import { Cover } from './Cover'
+import { Banner } from './media'
 import { formatDate } from '../format'
 
 export function PostSummary({ post }: { post: Post }) {
@@ -61,6 +61,11 @@ export function PostIndex({ items, heading }: { items: Post[]; heading?: string 
 export function PostItem({ post }: { post: Post }) {
   return (
     <article className="pt-20 pb-8">
+      {/* Above the meta line, not below the title. A banner is the masthead of
+          the piece; putting it after the headline makes it an illustration of a
+          paragraph it is not illustrating. */}
+      {post.coverImage && <Banner media={post.coverImage} />}
+
       <p className="tabular mb-5 font-mono text-xs text-[var(--faint)]">
         {formatDate(post.publishedAt, 'day')}
         {post.readingMinutes ? ` · ${post.readingMinutes} min read` : ''}
@@ -69,8 +74,6 @@ export function PostItem({ post }: { post: Post }) {
       <h1 className="mb-8 max-w-[24ch] text-4xl font-medium leading-[1.1] tracking-[-0.03em] text-balance">
         {post.title}
       </h1>
-
-      {post.coverImage && <Cover media={post.coverImage} priority />}
 
       <div
         className="prose"

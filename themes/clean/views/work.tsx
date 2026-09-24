@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import type { Tech, Work } from '@/lib/models'
+import type { Media, Tech, Work } from '@/lib/models'
 import { renderMarkdown } from '@/lib/markdown'
 import { SectionLabel } from '../Shell'
-import { Cover } from './Cover'
+import { Walkthrough } from './media'
 import { workDateLine, workRoleLine } from '../format'
 
 /**
@@ -117,8 +117,9 @@ export function WorkItem({
         </ul>
       )}
 
-      {/* After the summary and links: what it is, then what it looks like. */}
-      {work.coverImage && <Cover media={work.coverImage} priority />}
+      {/* After the summary and links: what it is, then what it does. The cover
+          leads the sequence, so it is prepended rather than shown separately. */}
+      <Walkthrough images={[work.coverImage, ...(work.gallery ?? [])].filter(Boolean) as Media[]} />
 
       {/* Rendered only when written. An empty "Problem" heading is worse than
           no heading, and inventing one would be worse still. */}

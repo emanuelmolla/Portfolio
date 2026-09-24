@@ -5,6 +5,7 @@ import { renderMarkdown } from '@/lib/markdown'
 import { formatDate, workDateLine, workRoleLine } from '../clean/format'
 import { WindowSection } from './Shell'
 import { ContactForm } from './ContactForm'
+import { Viewer } from './Viewer'
 import { DocIcon, PdfIcon, PersonIcon } from './icons'
 
 /**
@@ -27,11 +28,14 @@ import { DocIcon, PdfIcon, PersonIcon } from './icons'
  * width and height come straight from the media record so the browser reserves
  * the box before the bytes arrive and the document below does not jump.
  *
- * Height-capped for the same reason as the clean theme's Cover: a screenshot at
- * full width is a hero, and this is meant to be a preview sitting inside a
- * document, not the point of the page. The frame shrinks to the image rather
- * than the image stretching to the frame, which is also how a real preview pane
- * behaves.
+ * Used by POSTS only. Projects get Viewer instead, which is a window with a
+ * filmstrip: a project has a set of screenshots to move through, a post has one
+ * cover image sitting in a document.
+ *
+ * The clean theme renders that same post cover as a full-width cropped banner,
+ * which is the bloggy answer. This is the file-manager answer: the image is an
+ * attachment in a document, labelled with its filename, sized to itself rather
+ * than stretched to the frame.
  */
 function Preview({ media, name }: { media: Media; name: string }) {
   return (
@@ -304,7 +308,13 @@ export function WorkItem({
         </ul>
       )}
 
-      {work.coverImage && <Preview media={work.coverImage} name={`${work.slug}.png`} />}
+      {/* A viewer, not the single Preview pane the posts use. A project is a
+          running application, so its screenshots are a set you look through;
+          a post has one cover and that is a different object. */}
+      <Viewer
+        images={[work.coverImage, ...(work.gallery ?? [])].filter(Boolean) as Media[]}
+        name={`${work.slug}/screenshots`}
+      />
 
       {work.problem && (
         <WindowSection label="Why it exists">

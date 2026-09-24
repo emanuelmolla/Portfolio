@@ -1,46 +1,44 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Emanuel Molla">
   <!--
-    The favicon: a capital E set in Fraunces, weight 700, optical size 9.
+    The favicon: a capital E set in Unbounded, weight 800.
 
-    WHY THIS LETTER. The v1 mark was a terminal prompt in pure white on
-    transparency: invisible on a light tab strip, and at 16px the underscore
-    collapsed to a smear. Candidates were compared at TRUE 16px, because that is
-    the size that decides a favicon and judging one at 512px is how the old one
-    ended up unreadable. A prompt cannot survive it: two small shapes with a gap,
-    and 16px has no room for a gap. A letter can, and an E says Emanuel where a
-    prompt says "a developer", which is true of several million people.
+    WHY A LETTER. The v1 mark was a terminal prompt in pure white on transparency:
+    invisible on a light tab strip, and at 16px the underscore collapsed to a
+    smear. Candidates were compared at TRUE 16px, because that is the size that
+    decides a favicon and judging one at 512px is how the old one ended up
+    unreadable. A prompt cannot survive it: two small shapes with a gap, and 16px
+    has no room for a gap. An E also says Emanuel, where a prompt says "a
+    developer", which is true of several million people.
 
-    WHY THIS FONT. Two earlier attempts were wrong in opposite directions. The
-    first drew the E from rectangles by hand and looked synthetic, because it was.
-    The second used Instrument Sans, the site's own text face, which is correct
-    brand thinking and produced a plain grotesque E with no character at all.
-    Fraunces is a display serif with flared, slightly wedged terminals: it reads
-    as a designed mark rather than a letter that happened to be typed.
+    WHY THIS FONT, after three wrong ones. Drawn by hand from rectangles: looked
+    synthetic, because it was. Instrument Sans: correct brand thinking, produced a
+    completely plain grotesque. Fraunces: a display serif, which read as a book
+    face, basically a Times. Unbounded is a geometric display face whose signature
+    is the chamfer on the stem and the sheared arm terminals, so the letter has a
+    silhouette you would recognise again. That is what a mark needs and what the
+    first three did not have.
 
-    WHY OPTICAL SIZE 9 AND NOT 144. Fraunces carries an optical size axis, and
-    this is exactly what that axis is for. The display cut (opsz 144) has fine
-    hairlines that look beautiful at 512px and lose the middle arm at 16px, where
-    the E turns into a stem with a blur beside it. The text cut (opsz 9) is drawn
-    with sturdier strokes for small sizes: it survives 16px intact and still has
-    the flared serifs at full size. One cut is used everywhere, because the SVG is
-    rendered at every size including 16px on a 1x display, so it has to hold there.
+    It also survives the size test the serif failed: the strokes are even, with no
+    hairlines to thin out, so the 16px frame stays legible with the middle arm
+    intact.
 
-    The outline is a single contour, so winding rule does not matter here, unlike
-    the Instrument Sans version which was four overlapping rectangles.
+    The outline is TWO contours, so it needs nonzero winding. Nonzero is the SVG
+    default, so nothing is declared here, but the .ico generator has to know.
 
-    Geometry: cap height 330 in a 512 box, ink 276x330, centred on both axes.
+    Geometry: cap height 320 in a 512 box, ink 303x320, centred on both axes.
 
-    Green rather than neutral ink: it is the site accent in both schemes (--accent
-    in app/globals.css), and a coloured mark is findable in a row of twenty tabs.
-    prefers-color-scheme is what fixes the original invisibility, one asset legible
-    on a light strip and a dark one.
+    Green rather than neutral ink: it is the site accent in both schemes
+    (--accent in app/globals.css), and a coloured mark is findable in a row of
+    twenty tabs. prefers-color-scheme is what fixes the original invisibility:
+    one asset, legible on a light strip and a dark one.
 
-    app/favicon.ico and app/apple-icon.png are generated from this same outline.
+    The wordmark in the site header is the same typeface, so the tab and the page
+    agree. app/favicon.ico and app/apple-icon.png come from this same outline.
   -->
   <style>
     :root { --mark: #17763c; }
     @media (prefers-color-scheme: dark) { :root { --mark: #41d67c; } }
   </style>
 
-  <path fill="var(--mark)" d="M204.5 241.2H269.7Q283.3 241.2 289.1 235.9Q295.0 230.5 298.8 214.8Q300.6 208.3 304.1 205.3Q307.7 202.3 312.6 202.0Q322.9 201.8 325.9 213.5L342.9 282.0Q344.7 289.1 342.9 293.3Q341.1 297.4 335.5 299.2Q329.9 301.0 325.2 299.5Q320.5 298.1 317.3 293.2Q310.6 282.9 305.0 277.5Q299.4 272.1 292.6 270.1Q285.8 268.1 275.0 268.1H204.5ZM118.1 112.5Q118.1 106.2 122.1 102.9Q126.1 99.5 134.7 99.5H303.9Q313.1 99.5 319.1 97.4Q325.2 95.3 330.4 93.1Q335.7 91.0 342.6 91.0Q351.1 91.0 355.5 95.8Q359.9 100.6 363.0 111.4L381.6 174.1Q383.6 181.0 381.5 185.6Q379.4 190.2 373.3 192.2Q366.4 194.7 360.9 192.1Q355.4 189.5 352.0 183.0Q343.1 165.6 335.3 154.5Q327.4 143.4 319.4 137.5Q311.3 131.5 302.2 129.3Q293.2 127.0 281.7 127.0H237.4V360.6Q237.4 373.1 244.0 379.2Q250.6 385.4 263.4 385.4H288.2Q304.4 385.4 316.3 380.4Q328.3 375.3 339.2 361.0Q350.0 346.7 362.6 319.4Q365.5 313.1 370.3 310.9Q375.1 308.6 381.1 309.7Q387.9 310.9 390.9 315.8Q393.9 320.7 391.9 328.1L372.0 400.6Q368.8 411.1 364.4 416.1Q359.9 421.0 350.5 421.0Q344.4 421.0 339.3 419.0Q334.1 417.0 328.0 415.0Q321.8 412.9 312.9 412.9H134.7Q126.1 412.9 122.1 409.5Q118.1 406.0 118.1 400.0Q118.1 389.7 128.8 385.9L139.4 382.9Q145.0 380.9 147.8 377.7Q150.6 374.4 150.6 369.1V143.4Q150.6 138.0 147.8 134.8Q145.0 131.5 139.4 129.5L128.8 126.6Q118.1 122.8 118.1 112.5Z" />
+  <path fill="var(--mark)" d="M392.7 221.0V291.0H155.1V221.0ZM222.9 256.0 202.9 379.7 164.1 336.6H407.7V416.0H104.3L128.2 256.0L104.3 96.0H405.5V175.4H164.1L202.9 132.3Z" />
 </svg>

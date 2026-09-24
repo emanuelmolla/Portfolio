@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Instrument_Sans, IBM_Plex_Mono, Fraunces } from 'next/font/google'
+import { Instrument_Sans, IBM_Plex_Mono, Unbounded } from 'next/font/google'
 import { getProfile } from '@/lib/content'
 import { resolveColorScheme, resolveTheme } from '@/lib/theme/resolve'
 import { websiteJsonLd } from '@/lib/jsonld'
@@ -21,25 +21,25 @@ const sans = Instrument_Sans({
 })
 
 /*
-  Fraunces is the DISPLAY face: the wordmark and the favicon, nothing else. It is
-  a display serif with flared, slightly wedged terminals, so it carries identity
-  in a way a grotesque cannot, and it is the same face the favicon E is cut from.
-  One typeface doing the identity job across the tab strip and the page is a
-  system; two unrelated ones would be a coincidence.
+  Unbounded is the DISPLAY face: the wordmark and the favicon, nothing else.
 
-  opsz is pinned to 9, the text cut, for the same reason the favicon uses it: the
-  display cut's hairlines thin out badly at small sizes, and the wordmark appears
-  at 13px in the header.
+  A geometric display face whose signature is the chamfered stem and sheared arm
+  terminals. It is the same face the favicon E is cut from, so the tab and the
+  header agree; one typeface carrying identity in both places is a system, two
+  unrelated ones would be a coincidence.
 
-  Loaded only where it is used, so the body text bundle is unaffected.
+  Earlier attempts went through a hand-drawn E (synthetic), Instrument Sans
+  (plain) and Fraunces (read as a book serif). This is the one with a silhouette.
+
+  A single static weight, not the variable font. The favicon is a baked SVG path
+  and needs no font at runtime, so this download exists only for the wordmark:
+  two words in the header and one heading on the home page. Shipping a variable
+  font with a full weight axis to set thirteen characters would be paying for
+  range nothing uses.
 */
-const display = Fraunces({
+const display = Unbounded({
   subsets: ['latin'],
-  // No `weight`, so the variable font ships and the opsz axis stays adjustable.
-  // next/font rejects `axes` alongside a fixed weight. The axis is then pinned in
-  // CSS by the .wordmark class, which is what lets one file serve both the 13px
-  // header and a 4rem heading without the hairlines collapsing at the small end.
-  axes: ['opsz'],
+  weight: '700',
   variable: '--app-font-display',
   display: 'swap',
 })
