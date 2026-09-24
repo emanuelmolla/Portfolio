@@ -38,6 +38,7 @@ const blank: WorkFormValues = {
   links: [],
   relatedPostRef: null,
   coverImage: null,
+  gallery: [],
   details: { kind: 'software' },
   seo: { title: null, description: null, canonicalUrl: null, noindex: false },
 }
@@ -92,6 +93,13 @@ export default async function EditWorkPage({ params }: { params: Promise<{ id: s
               caption: work.coverImage.caption,
             }
           : null,
+        gallery: (work.gallery ?? []).map((m) => ({
+          url: m.url,
+          alt: m.alt,
+          width: m.width,
+          height: m.height,
+          caption: m.caption,
+        })),
         details: (work.details as Record<string, unknown> | null) ?? null,
         seo: {
           title: work.seo?.title ?? null,

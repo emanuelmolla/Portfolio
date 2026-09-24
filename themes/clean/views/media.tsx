@@ -54,77 +54,67 @@ export function Banner({ media }: { media: Media }) {
   )
 }
 
-/* -------------------------------------------------------- walkthrough ---- */
+/* ------------------------------------------------------------- plates ---- */
 
 /**
- * A project's screenshots, as a horizontal strip you scroll through.
+ * A project's screenshots, as numbered plates.
  *
- * CSS scroll-snap, no JavaScript and no carousel library. The strip is a real
- * overflow container, so it works with a trackpad, a touch swipe, shift-scroll
- * and the keyboard, and it still works with JS disabled. A library would add
- * bundle weight to reimplement scrolling, worse.
+ * DELIBERATELY NOT a carousel, and not the horizontal strip this replaced. That
+ * strip was a widget: a thing you poke at, which is the desktop theme's job and
+ * not this one's. The clean theme is a printed page, so a sequence of images is a
+ * sequence of plates with their captions set in the margin, and you walk through
+ * the application by reading down.
  *
- * Slides are NOT cropped: a screenshot cropped to a common aspect is a screenshot
- * with its edges cut off, and the edges of an interface are where the navigation
- * lives. They share a height and keep their own widths, which is the same rule
- * the detail figures use.
+ * The contrast with the other theme is the point. Desktop gets a stateful viewer
+ * window with a filmstrip and an index. This has no state and no JavaScript at
+ * all, and the two share nothing but the data.
  *
- * A single image renders as a single image, with no strip affordances, because a
- * carousel of one is a lie about how much there is to see.
+ * Captions hang in the left margin on wide screens, which is the convention this
+ * borrows and the reason it reads as considered rather than assembled. The clean
+ * shell is 60rem wide while its prose sits at 34rem, so that margin already
+ * exists; this uses it instead of letting it stay empty.
+ *
+ * Plates are NOT cropped to a common aspect. A cropped screenshot is a screenshot
+ * with its edges removed, and the edges of an interface are where the navigation
+ * lives. They share a max height and keep their own widths.
  */
-export function Walkthrough({ images }: { images: Media[] }) {
+export function Plates({ images }: { images: Media[] }) {
   if (images.length === 0) return null
 
-  if (images.length === 1) {
-    const only = images[0]
-    return (
-      <figure className="mb-12">
-        <Image
-          src={only.url}
-          alt={only.alt}
-          width={only.width}
-          height={only.height}
-          sizes="(min-width: 640px) 36rem, 100vw"
-          className="h-auto max-h-72 w-auto max-w-full rounded border border-[var(--rule)]"
-        />
-        {only.caption && (
-          <figcaption className="mt-2.5 font-mono text-xs text-[var(--faint)]">
-            {only.caption}
-          </figcaption>
-        )}
-      </figure>
-    )
-  }
+  const many = images.length > 1
 
   return (
-    <section className="mb-12" aria-label="Screenshots">
-      <div
-        // -mx and px let the strip bleed to the edges on a phone while the first
-        // slide still lines up with the text above it.
-        className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-3 sm:-mx-6 sm:px-6"
-        tabIndex={0}
-      >
-        {images.map((media, i) => (
-          <figure key={media.url} className="shrink-0 snap-start">
-            <Image
-              src={media.url}
-              alt={media.alt}
-              width={media.width}
-              height={media.height}
-              sizes="(min-width: 640px) 34rem, 85vw"
-              className="h-auto max-h-72 w-auto rounded border border-[var(--rule)]"
-            />
-            <figcaption className="mt-2 flex items-baseline gap-2 font-mono text-[11px] text-[var(--faint)]">
-              <span className="tabular">
-                {i + 1}/{images.length}
+    <section className="mb-14" aria-label="Screenshots">
+      {images.map((media, i) => (
+        <figure
+          key={media.url}
+          className="mb-10 grid gap-3 sm:grid-cols-[5.5rem_minmax(0,1fr)] sm:gap-6"
+        >
+          {/* The margin column. On a phone this stacks above the image, which is
+              the right fallback: a caption beside a full-width image would leave
+              neither enough room. */}
+          <figcaption className="font-mono text-[11px] leading-relaxed text-[var(--faint)] sm:pt-1 sm:text-right">
+            {/* Numbered only when there is a sequence to number. "fig 01" against
+                a single image is ceremony. */}
+            {many && (
+              <span className="tabular block text-[var(--muted)]">
+                fig {String(i + 1).padStart(2, '0')}
               </span>
-              {media.caption && <span className="text-[var(--muted)]">{media.caption}</span>}
-            </figcaption>
-          </figure>
-        ))}
-      </div>
+            )}
+            {media.caption && <span className="block sm:mt-1">{media.caption}</span>}
+          </figcaption>
 
-      <p className="mt-1 font-mono text-[11px] text-[var(--faint)]">Scroll for more</p>
+          <Image
+            src={media.url}
+            alt={media.alt}
+            width={media.width}
+            height={media.height}
+            sizes="(min-width: 640px) 34rem, 100vw"
+            priority={i === 0}
+            className="h-auto max-h-[22rem] w-auto max-w-full rounded border border-[var(--rule)]"
+          />
+        </figure>
+      ))}
     </section>
   )
 }

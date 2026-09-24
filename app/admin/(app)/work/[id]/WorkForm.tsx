@@ -7,6 +7,7 @@ import { MarkdownEditor } from '@/components/admin/MarkdownEditor'
 import { SlugField } from '@/components/admin/SlugField'
 import { DeleteButton } from '@/components/admin/DeleteButton'
 import { ImageFields } from '@/components/admin/ImageFields'
+import { GalleryRows, type GalleryItem } from '@/components/admin/GalleryRows'
 import { PreviewLink } from '@/components/admin/PreviewLink'
 import { LinkRows, type LinkRow } from '@/components/admin/LinkRows'
 import {
@@ -55,6 +56,7 @@ export interface WorkFormValues {
     height: number
     caption: string | null
   } | null
+  gallery: GalleryItem[]
   details: Record<string, unknown> | null
   seo: {
     title: string | null
@@ -413,6 +415,10 @@ export function WorkForm({
               err={err}
               legendHint="Optional. The size fills itself in once a URL is entered; it is required because the page has to reserve the space before the image arrives."
             />
+          </Fieldset>
+
+          <Fieldset legend="Screenshots">
+            <GalleryRows defaultValue={values.gallery} />
           </Fieldset>
 
           <SeoFieldset values={values.seo} err={err} />

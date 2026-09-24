@@ -131,6 +131,34 @@ export async function saveWork(_prev: ActionState, formData: FormData): Promise<
     ).map((row) => ({ kind: row.kind, label: row.label || null, url: row.url })),
 
     coverImage: cover.value,
+
+    /**
+     * Parallel arrays, same contract as links. Rows with no URL are dropped, and
+     * a row whose dimensions did not get measured is dropped too rather than
+     * saved at 0x0: zMedia requires positive integers, so it would fail the whole
+     * form with an error pointing at a field the editor never typed into.
+     */
+    gallery: rows(
+      formData,
+      {
+        url: 'gallery.url',
+        alt: 'gallery.alt',
+        width: 'gallery.width',
+        height: 'gallery.height',
+        caption: 'gallery.caption',
+      },
+      'url'
+    )
+      .map((row) => ({
+        url: row.url,
+        alt: row.alt || 'Screenshot',
+        width: Number(row.width),
+        height: Number(row.height),
+        blurDataURL: null,
+        caption: row.caption || null,
+      }))
+      .filter((m) => Number.isFinite(m.width) && Number.isFinite(m.height) && m.width > 0 && m.height > 0),
+
     mediaRefs: [],
     relatedPostRef: optText(formData, 'relatedPostRef'),
 
