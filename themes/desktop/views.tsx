@@ -168,13 +168,29 @@ export function Home({
         is only what happens to be open on it.
       */}
       {profile && (
-        <header className="mb-5 px-1">
-          <h1 className="text-[clamp(1.75rem,5vw,2.5rem)] font-medium leading-[1.05] tracking-[-0.03em]">
-            {profile.name}
-          </h1>
-          <p className="mt-1.5 font-mono text-[12px] tracking-[0.02em] text-[var(--muted)]">
-            {profile.headline}
-          </p>
+        <header className="mb-5 flex items-center gap-3 px-1">
+          {/*
+            DELIBERATELY NOT the clean theme's wordmark.
+
+            That one sets the name in a display serif, which is right for an
+            editorial page and wrong here: nothing in an operating system is set
+            in Fraunces. This reads as a session identity instead, the way a
+            machine states who is logged into it, so the two themes state the
+            same fact in their own vocabulary rather than sharing a component.
+
+            That was the point of building themes at all, and the last few
+            additions had been drifting towards one layout in two palettes.
+          */}
+          <PersonIcon className="h-9 w-9 shrink-0 text-[var(--accent)]" />
+          <div className="min-w-0">
+            <h1 className="truncate font-mono text-[15px] tracking-[0.01em] text-[var(--ink)]">
+              {profile.name}
+            </h1>
+            <p className="truncate font-mono text-[11px] text-[var(--muted)]">
+              {profile.headline}
+              {profile.location?.city ? `  ·  ${profile.location.city}` : ''}
+            </p>
+          </div>
         </header>
       )}
 

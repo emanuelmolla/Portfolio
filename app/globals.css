@@ -23,6 +23,8 @@
 @theme {
   --font-sans: var(--app-font-sans);
   --font-mono: var(--app-font-mono);
+  /* Fraunces. Identity only: the wordmark and the favicon, never body text. */
+  --font-display: var(--app-font-display);
 }
 
 :root {
@@ -135,6 +137,23 @@ body {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 1px;
+}
+
+/*
+  The wordmark.
+
+  Fraunces at opsz 9, the text cut, for the same reason the favicon uses it: the
+  display cut is drawn with fine hairlines that look right at 500px and thin to
+  nothing at 13px, which is the size this appears at in the header.
+
+  Letter-spacing is pulled in slightly because display serifs are drawn for large
+  sizes and set loose at small ones.
+*/
+.wordmark {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 9;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 /* Digits that sit in columns should line up. */

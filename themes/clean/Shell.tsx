@@ -39,9 +39,13 @@ export function Shell({
 
       <div className="mx-auto flex min-h-screen max-w-[60rem] flex-col">
         <header className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 pt-20">
+          {/* The wordmark, not a nav item. Set in the display face so the one
+              piece of identity in the header reads as a mark rather than as the
+              first link in a list. Ink where the nav is muted, which is the whole
+              hierarchy: this is whose site it is, those are its sections. */}
           <Link
             href="/"
-            className="text-[13px] font-semibold tracking-[0.02em] text-[var(--muted)] hover:text-[var(--accent)]"
+            className="wordmark text-[15px] text-[var(--ink)] hover:text-[var(--accent)]"
           >
             {siteName}
           </Link>

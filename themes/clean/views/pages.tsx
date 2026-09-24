@@ -25,6 +25,11 @@ export function Home({
 
   const roles = (experience ?? []).filter((e) => e.section === 'work' || e.section === 'coop')
 
+  // Split off the first word rather than trusting givenName/familyName to be
+  // filled in. The name is the one field guaranteed to exist.
+  const [given, ...rest] = profile.name.split(' ')
+  const family = rest.join(' ')
+
   return (
     <>
       <section className="pt-24 pb-20">
@@ -40,8 +45,18 @@ export function Home({
           It is also the plainer human answer. Someone who lands here should leave
           able to say whose site it was.
         */}
-        <h1 className="mb-3 text-[clamp(2.5rem,7vw,4rem)] font-medium leading-[1.02] tracking-[-0.04em]">
-          {profile.name}
+        {/*
+          Set in the display face rather than the body sans. A name typed in the
+          same grotesque as the paragraph under it is not a wordmark, it is just
+          large text, which is what made the first version of this look flat.
+
+          The family name takes the muted tone. It is the quietest way to give a
+          two-word name some shape without reaching for a second colour, and it
+          puts the emphasis on the half people actually say.
+        */}
+        <h1 className="wordmark mb-3 text-[clamp(2.75rem,7.5vw,4.5rem)] leading-[1.0] tracking-[-0.02em]">
+          <span className="text-[var(--ink)]">{given}</span>
+          {family && <span className="text-[var(--faint)]"> {family}</span>}
         </h1>
 
         <p className="mb-7 max-w-[24ch] text-[clamp(1.25rem,3vw,1.625rem)] leading-[1.2] tracking-[-0.025em] text-balance text-[var(--muted)]">

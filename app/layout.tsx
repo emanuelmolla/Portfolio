@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Instrument_Sans, IBM_Plex_Mono } from 'next/font/google'
+import { Instrument_Sans, IBM_Plex_Mono, Fraunces } from 'next/font/google'
 import { getProfile } from '@/lib/content'
 import { resolveColorScheme, resolveTheme } from '@/lib/theme/resolve'
 import { websiteJsonLd } from '@/lib/jsonld'
@@ -17,6 +17,30 @@ import './globals.css'
 const sans = Instrument_Sans({
   subsets: ['latin'],
   variable: '--app-font-sans',
+  display: 'swap',
+})
+
+/*
+  Fraunces is the DISPLAY face: the wordmark and the favicon, nothing else. It is
+  a display serif with flared, slightly wedged terminals, so it carries identity
+  in a way a grotesque cannot, and it is the same face the favicon E is cut from.
+  One typeface doing the identity job across the tab strip and the page is a
+  system; two unrelated ones would be a coincidence.
+
+  opsz is pinned to 9, the text cut, for the same reason the favicon uses it: the
+  display cut's hairlines thin out badly at small sizes, and the wordmark appears
+  at 13px in the header.
+
+  Loaded only where it is used, so the body text bundle is unaffected.
+*/
+const display = Fraunces({
+  subsets: ['latin'],
+  // No `weight`, so the variable font ships and the opsz axis stays adjustable.
+  // next/font rejects `axes` alongside a fixed weight. The axis is then pinned in
+  // CSS by the .wordmark class, which is what lets one file serve both the 13px
+  // header and a 4rem heading without the hairlines collapsing at the small end.
+  axes: ['opsz'],
+  variable: '--app-font-display',
   display: 'swap',
 })
 
@@ -80,7 +104,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       // the inline script waits for.
       data-scheme={scheme === 'system' ? undefined : scheme}
       suppressHydrationWarning
-      className={`${sans.variable} ${mono.variable}`}
+      className={`${sans.variable} ${mono.variable} ${display.variable}`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: schemeScript }} />
