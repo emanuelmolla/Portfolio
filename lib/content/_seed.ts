@@ -259,7 +259,7 @@ export const seedWork: Work[] = [
     featuredOrder: 1,
     techRefs: [T('nextjs'), T('typescript'), T('postgresql'), T('tailwind')],
     tags: ['client-work', 'production'],
-    links: [{ kind: 'live', label: 'vividsafaris.com', url: 'https://vividsafaris.com' }],
+    links: [{ kind: 'live', label: 'vivid.africa', url: 'https://vivid.africa' }],
     coverImage: null,
     gallery: [],
     mediaRefs: [],
@@ -277,7 +277,7 @@ export const seedWork: Work[] = [
       architectureNotes:
         'Server-rendered on Cloudflare Workers with Neon Postgres behind it. Each environment migrates its own database from CI, and each site posts its contact form to its own Worker.',
       repoUrl: null,
-      liveUrl: 'https://vividsafaris.com',
+      liveUrl: 'https://vivid.africa',
     },
     seo: { title: null, description: null, ogImage: null, canonicalUrl: null, noindex: false },
   },
