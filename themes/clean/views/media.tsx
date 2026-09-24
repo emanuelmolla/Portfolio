@@ -78,7 +78,7 @@ export function Banner({ media }: { media: Media }) {
  * with its edges removed, and the edges of an interface are where the navigation
  * lives. They share a max height and keep their own widths.
  */
-export function Plates({ images }: { images: Media[] }) {
+function Plates({ images }: { images: Media[] }) {
   if (images.length === 0) return null
 
   const many = images.length > 1
@@ -110,11 +110,81 @@ export function Plates({ images }: { images: Media[] }) {
             width={media.width}
             height={media.height}
             sizes="(min-width: 640px) 34rem, 100vw"
-            priority={i === 0}
             className="h-auto max-h-[22rem] w-auto max-w-full rounded border border-[var(--rule)]"
           />
         </figure>
       ))}
     </section>
+  )
+}
+
+/* -------------------------------------------------------- disclosure ---- */
+
+/**
+ * Screenshots, folded away behind a disclosure.
+ *
+ * The plates are good and they are also a lot of page. A project detail in this
+ * theme is meant to read as writing, and four screenshots stacked above the prose
+ * turns it into a slide deck with paragraphs attached. So the default state is
+ * closed, and opening it is a decision the reader makes.
+ *
+ * The lure is a row of thumbnails rather than a bare button. "Show screenshots"
+ * on its own is a label nobody has a reason to trust; a stack of real frames
+ * says what is behind it and roughly how much, which is the whole job of a
+ * teaser. They are overlapped slightly so the group reads as one deck instead of
+ * three separate pictures.
+ *
+ * <details>, not useState. No JavaScript, no hydration, works before the bundle
+ * arrives and works without it, which is the same principle the appearance menu
+ * follows. It also means the full-size images inside stay unfetched while it is
+ * closed: they are lazy by default and a closed disclosure never brings them into
+ * view, so the teaser costs three thumbnails and nothing else.
+ *
+ * The desktop theme does the opposite on purpose: its Viewer is open, stateful
+ * and immediate, because there a set of screenshots is an application you are
+ * already looking at.
+ */
+export function Screenshots({ images }: { images: Media[] }) {
+  if (images.length === 0) return null
+
+  const count = images.length
+  const teasers = images.slice(0, 3)
+
+  return (
+    <details className="group mb-14">
+      <summary className="inline-flex cursor-pointer list-none items-center gap-4 rounded px-1 py-1 transition-colors hover:text-[var(--accent)] [&::-webkit-details-marker]:hidden">
+        <span className="flex shrink-0 items-center">
+          {teasers.map((media, i) => (
+            <Image
+              key={media.url}
+              src={media.url}
+              alt=""
+              width={media.width}
+              height={media.height}
+              sizes="72px"
+              aria-hidden
+              // `relative` is load-bearing: z-index is ignored on a statically
+              // positioned element, so without it the frames stack in DOM order
+              // and the deck reads back-to-front.
+              className={`relative h-10 w-14 rounded-[3px] border border-[var(--rule)] bg-[var(--raised)] object-cover object-left-top ${
+                i > 0 ? '-ml-6' : ''
+              }`}
+              style={{ zIndex: teasers.length - i }}
+            />
+          ))}
+        </span>
+
+        <span className="font-mono text-xs tracking-[0.04em] text-[var(--muted)] group-hover:text-[var(--accent)]">
+          <span className="group-open:hidden">
+            Show {count} screenshot{count === 1 ? '' : 's'}
+          </span>
+          <span className="hidden group-open:inline">Hide screenshots</span>
+        </span>
+      </summary>
+
+      <div className="pt-10">
+        <Plates images={images} />
+      </div>
+    </details>
   )
 }

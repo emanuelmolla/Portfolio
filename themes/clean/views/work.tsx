@@ -2,7 +2,7 @@ import Link from 'next/link'
 import type { Media, Tech, Work } from '@/lib/models'
 import { renderMarkdown } from '@/lib/markdown'
 import { SectionLabel } from '../Shell'
-import { Plates } from './media'
+import { Screenshots } from './media'
 import { workDateLine, workRoleLine } from '../format'
 
 /**
@@ -117,9 +117,11 @@ export function WorkItem({
         </ul>
       )}
 
-      {/* After the summary and links: what it is, then what it does. The cover
-          leads the sequence, so it is prepended rather than shown separately. */}
-      <Plates images={[work.coverImage, ...(work.gallery ?? [])].filter(Boolean) as Media[]} />
+      {/* After the summary and links: what it is, then, if the reader wants it,
+          what it does. Folded away by default so this page stays writing rather
+          than a slide deck. The cover leads the sequence, so it is prepended
+          rather than shown separately. */}
+      <Screenshots images={[work.coverImage, ...(work.gallery ?? [])].filter(Boolean) as Media[]} />
 
       {/* Rendered only when written. An empty "Problem" heading is worse than
           no heading, and inventing one would be worse still. */}
