@@ -297,6 +297,14 @@ export function About({
                   )}
                   {entry.location ? ` · ${entry.location}` : ''}
                 </span>
+                {/* summary was on the model, editable in the admin, and shown
+                    by nothing. A field with no reader is a field that silently
+                    swallows whatever gets typed into it. */}
+                {entry.summary && (
+                  <p className="mt-1 max-w-[34rem] text-[15px] leading-relaxed text-[var(--muted)] sm:col-span-1">
+                    {entry.summary}
+                  </p>
+                )}
                 {entry.highlights.length > 0 && (
                   <ul className="mt-1 flex max-w-[34rem] flex-col gap-1 text-[15px] text-[var(--muted)] sm:col-span-1">
                     {entry.highlights.map((h) => (

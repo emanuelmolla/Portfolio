@@ -492,6 +492,11 @@ export function About({
                     {entry.current ? 'current' : formatDate(entry.endDate, 'year')}
                   </span>
                   <span className="text-sm text-[var(--muted)]">{entry.org}</span>
+                  {entry.summary && (
+                    <span className="max-w-[40rem] text-sm text-[var(--faint)] sm:col-span-1">
+                      {entry.summary}
+                    </span>
+                  )}
                 </li>
               ))}
             </ul>

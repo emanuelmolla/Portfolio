@@ -583,14 +583,23 @@ export const seedExperience: Experience[] = [
     section: 'education',
     sortMode: 'date-desc',
     org: 'Bahir Dar University',
-    role: 'Studied in Ethiopia',
+    /**
+     * The programme, not a euphemism. This read "Studied in Ethiopia", which is
+     * vague enough to sound like something being avoided, and it hid a real
+     * three years of a computing degree.
+     *
+     * The summary states plainly that it was not finished. Naming the degree
+     * without that would let a reader assume it was completed, and a CV that
+     * implies something it does not say is worse than one that says less.
+     */
+    role: 'BSc Information Systems',
     location: 'Bahir Dar, Ethiopia',
     employmentType: null,
     url: null,
     startDate: null,
     endDate: null,
     current: false,
-    summary: null,
+    summary: 'Three years of the programme before I moved to Canada.',
     highlights: [],
     techRefs: [T('cpp')],
     links: [],
