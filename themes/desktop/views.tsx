@@ -26,10 +26,16 @@ import { DocIcon, PdfIcon, PersonIcon } from './icons'
  *
  * width and height come straight from the media record so the browser reserves
  * the box before the bytes arrive and the document below does not jump.
+ *
+ * Height-capped for the same reason as the clean theme's Cover: a screenshot at
+ * full width is a hero, and this is meant to be a preview sitting inside a
+ * document, not the point of the page. The frame shrinks to the image rather
+ * than the image stretching to the frame, which is also how a real preview pane
+ * behaves.
  */
 function Preview({ media, name }: { media: Media; name: string }) {
   return (
-    <figure className="mb-8 overflow-hidden rounded-md border border-[var(--rule)] bg-[var(--window)]">
+    <figure className="mb-8 inline-block max-w-full overflow-hidden rounded-md border border-[var(--rule)] bg-[var(--window)] align-top">
       <div className="border-b border-[var(--rule)] bg-[var(--chrome)] px-3 py-1.5 font-mono text-[11px] text-[var(--muted)]">
         {name}
       </div>
@@ -38,8 +44,8 @@ function Preview({ media, name }: { media: Media; name: string }) {
         alt={media.alt}
         width={media.width}
         height={media.height}
-        sizes="(min-width: 768px) 42rem, 100vw"
-        className="h-auto w-full"
+        sizes="(min-width: 640px) 24rem, 100vw"
+        className="block h-auto max-h-56 w-auto max-w-[min(24rem,100%)]"
       />
       {media.caption && (
         <figcaption className="border-t border-[var(--rule)] px-3 py-1.5 font-mono text-[11px] text-[var(--faint)]">
