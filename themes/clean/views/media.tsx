@@ -57,64 +57,55 @@ export function Banner({ media }: { media: Media }) {
 /* ------------------------------------------------------------- plates ---- */
 
 /**
- * A project's screenshots, as numbered plates.
+ * A project's screenshots, stacked, once the reader has asked for them.
  *
- * DELIBERATELY NOT a carousel, and not the horizontal strip this replaced. That
- * strip was a widget: a thing you poke at, which is the desktop theme's job and
- * not this one's. The clean theme is a printed page, so a sequence of images is a
- * sequence of plates with their captions set in the margin, and you walk through
- * the application by reading down.
+ * REWRITTEN. The first version hung each caption in the left margin, which is a
+ * lovely convention and was the wrong bet here: it reserved a fixed column for
+ * text that mostly does not exist. None of the migrated images carry a caption,
+ * and a single screenshot gets no figure number either, so the usual case
+ * rendered an empty column, a gap, and a screenshot shunted seven rem to the
+ * right of nothing. A layout that only looks right when every optional field is
+ * filled in is a layout that is usually wrong.
  *
- * The contrast with the other theme is the point. Desktop gets a stateful viewer
- * window with a filmstrip and an index. This has no state and no JavaScript at
- * all, and the two share nothing but the data.
+ * So the caption sits UNDER the image and the whole line is dropped when there is
+ * nothing to say. No reserved space, nothing to leave hanging.
  *
- * Captions hang in the left margin on wide screens, which is the convention this
- * borrows and the reason it reads as considered rather than assembled. The clean
- * shell is 60rem wide while its prose sits at 34rem, so that margin already
- * exists; this uses it instead of letting it stay empty.
- *
- * Plates are NOT cropped to a common aspect. A cropped screenshot is a screenshot
- * with its edges removed, and the edges of an interface are where the navigation
- * lives. They share a max height and keep their own widths.
+ * They are also allowed to be big now. The earlier sizing fought to keep images
+ * from dominating a page nobody asked to be shown images on; behind a disclosure
+ * that argument is gone. Someone who clicked "show screenshots" wants to see the
+ * screenshots, so they run the full width of the column at their own aspect.
  */
 function Plates({ images }: { images: Media[] }) {
   if (images.length === 0) return null
-
   const many = images.length > 1
 
   return (
-    <section className="mb-14" aria-label="Screenshots">
-      {images.map((media, i) => (
-        <figure
-          key={media.url}
-          className="mb-10 grid gap-3 sm:grid-cols-[5.5rem_minmax(0,1fr)] sm:gap-6"
-        >
-          {/* The margin column. On a phone this stacks above the image, which is
-              the right fallback: a caption beside a full-width image would leave
-              neither enough room. */}
-          <figcaption className="font-mono text-[11px] leading-relaxed text-[var(--faint)] sm:pt-1 sm:text-right">
-            {/* Numbered only when there is a sequence to number. "fig 01" against
-                a single image is ceremony. */}
-            {many && (
-              <span className="tabular block text-[var(--muted)]">
-                fig {String(i + 1).padStart(2, '0')}
-              </span>
-            )}
-            {media.caption && <span className="block sm:mt-1">{media.caption}</span>}
-          </figcaption>
+    <div aria-label="Screenshots">
+      {images.map((media, i) => {
+        const label = [many ? `fig ${String(i + 1).padStart(2, '0')}` : null, media.caption]
+          .filter(Boolean)
+          .join('  ·  ')
 
-          <Image
-            src={media.url}
-            alt={media.alt}
-            width={media.width}
-            height={media.height}
-            sizes="(min-width: 640px) 34rem, 100vw"
-            className="h-auto max-h-[22rem] w-auto max-w-full rounded border border-[var(--rule)]"
-          />
-        </figure>
-      ))}
-    </section>
+        return (
+          <figure key={media.url} className="mb-12 last:mb-0">
+            <Image
+              src={media.url}
+              alt={media.alt}
+              width={media.width}
+              height={media.height}
+              sizes="(min-width: 768px) 44rem, 100vw"
+              className="h-auto w-full max-w-[44rem] rounded border border-[var(--rule)]"
+            />
+            {/* Dropped entirely when empty, rather than rendered blank. */}
+            {label && (
+              <figcaption className="mt-2.5 font-mono text-[11px] text-[var(--faint)]">
+                {label}
+              </figcaption>
+            )}
+          </figure>
+        )
+      })}
+    </div>
   )
 }
 
