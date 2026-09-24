@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Emanuel Molla">
   <!--
-    The favicon: a capital E set in Unbounded, weight 800.
+    The favicon: a capital E set in Unbounded, weight 800, knocked out in black
+    on a solid green tile.
 
     WHY A LETTER. The v1 mark was a terminal prompt in pure white on transparency:
     invisible on a light tab strip, and at 16px the underscore collapsed to a
@@ -25,20 +26,36 @@
     The outline is TWO contours, so it needs nonzero winding. Nonzero is the SVG
     default, so nothing is declared here, but the .ico generator has to know.
 
-    Geometry: cap height 320 in a 512 box, ink 303x320, centred on both axes.
+    Geometry: cap height 320 in a 512 box, ink 303x320, centred on both axes, so
+    the tile carries an even 96px of green above and below the letter and 104px
+    either side. The letter is at full size and needs no scaling: a square keeps
+    the corners the E reaches into, so the margin is already even all the way
+    round. (A circular tile does not, and would need the letter at about 92% to
+    stop the arms crowding the edge.)
 
-    Green rather than neutral ink: it is the site accent in both schemes
-    (--accent in app/globals.css), and a coloured mark is findable in a row of
-    twenty tabs. prefers-color-scheme is what fixes the original invisibility:
-    one asset, legible on a light strip and a dark one.
+    WHY A TILE, AND WHY THIS GREEN. Ink-on-transparency needed
+    prefers-color-scheme to stay visible, because the tab strip showed through and
+    the strip changes colour. An opaque tile carries its own background, so the
+    mark looks identical on every strip, in every browser, and in contexts that
+    ignore the media query entirely: bookmark bars, history lists, PWA installs
+    and the iOS home screen. One asset, no conditional.
+
+    The green is #41d67c, the dark-scheme value of the accent token in
+    app/globals.css. (Do not write that token's name with its two leading
+    hyphens anywhere in this comment: XML forbids a double hyphen inside a
+    comment, and it makes the file unparseable to anything stricter than a
+    browser, including the icon generator.)
+    The light-scheme #17763c is the wrong choice HERE specifically: against black
+    ink it measures 3.7:1, which is under the 4.5:1 bar and reads muddy once the
+    letter is 10px tall. #41d67c against black is 11.1:1. The constraint is the
+    black letter, not the brand: a tile has to be light enough for dark ink to
+    survive being small.
 
     The wordmark in the site header is the same typeface, so the tab and the page
-    agree. app/favicon.ico and app/apple-icon.png come from this same outline.
+    agree. app/favicon.ico and app/apple-icon.png are generated from this file.
   -->
-  <style>
-    :root { --mark: #17763c; }
-    @media (prefers-color-scheme: dark) { :root { --mark: #41d67c; } }
-  </style>
 
-  <path fill="var(--mark)" d="M392.7 221.0V291.0H155.1V221.0ZM222.9 256.0 202.9 379.7 164.1 336.6H407.7V416.0H104.3L128.2 256.0L104.3 96.0H405.5V175.4H164.1L202.9 132.3Z" />
+  <rect width="512" height="512" fill="#41d67c" />
+
+  <path fill="#000000" d="M392.7 221.0V291.0H155.1V221.0ZM222.9 256.0 202.9 379.7 164.1 336.6H407.7V416.0H104.3L128.2 256.0L104.3 96.0H405.5V175.4H164.1L202.9 132.3Z" />
 </svg>
