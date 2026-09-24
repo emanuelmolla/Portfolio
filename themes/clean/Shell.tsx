@@ -38,7 +38,28 @@ export function Shell({
       </a>
 
       <div className="mx-auto flex min-h-screen max-w-[60rem] flex-col">
-        <header className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 pt-20">
+        {/*
+          Sticky, because on a long project page the only way back to the rest of
+          the site was to scroll to the top first.
+
+          A sticky element always renders its own padding, so the tall pt-20 this
+          used to carry would have parked a seven-rem bar across the viewport for
+          the whole scroll. There is no CSS-only way to be tall at rest and short
+          when stuck without scroll-driven animations, which Safari and Firefox do
+          not support. So the header is compact at every scroll position, and the
+          air that used to sit above it now belongs to the page: every view
+          already opens with its own pt-20 or pt-24.
+
+          The translucent ground plus blur is what keeps text from sliding
+          visibly behind it, and the hairline gives the bar an edge once content
+          is underneath. z-40 sits below the appearance menu, which must stay
+          reachable.
+
+          Tighter padding below the sm breakpoint: the wordmark and the nav wrap
+          onto two lines on a phone, and at the desktop padding that bar would
+          take a sixth of the viewport for the whole scroll.
+        */}
+        <header className="sticky top-0 z-40 -mx-6 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-[var(--rule)] bg-[var(--ground)]/85 px-6 py-3.5 backdrop-blur-md sm:gap-x-8 sm:py-5">
           {/* The wordmark, not a nav item. Set in the display face so the one
               piece of identity in the header reads as a mark rather than as the
               first link in a list. Ink where the nav is muted, which is the whole
