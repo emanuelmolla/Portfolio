@@ -3,6 +3,7 @@ import Link from 'next/link'
 import type { Experience, Page, Post, Profile, Tech, Work } from '@/lib/models'
 import { renderMarkdown } from '@/lib/markdown'
 import { SectionLabel } from '../Shell'
+import { resumeFilename } from '@/lib/resume'
 import { formatDate } from '../format'
 import { WorkSummary } from './work'
 import { PostSummary } from './post'
@@ -91,7 +92,7 @@ export function Home({
         <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4">
           <a
             href={profile.resumeUrl}
-            download
+            download={resumeFilename(profile.name)}
             className="inline-flex items-center gap-2.5 border border-[var(--ink)] bg-[var(--ink)] px-5 py-2.5 font-mono text-xs tracking-[0.04em] text-[var(--ground)] transition-colors hover:border-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--accent-contrast)]"
           >
             <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden>
@@ -443,7 +444,7 @@ export function Contact({ profile }: { profile: Profile | null }) {
                     href={link.url}
                     target={isExternal ? '_blank' : undefined}
                     rel="noreferrer noopener"
-                    download={isDownload || undefined}
+                    download={isDownload ? resumeFilename(profile.name) : undefined}
                     className="group flex items-center gap-4 rounded px-3 py-4 transition-colors hover:bg-[var(--selection)]"
                   >
                     <span className="w-[5.5rem] shrink-0 font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--faint)]">

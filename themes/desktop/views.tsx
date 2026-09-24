@@ -3,6 +3,7 @@ import Link from 'next/link'
 import type { Experience, Media, Page, Post, Profile, Tech, Work } from '@/lib/models'
 import { renderMarkdown } from '@/lib/markdown'
 import { formatDate, workDateLine, workRoleLine } from '../clean/format'
+import { resumeFilename } from '@/lib/resume'
 import { WindowSection } from './Shell'
 import { ContactForm } from './ContactForm'
 import { Viewer } from './Viewer'
@@ -233,7 +234,11 @@ export function Home({
 
       {profile && (
         <p className="mt-4 border-t border-[var(--rule)] pt-3 font-mono text-[11px] text-[var(--faint)]">
-          <a href={profile.resumeUrl} download className="hover:text-[var(--accent)]">
+          <a
+            href={profile.resumeUrl}
+            download={resumeFilename(profile.name)}
+            className="hover:text-[var(--accent)]"
+          >
             resume.pdf
           </a>
           {' · '}
@@ -513,7 +518,7 @@ export function About({
       <div className="mt-8 border-t border-[var(--rule)] pt-5">
         <a
           href={profile.resumeUrl}
-          download
+          download={resumeFilename(profile.name)}
           className="inline-flex items-center gap-2 font-mono text-[11px] text-[var(--muted)] hover:text-[var(--accent)]"
         >
           <PdfIcon className="h-4 w-4" />
@@ -609,7 +614,7 @@ export function Contact({ profile }: { profile: Profile | null }) {
                     href={link.url}
                     target={link.url.startsWith('http') ? '_blank' : undefined}
                     rel="noreferrer noopener"
-                    download={link.kind === 'resume' ? true : undefined}
+                    download={link.kind === 'resume' ? resumeFilename(profile.name) : undefined}
                     className="flex items-baseline gap-3 px-4 py-2 text-[13px] hover:bg-[var(--selection)]"
                   >
                     <span className="w-[4.25rem] shrink-0 font-mono text-[11px] text-[var(--faint)]">

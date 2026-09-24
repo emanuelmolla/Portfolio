@@ -111,6 +111,19 @@ export interface ThemeModule {
     headline?: string
     /** "Vancouver". Comes from profile.location, never hardcoded in a theme. */
     location?: string
+    /**
+     * Where the resume lives, from profile.resumeUrl. A theme that renders a
+     * resume affordance in its chrome must take it from here: the desktop theme
+     * had '/resume' written into a constant, which is the same hardcoding this
+     * rebuild exists to remove.
+     */
+    resumeUrl?: string
+    /**
+     * The profile's visible links, for chrome that shows one (the desktop theme
+     * puts GitHub on the wallpaper). Its URL used to be a literal in that file,
+     * so changing a handle meant a deploy. Exactly the v1 failure.
+     */
+    links?: ShellLink[]
   }>
   views: ThemeViews
 }
@@ -118,6 +131,13 @@ export interface ThemeModule {
 export interface NavLink {
   href: string
   label: string
+}
+
+/** A profile link, as much of it as a shell needs. */
+export interface ShellLink {
+  kind: string
+  url: string
+  label: string | null
 }
 
 /**

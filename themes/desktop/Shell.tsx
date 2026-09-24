@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import type { NavLink } from '@/lib/theme/contract'
+import type { NavLink, ShellLink } from '@/lib/theme/contract'
+import { resumeFilename } from '@/lib/resume'
 import { Clock } from './Clock'
 import { DocIcon, FolderIcon, GridIcon, LinkIcon, MailIcon, PdfIcon, PersonIcon } from './icons'
 
@@ -24,16 +25,58 @@ interface DesktopFile {
   icon: React.ComponentType<{ className?: string }>
   external?: boolean
   download?: boolean
+  /** Explicit filename for the saved file; see desktopFiles below. */
+  downloadAs?: string
 }
 
-const FILES: DesktopFile[] = [
-  { href: '/work', label: 'Projects', icon: FolderIcon },
-  { href: '/blog', label: 'Writing', icon: FolderIcon },
-  { href: '/about', label: 'About me', icon: PersonIcon },
-  { href: '/contact', label: 'Contact', icon: MailIcon },
-  { href: '/resume', label: 'Resume.pdf', icon: PdfIcon, external: true, download: true },
-  { href: 'https://github.com/emanuelmolla', label: 'GitHub', icon: LinkIcon, external: true },
-]
+/**
+ * The desktop icons, built from the profile rather than written down.
+ *
+ * This used to be a literal array with '/resume' and a full GitHub URL in it.
+ * That is the v1 failure exactly: the old site had a handle hardcoded across
+ * fourteen files, six of them pointing at a username that no longer existed, and
+ * changing it meant a deploy. The fixed entries below are ROUTES, which are part
+ * of this theme's structure; the resume and the GitHub link are DATA, so they
+ * come in as props.
+ *
+ * downloadAs carries the filename explicitly. /resume normally names the file
+ * itself through Content-Disposition, but when nothing has been uploaded it
+ * redirects to the committed public/resume.pdf and the static handler sends no
+ * disposition at all, so the download would land as "resume.pdf". A same-origin
+ * download attribute wins on either path.
+ */
+function desktopFiles(
+  resumeUrl: string,
+  siteName: string,
+  links: ShellLink[]
+): DesktopFile[] {
+  const github = links.find((l) => l.kind === 'github')
+
+  return [
+    { href: '/work', label: 'Projects', icon: FolderIcon },
+    { href: '/blog', label: 'Writing', icon: FolderIcon },
+    { href: '/about', label: 'About me', icon: PersonIcon },
+    { href: '/contact', label: 'Contact', icon: MailIcon },
+    {
+      href: resumeUrl,
+      label: resumeFilename(siteName),
+      icon: PdfIcon,
+      external: true,
+      download: true,
+      downloadAs: resumeFilename(siteName),
+    },
+    ...(github
+      ? [
+          {
+            href: github.url,
+            label: github.label ?? 'GitHub',
+            icon: LinkIcon,
+            external: true,
+          },
+        ]
+      : []),
+  ]
+}
 
 const APPS: NavLink[] = [
   { href: '/work', label: 'Projects' },
@@ -74,7 +117,7 @@ function DesktopIcon({ file }: { file: DesktopFile }) {
         className={cls}
         target={file.download ? undefined : '_blank'}
         rel="noreferrer noopener"
-        download={file.download}
+        download={file.downloadAs ?? file.download}
       >
         {content}
       </a>
@@ -95,6 +138,8 @@ export function Shell({
   appearance,
   headline,
   location,
+  resumeUrl = '/resume',
+  links = [],
 }: {
   children: React.ReactNode
   nav: NavLink[]
@@ -103,8 +148,11 @@ export function Shell({
   appearance?: React.ReactNode
   headline?: string
   location?: string
+  resumeUrl?: string
+  links?: ShellLink[]
 }) {
   const onDesktop = path === '/'
+  const FILES = desktopFiles(resumeUrl, siteName, links)
   const openApp = APPS.find((t) => isActive(path, t.href))
 
   return (

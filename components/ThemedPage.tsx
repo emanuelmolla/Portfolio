@@ -46,6 +46,10 @@ export async function ThemedPage({
       path={path}
       headline={profile?.headline}
       location={profile?.location?.city}
+      resumeUrl={profile?.resumeUrl}
+      links={(profile?.links ?? [])
+        .filter((l) => l.visible)
+        .map((l) => ({ kind: l.kind, url: l.url, label: l.label }))}
     >
       {children}
     </Shell>
