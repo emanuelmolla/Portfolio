@@ -1,52 +1,50 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Emanuel Molla">
   <!--
-    The favicon. Source of truth; app/favicon.ico and app/apple-icon.png are
-    generated from these same coordinates.
+    The favicon: a capital E set in Instrument Sans 700.
 
-    WHY A LETTER AND NOT THE OLD >_ PROMPT.
+    WHY THIS LETTER, FROM THIS FONT.
 
-    The v1 mark was a terminal prompt in pure white on transparency. Two problems:
-    it was invisible on a light tab strip, and at 16px the underscore collapsed to
-    a 2px smear while the chevron read as a generic diagonal. Candidates were
-    rendered at true 16px and compared before choosing; the prompt does not
-    survive that size no matter how it is weighted, because it is two small shapes
-    separated by a gap and 16px has no room for a gap.
+    The v1 mark was a terminal prompt in pure white on transparency: invisible on
+    a light tab strip, and at 16px the underscore collapsed to a smear while the
+    chevron read as a generic diagonal. Candidates were compared at true 16px
+    before choosing, because that is the size that decides a favicon and judging
+    one at 512px is how the old one ended up unreadable. A prompt cannot survive
+    16px in any weighting: it is two small shapes separated by a gap, and 16px has
+    no room for a gap.
 
-    The deeper reason is what the mark says. A terminal prompt says "a developer",
-    which is true of several million people. An E says Emanuel. A favicon's job is
-    recognition in a strip of twenty tabs, and being identifiably his beats being
-    thematically clever.
+    The glyph is lifted from the real typeface rather than drawn from rectangles.
+    An earlier attempt constructed the E by hand and it looked synthetic, because
+    it was: 80px strokes against 30px counters, which reads as a slab with two
+    slots rather than a letter. Letterforms are a solved problem and the solution
+    is a font.
 
-    PROPORTIONS. Arms at the top, the true vertical centre, and the bottom, with
-    the middle arm shorter, which is what a drawn E does. An earlier attempt put
-    the middle arm at 46% of the height and it read as a broken C.
+    Instrument Sans specifically, at 700, because it is the site's own text face
+    (see app/layout.tsx). The favicon and the headings are now the same letter.
+    The 700 weight rather than 400 or 500: at 16px a text weight goes spindly and
+    the counters fill in.
 
-    Optically centred: the ink spans x 146..366, so its midpoint is 256.
-    The three arms sit at y 106, 216 and 326, which leaves two counters of exactly
-    30px. An earlier version had the bottom arm at 326-20, which left a stub of
-    stem hanging below it and made the lower counter a third of the upper one.
+    The path is four overlapping rectangles, which is how this font builds an E.
+    That means it needs NONZERO winding, not even-odd, or the overlaps punch holes
+    at the junctions. Nonzero is the SVG default, so nothing is declared here, but
+    anything regenerating the raster versions has to know.
 
-    GREEN rather than neutral ink. It is the site accent in both schemes (--accent
-    in app/globals.css), and a coloured mark is findable in a row of tabs where a
-    dark grey glyph is not.
+    Geometry: cap height 330 in a 512 box, ink spanning x 133.2..378.8 and
+    y 91..421, so it is centred on both axes.
 
-    prefers-color-scheme is what fixes the original invisibility: one asset, legible
-    on a light tab strip and a dark one.
+    Green rather than neutral ink: it is the site accent in both schemes (--accent
+    in app/globals.css), and a coloured mark is findable in a row of twenty tabs
+    where a dark grey glyph is not. prefers-color-scheme is what fixes the
+    original invisibility, one asset legible on a light strip and a dark one.
 
-    The alternative that came second was the chevron alone, refined:
-      <path d="..."/> from stroking (152,126) -> (360,256) -> (152,386) at width 92.
-    It keeps the terminal association and is equally legible. Say the word and it
-    swaps back.
+    app/favicon.ico and app/apple-icon.png are generated from this same outline.
   -->
   <style>
     :root { --mark: #17763c; }
     @media (prefers-color-scheme: dark) { :root { --mark: #41d67c; } }
   </style>
 
-  <g fill="var(--mark)">
-    <rect x="146" y="106" width="80"  height="300" />
-    <rect x="146" y="106" width="220" height="80" />
-    <rect x="146" y="216" width="180" height="80" />
-    <rect x="146" y="326" width="220" height="80" />
-  </g>
+  <path
+    fill="var(--mark)"
+    d="M133.2 421.0V91.0H203.8V421.0ZM166.2 421.0V366.9H378.8V421.0ZM166.2 278.9V225.8H362.8V278.9ZM166.2 145.1V91.0H373.3V145.1Z"
+  />
 </svg>
