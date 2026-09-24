@@ -9,10 +9,16 @@ import type { ThemeManifest } from '@/lib/theme/contract'
  * every content kind.
  */
 const manifest: ThemeManifest = {
+  /**
+   * `id` stays 'clean' while the display name is 'Minimal'. The id is the stable
+   * key: it is what the theme cookie stores and what the registry and the drift
+   * checks key on, so renaming it would silently reset the preference of anyone
+   * already carrying that cookie. The name is the only part anyone reads.
+   */
   id: 'clean',
-  name: 'Clean',
+  name: 'Minimal',
   version: '0.1.0',
-  description: 'Clean, modern, minimal. The default.',
+  description: 'Minimal and typographic. The default.',
 
   renders: {
     profile: ['full', 'summary'],

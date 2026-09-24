@@ -112,26 +112,45 @@ function Plates({ images }: { images: Media[] }) {
 /* -------------------------------------------------------- disclosure ---- */
 
 /**
- * Screenshots, folded away behind a disclosure.
+ * How the closed stack sits.
+ *
+ * Static class strings, one per depth, because Tailwind scans source text: a
+ * template literal like `rotate-[${n}deg]` produces no CSS at all. Inline styles
+ * would work for the resting state and cannot express the hover, which is the
+ * half that makes it feel like a physical pile.
+ *
+ * The angles are uneven on purpose. Three prints dropped on a desk do not land
+ * at -5, 0 and +5; a regular fan reads as a widget, and the point here is that it
+ * reads as a handful of photographs.
+ */
+const STACK = [
+  'z-30 [transform:rotate(-3deg)] group-hover:[transform:rotate(-8deg)_translateX(-10px)_translateY(-2px)]',
+  'z-20 [transform:rotate(7deg)_translateX(13px)] group-hover:[transform:rotate(14deg)_translateX(26px)]',
+  'z-10 [transform:rotate(-13deg)_translateX(25px)] group-hover:[transform:rotate(-20deg)_translateX(46px)_translateY(2px)]',
+]
+
+/**
+ * Screenshots, folded away behind a pile of photographs.
  *
  * The plates are good and they are also a lot of page. A project detail in this
  * theme is meant to read as writing, and four screenshots stacked above the prose
- * turns it into a slide deck with paragraphs attached. So the default state is
- * closed, and opening it is a decision the reader makes.
+ * turns it into a slide deck with paragraphs attached. So the default is closed,
+ * and opening it is the reader's decision.
  *
- * The lure is a row of thumbnails rather than a bare button. "Show screenshots"
- * on its own is a label nobody has a reason to trust; a stack of real frames
- * says what is behind it and roughly how much, which is the whole job of a
- * teaser. They are overlapped slightly so the group reads as one deck instead of
- * three separate pictures.
+ * The lure is a scattered stack rather than a neat row, because a neat row of
+ * thumbnails is a filmstrip, and a filmstrip is what the desktop theme uses. This
+ * needed to say "there is a set of pictures here" in a way that belongs to a
+ * page rather than to an application: slightly rotated, overlapping, shadowed,
+ * like prints left in a pile. They fan apart on hover, which is the only
+ * animation on the page and the only thing that needs to suggest it opens.
  *
  * <details>, not useState. No JavaScript, no hydration, works before the bundle
- * arrives and works without it, which is the same principle the appearance menu
- * follows. It also means the full-size images inside stay unfetched while it is
- * closed: they are lazy by default and a closed disclosure never brings them into
- * view, so the teaser costs three thumbnails and nothing else.
+ * arrives and without it, the same principle the appearance menu follows. It also
+ * keeps the full-size images unfetched while closed: they are lazy by default and
+ * a closed disclosure never brings them into view, so the teaser costs three
+ * thumbnails and nothing else.
  *
- * The desktop theme does the opposite on purpose: its Viewer is open, stateful
+ * The desktop theme does the opposite deliberately: its Viewer is open, stateful
  * and immediate, because there a set of screenshots is an application you are
  * already looking at.
  */
@@ -143,8 +162,10 @@ export function Screenshots({ images }: { images: Media[] }) {
 
   return (
     <details className="group mb-14">
-      <summary className="inline-flex cursor-pointer list-none items-center gap-4 rounded px-1 py-1 transition-colors hover:text-[var(--accent)] [&::-webkit-details-marker]:hidden">
-        <span className="flex shrink-0 items-center">
+      <summary className="inline-flex cursor-pointer list-none items-center gap-5 py-1 [&::-webkit-details-marker]:hidden">
+        {/* The stage is larger than the prints so the rotated corners and the
+            hover spread have somewhere to go without being clipped. */}
+        <span className="relative h-[4.5rem] w-32 shrink-0" aria-hidden>
           {teasers.map((media, i) => (
             <Image
               key={media.url}
@@ -152,22 +173,15 @@ export function Screenshots({ images }: { images: Media[] }) {
               alt=""
               width={media.width}
               height={media.height}
-              sizes="72px"
-              aria-hidden
-              // `relative` is load-bearing: z-index is ignored on a statically
-              // positioned element, so without it the frames stack in DOM order
-              // and the deck reads back-to-front.
-              className={`relative h-10 w-14 rounded-[3px] border border-[var(--rule)] bg-[var(--raised)] object-cover object-left-top ${
-                i > 0 ? '-ml-6' : ''
-              }`}
-              style={{ zIndex: teasers.length - i }}
+              sizes="96px"
+              className={`absolute top-3 left-4 h-12 w-[4.5rem] rounded-[3px] border border-[var(--rule)] bg-[var(--raised)] object-cover object-left-top shadow-[0_2px_8px_rgba(0,0,0,0.13)] transition-transform duration-200 ease-out ${STACK[i]}`}
             />
           ))}
         </span>
 
-        <span className="font-mono text-xs tracking-[0.04em] text-[var(--muted)] group-hover:text-[var(--accent)]">
+        <span className="font-mono text-xs tracking-[0.04em] text-[var(--muted)] transition-colors group-hover:text-[var(--accent)]">
           <span className="group-open:hidden">
-            Show {count} screenshot{count === 1 ? '' : 's'}
+            {count} screenshot{count === 1 ? '' : 's'}
           </span>
           <span className="hidden group-open:inline">Hide screenshots</span>
         </span>
