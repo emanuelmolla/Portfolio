@@ -40,7 +40,7 @@ export function PostSummary({ post }: { post: Post }) {
 export function PostIndex({ items, heading }: { items: Post[]; heading?: string }) {
   return (
     <section className="pt-20 pb-22">
-      <SectionLabel>{heading ?? 'Writing'}</SectionLabel>
+      <SectionLabel as="h1">{heading ?? 'Writing'}</SectionLabel>
 
       {items.length === 0 ? (
         <p className="max-w-[34rem] text-[15px] leading-relaxed text-[var(--muted)]">

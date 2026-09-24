@@ -80,10 +80,25 @@ export function Shell({
  * else: dense hairline rules between every row is a broadsheet pastiche that
  * currently reads as machine-generated, so rows below are separated by space.
  */
-export function SectionLabel({ children }: { children: React.ReactNode }) {
+/**
+ * A section heading. `as` changes only the TAG, never the look.
+ *
+ * The index pages at /work and /blog had no h1 at all, because this label was
+ * their page title and it renders an h2. A page with no h1 has no stated
+ * subject: assistive technology has nothing to announce it by, and a crawler is
+ * left inferring it. The visual treatment is right and stays exactly as it is;
+ * only the element changes.
+ */
+export function SectionLabel({
+  children,
+  as: Tag = 'h2',
+}: {
+  children: React.ReactNode
+  as?: 'h1' | 'h2'
+}) {
   return (
-    <h2 className="mb-10 border-b border-[var(--rule)] pb-3.5 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--faint)]">
+    <Tag className="mb-10 border-b border-[var(--rule)] pb-3.5 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--faint)]">
       {children}
-    </h2>
+    </Tag>
   )
 }

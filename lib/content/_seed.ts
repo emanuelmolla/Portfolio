@@ -161,8 +161,17 @@ export const seedProfile: Profile = {
   alternateName: 'emanuelmolla',
   headline: 'Backend developer',
   bio: {
+    /**
+     * Does NOT restate the headline. The home page now renders name, then
+     * headline, then this, so a bio opening with "Backend developer" would print
+     * the same two words twice in a row, three lines apart.
+     *
+     * It is no longer the meta description either: seo.description below is set
+     * explicitly, so the page copy can read naturally while the search snippet
+     * still carries the name and the role together.
+     */
     short:
-      'Backend developer based in Vancouver. Computer Systems Technology at BCIT, working mostly on the server side.',
+      'Computer Systems Technology at BCIT, based in Vancouver, working mostly on the server side.',
     long: [
       'I love solving real problems with code, building tools that help people, and constantly learning how technology works behind the scenes.',
       '',
@@ -193,8 +202,14 @@ export const seedProfile: Profile = {
   inLanguage: 'en',
   seo: {
     title: 'Emanuel Molla',
+    /**
+     * Leads with the name. This is the snippet under the blue link, and the
+     * search that matters most for a personal site is someone typing the name
+     * after reading it on a resume. Pairing the name with the role in one
+     * sentence is what ties the two together for a reader skimming results.
+     */
     description:
-      'Backend developer based in Vancouver. Computer Systems Technology at BCIT.',
+      'Emanuel Molla is a backend developer in Vancouver, studying Computer Systems Technology at BCIT.',
     ogImage: null,
     canonicalUrl: null,
     noindex: false,

@@ -28,9 +28,26 @@ export function Home({
   return (
     <>
       <section className="pt-24 pb-20">
-        <h1 className="mb-8 max-w-[22ch] text-[clamp(2.25rem,6vw,3.75rem)] font-medium leading-[1.05] tracking-[-0.035em] text-balance">
-          {profile.headline}
+        {/*
+          THE NAME IS THE H1, not the headline.
+
+          It used to be the headline, which meant the largest text on the site and
+          its single strongest relevance signal both read "Backend developer": a
+          job title shared with a million people and attached to nobody. Driver #1
+          of this rebuild was being machine-readable as a specific person, and an
+          h1 with no name in it works directly against that.
+
+          It is also the plainer human answer. Someone who lands here should leave
+          able to say whose site it was.
+        */}
+        <h1 className="mb-3 text-[clamp(2.5rem,7vw,4rem)] font-medium leading-[1.02] tracking-[-0.04em]">
+          {profile.name}
         </h1>
+
+        <p className="mb-7 max-w-[24ch] text-[clamp(1.25rem,3vw,1.625rem)] leading-[1.2] tracking-[-0.025em] text-balance text-[var(--muted)]">
+          {profile.headline}
+        </p>
+
         <p className="max-w-[34rem] text-[17px] leading-relaxed text-[var(--muted)]">
           {profile.bio.short}
         </p>

@@ -59,7 +59,7 @@ export function WorkSummary({ work }: { work: Work }) {
 export function WorkIndex({ items, heading }: { items: Work[]; heading?: string }) {
   return (
     <section className="pt-20 pb-22">
-      <SectionLabel>{heading ?? 'Work'}</SectionLabel>
+      <SectionLabel as="h1">{heading ?? 'Work'}</SectionLabel>
 
       {items.length === 0 ? (
         <p className="max-w-[34rem] text-[15px] text-[var(--muted)]">Nothing here yet.</p>

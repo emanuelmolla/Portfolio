@@ -157,10 +157,31 @@ export function Home({
 }) {
   const roles = (experience ?? []).filter((e) => e.section === 'work' || e.section === 'coop')
   return (
-    <div className="rounded-lg border border-[var(--rule)] bg-[var(--window)]/80 p-4 backdrop-blur-sm sm:p-5">
-      <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--faint)]">
-        Recent work
-      </p>
+    <div>
+      {/*
+        This theme's home had no h1 at all; it opened straight into a folder of
+        recent work. Every page needs exactly one, and on the home page it should
+        carry the name, for the same reason it does in the clean theme.
+
+        Set on the wallpaper rather than inside the window, which is the
+        desktop-native place for it: the name belongs to the machine, the window
+        is only what happens to be open on it.
+      */}
+      {profile && (
+        <header className="mb-5 px-1">
+          <h1 className="text-[clamp(1.75rem,5vw,2.5rem)] font-medium leading-[1.05] tracking-[-0.03em]">
+            {profile.name}
+          </h1>
+          <p className="mt-1.5 font-mono text-[12px] tracking-[0.02em] text-[var(--muted)]">
+            {profile.headline}
+          </p>
+        </header>
+      )}
+
+      <div className="rounded-lg border border-[var(--rule)] bg-[var(--window)]/80 p-4 backdrop-blur-sm sm:p-5">
+        <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--faint)]">
+          Recent work
+        </p>
       <FileList
         empty="Empty folder."
         rows={work.map((item) => ({
@@ -197,8 +218,9 @@ export function Home({
           </a>
           {' · '}
           {work.length} item{work.length === 1 ? '' : 's'}
-        </p>
-      )}
+          </p>
+        )}
+      </div>
     </div>
   )
 }
@@ -208,6 +230,9 @@ export function Home({
 export function WorkIndex({ items }: { items: Work[] }) {
   return (
     <div className="pt-4">
+      {/* The folder name IS the page heading here. It was a bare paragraph, so
+          this view shipped without an h1. Same look, correct element. */}
+      <h1 className="mb-1 font-mono text-[13px] tracking-[0.02em] text-[var(--ink)]">work</h1>
       <p className="mb-4 font-mono text-[11px] text-[var(--muted)]">
         {items.length} item{items.length === 1 ? '' : 's'}
       </p>
@@ -323,6 +348,7 @@ export function WorkItem({
 export function PostIndex({ items }: { items: Post[] }) {
   return (
     <div className="pt-4">
+      <h1 className="mb-1 font-mono text-[13px] tracking-[0.02em] text-[var(--ink)]">writing</h1>
       <p className="mb-4 font-mono text-[11px] text-[var(--muted)]">
         {items.length} item{items.length === 1 ? '' : 's'}
       </p>
@@ -487,6 +513,7 @@ export function Contact({ profile }: { profile: Profile | null }) {
 
   return (
     <div className="pt-4">
+      <h1 className="mb-4 font-mono text-[13px] tracking-[0.02em] text-[var(--ink)]">contact</h1>
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
         <div className="min-w-0 flex-1">
           <ContactForm toName={profile.name} toEmail={email} />
