@@ -10,6 +10,21 @@ import { ContactForm } from './ContactForm'
 
 /* ------------------------------------------------------------------ home --- */
 
+/**
+ * How Experience rows are grouped on /about.
+ *
+ * Work and co-op share a heading because a co-op term is a job; splitting them
+ * would say more about BCIT's paperwork than about the work. Awards and
+ * certificates are deliberately absent: the one award here is already a project
+ * and a post, and listing it a third time under its own heading would be the
+ * same duplication in a nicer wrapper. Add a group here when there is something
+ * real to put in it.
+ */
+const GROUPS: { heading: string; sections: string[] }[] = [
+  { heading: 'Experience', sections: ['work', 'coop'] },
+  { heading: 'Education', sections: ['education'] },
+]
+
 export function Home({
   profile,
   work,
@@ -230,11 +245,28 @@ export function About({
         </div>
       </div>
 
-      {experience.length > 0 && (
-        <section className="pb-20">
-          <SectionLabel>Experience</SectionLabel>
+      {/*
+        Grouped by section, not dumped into one list.
+
+        This used to render every Experience row under a single "Experience"
+        heading, which is how an award for a student project ended up sitting
+        between a job and a degree. The `section` discriminator exists precisely
+        so these are different things; ignoring it and labelling the result
+        "Experience" made the label a lie.
+
+        Only non-empty groups render, and they come out in GROUPS order rather
+        than data order, so a new entry lands under the right heading on its own
+        instead of wherever the sort happened to put it.
+      */}
+      {GROUPS.map(({ heading, sections }) => {
+        const rows = experience.filter((e) => sections.includes(e.section))
+        if (rows.length === 0) return null
+
+        return (
+        <section key={heading} className="pb-20">
+          <SectionLabel>{heading}</SectionLabel>
           <div className="flex flex-col gap-9">
-            {experience.map((entry) => (
+            {rows.map((entry) => (
               <div
                 key={entry.slug}
                 className="grid grid-cols-1 items-baseline gap-x-8 gap-y-1.5 sm:grid-cols-[minmax(0,1fr)_9rem]"
@@ -275,7 +307,8 @@ export function About({
             ))}
           </div>
         </section>
-      )}
+        )
+      })}
 
       {top.length > 0 && (
         <section className="pb-20">

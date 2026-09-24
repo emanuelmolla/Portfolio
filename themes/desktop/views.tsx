@@ -411,6 +411,19 @@ export function PostItem({ post }: { post: Post }) {
 
 /* ----------------------------------------------------------------- about --- */
 
+/**
+ * Experience groupings for this theme.
+ *
+ * Deliberately duplicated rather than imported from the clean theme. The split
+ * (work and co-op together, education apart) is the same editorial judgement,
+ * but the labels are this theme's vocabulary, and one theme reaching into
+ * another for a constant is how the two quietly become one theme again.
+ */
+const GROUPS: { label: string; sections: string[] }[] = [
+  { label: 'Experience', sections: ['work', 'coop'] },
+  { label: 'Education', sections: ['education'] },
+]
+
 export function About({
   profile,
   experience,
@@ -454,24 +467,32 @@ export function About({
         </div>
       </div>
 
-      {experience.length > 0 && (
-        <WindowSection label="Experience">
-          <ul className="flex flex-col gap-5">
-            {experience.map((entry) => (
-              <li
-                key={entry.slug}
-                className="grid grid-cols-1 items-baseline gap-x-8 gap-y-1 sm:grid-cols-[minmax(0,1fr)_8rem]"
-              >
-                <span className="font-medium">{entry.role}</span>
-                <span className="tabular font-mono text-[11px] text-[var(--faint)] sm:text-right">
-                  {entry.current ? 'current' : formatDate(entry.endDate, 'year')}
-                </span>
-                <span className="text-sm text-[var(--muted)]">{entry.org}</span>
-              </li>
-            ))}
-          </ul>
-        </WindowSection>
-      )}
+      {/* Grouped, for the same reason the clean theme groups: one list labelled
+          "Experience" put a degree and a student award next to a job. The
+          headings are this theme's own, lowercased to match its chrome. */}
+      {GROUPS.map(({ label, sections }) => {
+        const rows = experience.filter((e) => sections.includes(e.section))
+        if (rows.length === 0) return null
+
+        return (
+          <WindowSection key={label} label={label}>
+            <ul className="flex flex-col gap-5">
+              {rows.map((entry) => (
+                <li
+                  key={entry.slug}
+                  className="grid grid-cols-1 items-baseline gap-x-8 gap-y-1 sm:grid-cols-[minmax(0,1fr)_8rem]"
+                >
+                  <span className="font-medium">{entry.role}</span>
+                  <span className="tabular font-mono text-[11px] text-[var(--faint)] sm:text-right">
+                    {entry.current ? 'current' : formatDate(entry.endDate, 'year')}
+                  </span>
+                  <span className="text-sm text-[var(--muted)]">{entry.org}</span>
+                </li>
+              ))}
+            </ul>
+          </WindowSection>
+        )
+      })}
 
       {top.length > 0 && (
         <WindowSection label="What I work with">
