@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { useUpload } from './useUpload'
 
 /**
  * Repeating image rows for a project's screenshots.
@@ -38,6 +39,8 @@ export function GalleryRows({
   const [rows, setRows] = useState<Keyed[]>(() =>
     defaultValue.map((r) => ({ ...r, key: (counter += 1) }))
   )
+  const picker = useRef<HTMLInputElement>(null)
+  const { upload, busy, error: uploadError } = useUpload()
 
   const patch = (key: number, next: Partial<GalleryItem>) =>
     setRows((c) => c.map((r) => (r.key === key ? { ...r, ...next } : r)))
@@ -64,19 +67,58 @@ export function GalleryRows({
     <div>
       <div className="mb-1.5 flex items-baseline justify-between gap-3">
         <span className="a-label">Screenshots</span>
-        <button
-          type="button"
-          className="a-btn a-btn-sm"
-          onClick={() =>
-            setRows((c) => [
-              ...c,
-              { key: (counter += 1), url: '', alt: '', width: 0, height: 0, caption: '' as string | null },
-            ])
-          }
-        >
-          Add screenshot
-        </button>
+        <span className="flex items-center gap-2">
+          {/* Multi-select, because adding screenshots to a project is naturally a
+              handful at once and one-at-a-time is the friction this replaces.
+              Each upload appends a row already filled in, dimensions included. */}
+          <input
+            ref={picker}
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={async (event) => {
+              const files = event.target.files
+              if (!files?.length) return
+              const images = await upload(files)
+              setRows((c) => [
+                ...c,
+                ...images.map((image) => ({
+                  key: (counter += 1),
+                  url: image.url,
+                  alt: '',
+                  width: image.width,
+                  height: image.height,
+                  caption: '' as string | null,
+                })),
+              ])
+              event.target.value = ''
+            }}
+          />
+          <button
+            type="button"
+            className="a-btn a-btn-sm a-btn-primary"
+            disabled={busy}
+            onClick={() => picker.current?.click()}
+          >
+            {busy ? 'Uploading' : 'Upload screenshots'}
+          </button>
+          <button
+            type="button"
+            className="a-btn a-btn-sm"
+            onClick={() =>
+              setRows((c) => [
+                ...c,
+                { key: (counter += 1), url: '', alt: '', width: 0, height: 0, caption: '' as string | null },
+              ])
+            }
+          >
+            Add by URL
+          </button>
+        </span>
       </div>
+
+      {uploadError && <p className="a-error mb-2">{uploadError}</p>}
 
       <p className="a-hint mb-2">
         Extra images beyond the cover. The cover leads the sequence, so do not repeat it here.

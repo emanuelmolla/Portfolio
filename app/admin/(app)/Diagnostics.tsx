@@ -1,6 +1,7 @@
 import { adminEmails, configuredProviders } from '@/auth'
 import { hasDatabase } from '@/lib/content/_util'
 import { emailConfigured, notificationRecipient } from '@/lib/email'
+import { uploadsConfigured, cloudName } from '@/lib/uploads'
 import { readResumeMeta } from '@/lib/admin/read'
 import { TestEmailButton } from './TestEmailButton'
 
@@ -42,6 +43,13 @@ export async function Diagnostics() {
       detail: email
         ? `Contact form messages are emailed to ${recipient}.`
         : 'No RESEND_API_KEY or CONTACT_FROM_EMAIL. Messages are still stored, they just do not reach your inbox.',
+    },
+    {
+      label: 'Image uploads',
+      ok: uploadsConfigured(),
+      detail: uploadsConfigured()
+        ? `Uploading to the Cloudinary account "${cloudName()}".`
+        : 'No CLOUDINARY_* keys. The image fields still accept a pasted URL, but nothing can be uploaded from here.',
     },
     {
       label: 'Resume',

@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { useUpload } from './useUpload'
 
 /**
  * URL, alt text and intrinsic size for an image.
@@ -18,6 +19,11 @@ import { useState } from 'react'
  * It fills in automatically only when the fields are empty, and never overwrites
  * a value that was typed. Deliberate cropping is a real thing and the auto-fill
  * should not fight it.
+ *
+ * UPLOAD is the primary path now. Pasting a URL still works, for an image that
+ * already lives somewhere, but the file picker is what removes the round trip
+ * through someone else's dashboard that v1 required. An upload returns its own
+ * width and height, so on that path the measuring never happens at all.
  */
 
 export interface ImageValue {
@@ -44,6 +50,8 @@ export function ImageFields({
   const [width, setWidth] = useState(value?.width ? String(value.width) : '')
   const [height, setHeight] = useState(value?.height ? String(value.height) : '')
   const [status, setStatus] = useState<string | null>(null)
+  const picker = useRef<HTMLInputElement>(null)
+  const { upload, busy, error: uploadError } = useUpload()
 
   const measure = (src: string, force: boolean) => {
     const target = src.trim()
@@ -79,10 +87,37 @@ export function ImageFields({
             value={url}
             onChange={(event) => setUrl(event.target.value)}
             onBlur={(event) => measure(event.target.value, false)}
-            placeholder="https://… or /me.jpg"
+            placeholder="Upload, or paste a URL"
             autoComplete="off"
             className="a-input a-mono"
           />
+          <input
+            ref={picker}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={async (event) => {
+              const files = event.target.files
+              if (!files?.length) return
+              const [image] = await upload(files)
+              // The upload already knows the size, so this path skips measuring.
+              if (image) {
+                setUrl(image.url)
+                setWidth(String(image.width))
+                setHeight(String(image.height))
+                setStatus(`${image.width} by ${image.height}`)
+              }
+              event.target.value = ''
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => picker.current?.click()}
+            disabled={busy}
+            className="a-btn a-btn-sm a-btn-primary shrink-0"
+          >
+            {busy ? 'Uploading' : 'Upload'}
+          </button>
           <button
             type="button"
             onClick={() => measure(url, true)}
@@ -92,6 +127,7 @@ export function ImageFields({
             Measure
           </button>
         </div>
+        {uploadError && <p className="a-error mt-1.5">{uploadError}</p>}
         {err(`${prefix}.url`) ? (
           <p className="a-error mt-1.5">{err(`${prefix}.url`)}</p>
         ) : (
