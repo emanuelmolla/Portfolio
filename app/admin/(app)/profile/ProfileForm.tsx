@@ -3,6 +3,7 @@
 import { FormShell } from '@/components/admin/FormShell'
 import { LinkRows, type LinkRow } from '@/components/admin/LinkRows'
 import { ImageFields } from '@/components/admin/ImageFields'
+import { InterestRows, type InterestItem } from '@/components/admin/InterestRows'
 import {
   Area,
   Fieldset,
@@ -32,6 +33,7 @@ export interface ProfileFormValues {
   links: LinkRow[]
   availability: { status: string; availableFrom: string; note: string | null }
   resumeUrl: string
+  interests: InterestItem[]
   knowsAbout: string[]
   knowsLanguage: string[]
   inLanguage: string
@@ -220,6 +222,10 @@ export function ProfileForm({
               withHandle
               hint="These are the site's contact links and the sameAs values in the JSON-LD, so each URL must be the full address rather than a handle. Order is the order of the rows."
             />
+          </Fieldset>
+
+          <Fieldset legend="Outside work">
+            <InterestRows defaultValue={values.interests} />
           </Fieldset>
 
           <Fieldset legend="Photo">

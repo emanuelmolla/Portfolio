@@ -270,15 +270,19 @@ export function About({
             {rows.map((entry) => (
               <div
                 key={entry.slug}
-                className="grid grid-cols-1 items-baseline gap-x-8 gap-y-1.5 sm:grid-cols-[minmax(0,1fr)_9rem]"
+                className="grid grid-cols-1 items-baseline gap-x-8 gap-y-1.5 sm:grid-cols-[minmax(0,1fr)_11rem]"
               >
                 <span className="text-[17px] font-medium">{entry.role}</span>
+                {/* Month precision, not year. "2021 → 2023" hides whether a
+                    two-year entry was two full years or thirteen months, which is
+                    the one thing the range is there to answer. The column is
+                    widened to fit "Jul 2021 → Jul 2023". */}
                 <span className="tabular font-mono text-xs text-[var(--faint)] sm:text-right">
                   {entry.current
                     ? entry.startDate
-                      ? `${formatDate(entry.startDate, 'year')} → now`
+                      ? `${formatDate(entry.startDate, 'month')} → now`
                       : 'current'
-                    : [formatDate(entry.startDate, 'year'), formatDate(entry.endDate, 'year')]
+                    : [formatDate(entry.startDate, 'month'), formatDate(entry.endDate, 'month')]
                         .filter(Boolean)
                         .join(' → ')}
                 </span>
@@ -299,14 +303,20 @@ export function About({
                 </span>
                 {/* summary was on the model, editable in the admin, and shown
                     by nothing. A field with no reader is a field that silently
-                    swallows whatever gets typed into it. */}
+                    swallows whatever gets typed into it.
+
+                    col-start-1 is load-bearing. This is a two-column grid and
+                    items flow, so role lands left, the date lands right, the org
+                    lands left, and the FOURTH item lands back in the right-hand
+                    column: the summary was being squeezed into the nine-rem date
+                    slot. Same reason the highlights below need it. */}
                 {entry.summary && (
-                  <p className="mt-1 max-w-[34rem] text-[15px] leading-relaxed text-[var(--muted)] sm:col-span-1">
+                  <p className="mt-1 max-w-[34rem] text-[15px] leading-relaxed text-[var(--muted)] sm:col-start-1">
                     {entry.summary}
                   </p>
                 )}
                 {entry.highlights.length > 0 && (
-                  <ul className="mt-1 flex max-w-[34rem] flex-col gap-1 text-[15px] text-[var(--muted)] sm:col-span-1">
+                  <ul className="mt-1 flex max-w-[34rem] flex-col gap-1 text-[15px] text-[var(--muted)] sm:col-start-1">
                     {entry.highlights.map((h) => (
                       <li key={h}>{h}</li>
                     ))}
@@ -318,6 +328,47 @@ export function About({
         </section>
         )
       })}
+
+      {/*
+        Rows, not cards. A three-across grid of tiles with an icon in each is the
+        v1 treatment and the reason that section read as filler: the layout was
+        sized for more content than there was, so it had to be padded with things
+        he had not started. Two rows look deliberate at two entries and still look
+        right at five.
+      */}
+      {profile.interests.length > 0 && (
+        <section className="pb-20">
+          <SectionLabel>Outside work</SectionLabel>
+          <ul className="flex flex-col gap-4">
+            {profile.interests.map((interest) => (
+              <li
+                key={interest.name}
+                className="grid grid-cols-1 items-baseline gap-x-8 gap-y-1 sm:grid-cols-[9rem_minmax(0,1fr)]"
+              >
+                <span className="text-[17px] font-medium">
+                  {interest.url ? (
+                    <a
+                      href={interest.url}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="underline decoration-[var(--rule)] underline-offset-4 hover:text-[var(--accent)] hover:decoration-[var(--accent)]"
+                    >
+                      {interest.name}
+                    </a>
+                  ) : (
+                    interest.name
+                  )}
+                </span>
+                {interest.note && (
+                  <span className="text-[15px] leading-relaxed text-[var(--muted)]">
+                    {interest.note}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {top.length > 0 && (
         <section className="pb-20">

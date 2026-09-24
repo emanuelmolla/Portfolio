@@ -84,6 +84,23 @@ export async function saveProfile(_prev: ActionState, formData: FormData): Promi
 
     resumeUrl: text(formData, 'resumeUrl') || '/resume',
 
+    /**
+     * Parsed here for the same reason links are: zProfile gives `interests` a
+     * default of [], and the doc is written with Object.assign, so a field the
+     * form does not send is not "left alone", it is overwritten with the empty
+     * default. Adding a model field without adding it here deletes it on the
+     * next save.
+     */
+    interests: rows(
+      formData,
+      { name: 'interest.name', note: 'interest.note', url: 'interest.url' },
+      'name'
+    ).map((row) => ({
+      name: row.name,
+      note: row.note || null,
+      url: row.url || null,
+    })),
+
     knowsAbout: tokens(formData, 'knowsAbout'),
     knowsLanguage: tokens(formData, 'knowsLanguage'),
     inLanguage: text(formData, 'inLanguage') || 'en',

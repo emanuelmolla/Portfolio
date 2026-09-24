@@ -60,6 +60,29 @@ export const zProfile = z.object({
    */
   resumeUrl: z.string().default('/resume'),
 
+  /**
+   * Things he does that are not work.
+   *
+   * STRUCTURED, not a sentence in the bio, for one reason: an interest can carry
+   * a link. A chess profile is a real artifact someone can go and look at, and a
+   * line of prose has nowhere to put it.
+   *
+   * Deliberately NOT the v1 shape. That had five entries with a `level` on each
+   * ("Intermediate", "Goal", "Dream"), three of which were things he had not
+   * started. Self-rating and aspiration both belong to the same failure: filling
+   * a section because it exists rather than because there is something in it. A
+   * name, an optional line, an optional link. Two honest entries beat five.
+   */
+  interests: z
+    .array(
+      z.object({
+        name: z.string(),
+        note: z.string().nullable().default(null),
+        url: z.string().nullable().default(null),
+      })
+    )
+    .default([]),
+
   knowsAbout: z.array(z.string()).default([]),
   knowsLanguage: z.array(z.string()).default([]),
 
@@ -104,6 +127,10 @@ const ProfileSchema = new Schema(
       note: { type: String, default: null },
     },
     resumeUrl: { type: String, default: '/resume' },
+    interests: {
+      type: [{ name: String, note: { type: String, default: null }, url: { type: String, default: null }, _id: false }],
+      default: [],
+    },
     knowsAbout: { type: [String], default: [] },
     knowsLanguage: { type: [String], default: [] },
     inLanguage: { type: String, default: 'en' },

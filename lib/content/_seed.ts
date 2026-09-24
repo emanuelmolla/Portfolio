@@ -178,8 +178,6 @@ export const seedProfile: Profile = {
       'I grew up in Ethiopia, where I developed my love for learning and problem-solving. At 21 I moved to Canada, and I could not be more grateful for the journey.',
       '',
       'My faith through the Ethiopian Orthodox Church plays a huge role in shaping who I am. It guides my values, keeps me grounded, and reminds me to approach life with gratitude and purpose.',
-      '',
-      'Away from a screen I play chess, which has been the constant one, and I have recently started cycling.',
     ].join('\n'),
   },
   location: { city: 'Vancouver', region: 'BC', country: 'Canada' },
@@ -199,6 +197,17 @@ export const seedProfile: Profile = {
   ],
   availability: { status: 'selective', availableFrom: null, note: null },
   resumeUrl: '/resume',
+  /**
+   * Two, because two is what is true. The v1 site listed five and three of them
+   * were things he had not started yet.
+   *
+   * The chess URL is intentionally null: nobody has supplied the account, and a
+   * fabricated profile link is worse than no link. Fill it in from the admin.
+   */
+  interests: [
+    { name: 'Chess', note: 'The constant one.', url: null },
+    { name: 'Cycling', note: 'Recently started.', url: null },
+  ],
   knowsAbout: ['Backend development', 'REST APIs', 'Node.js', 'MongoDB', 'Systems design'],
   knowsLanguage: ['en', 'am'],
   inLanguage: 'en',
@@ -588,18 +597,19 @@ export const seedExperience: Experience[] = [
      * vague enough to sound like something being avoided, and it hid a real
      * three years of a computing degree.
      *
-     * The summary states plainly that it was not finished. Naming the degree
-     * without that would let a reader assume it was completed, and a CV that
-     * implies something it does not say is worse than one that says less.
+     * The summary exists for exactly one reason: naming the degree without it
+     * would let a reader assume it was completed. It states the fact and stops
+     * there. Why he left is nobody's business and reads as an excuse on a page
+     * where none was asked for.
      */
     role: 'BSc Information Systems',
     location: 'Bahir Dar, Ethiopia',
     employmentType: null,
     url: null,
-    startDate: null,
-    endDate: null,
+    startDate: new Date('2021-07-01'),
+    endDate: new Date('2023-07-01'),
     current: false,
-    summary: 'Three years of the programme before I moved to Canada.',
+    summary: 'Completed 3 of the 4 years.',
     highlights: [],
     techRefs: [T('cpp')],
     links: [],

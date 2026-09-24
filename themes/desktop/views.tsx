@@ -493,7 +493,7 @@ export function About({
                   </span>
                   <span className="text-sm text-[var(--muted)]">{entry.org}</span>
                   {entry.summary && (
-                    <span className="max-w-[40rem] text-sm text-[var(--faint)] sm:col-span-1">
+                    <span className="max-w-[40rem] text-sm text-[var(--faint)] sm:col-start-1">
                       {entry.summary}
                     </span>
                   )}
@@ -503,6 +503,35 @@ export function About({
           </WindowSection>
         )
       })}
+
+      {/* Listed in this theme's vocabulary: lowercased mono entries in a window
+          section, not the clean theme's typographic rows. Same facts, and no
+          shared markup, which is the whole reason there are two themes. */}
+      {profile.interests.length > 0 && (
+        <WindowSection label="Outside work">
+          <ul className="flex flex-col gap-2.5">
+            {profile.interests.map((interest) => (
+              <li key={interest.name} className="flex flex-wrap items-baseline gap-x-3 text-[13px]">
+                <span className="font-mono text-[var(--ink)]">
+                  {interest.url ? (
+                    <a
+                      href={interest.url}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="underline decoration-[var(--rule)] underline-offset-4 hover:text-[var(--accent)]"
+                    >
+                      {interest.name.toLowerCase()}
+                    </a>
+                  ) : (
+                    interest.name.toLowerCase()
+                  )}
+                </span>
+                {interest.note && <span className="text-[var(--muted)]">{interest.note}</span>}
+              </li>
+            ))}
+          </ul>
+        </WindowSection>
+      )}
 
       {top.length > 0 && (
         <WindowSection label="What I work with">
