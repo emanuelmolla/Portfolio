@@ -18,7 +18,7 @@ const manifest: ThemeManifest = {
   description: 'Pages as windows on a dock. The previous version of this site, rebuilt.',
 
   renders: {
-    profile: ['full', 'summary'],
+    profile: ['full'],
     page: ['full'],
     work: ['full', 'summary'],
     post: ['full', 'summary'],
@@ -31,7 +31,7 @@ const manifest: ThemeManifest = {
     page: { pattern: '/:slug' },
     work: { pattern: '/work/:slug', indexPattern: '/work' },
     post: { pattern: '/blog/:slug', indexPattern: '/blog' },
-    experience: { pattern: '/experience/:slug', indexPattern: '/experience' },
+    experience: { pattern: '/experience' },
     contact: { pattern: '/contact' },
     profile: { pattern: '/about' },
   },

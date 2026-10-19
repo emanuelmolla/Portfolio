@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      { source: '/projects', destination: '/work', permanent: true },
+      { source: '/projects/:slug', destination: '/work/:slug', permanent: true },
+    ]
+  },
   images: {
     /**
      * Scoped to the one Cloudinary account rather than all of res.cloudinary.com.

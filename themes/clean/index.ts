@@ -4,6 +4,7 @@ import { Shell } from './Shell'
 import { WorkIndex, WorkItem } from './views/work'
 import { PostIndex, PostItem } from './views/post'
 import { About, Contact, Home, PageView } from './views/pages'
+import { ExperienceView } from './views/experience'
 
 /**
  * The clean theme: the canonical renderer.
@@ -22,7 +23,7 @@ const theme: ThemeModule = {
     page: { full: PageView as never },
     work: { full: WorkItem as never, summary: WorkIndex as never },
     post: { full: PostItem as never, summary: PostIndex as never },
-    experience: { full: About as never },
+    experience: { full: ExperienceView as never },
     contact: { full: Contact as never },
   },
 }

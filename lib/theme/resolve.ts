@@ -5,7 +5,7 @@ import type { ThemeManifest } from './contract'
 /**
  * Two independent axes, deliberately kept apart:
  *
- *   THEME        which renderer draws the site   clean | desktop
+ *   THEME        which renderer draws the site   clean | desktop | chess
  *   COLOR SCHEME which palette it draws with     light | dark | system
  *
  * Conflating them is the obvious mistake: "dark mode" is not a theme, it is a
@@ -19,7 +19,7 @@ export const SCHEME_COOKIE = 'scheme'
 export type ColorScheme = 'light' | 'dark' | 'system'
 
 export function isThemeId(value: string | undefined): value is ThemeId {
-  return Boolean(value && value in themes)
+  return Boolean(value && Object.hasOwn(themes, value))
 }
 
 /**

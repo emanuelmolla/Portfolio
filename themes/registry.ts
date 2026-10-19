@@ -1,7 +1,8 @@
 import type { ThemeModule } from '@/lib/theme/contract'
-import { assertThemeCoverage } from '@/lib/theme/contract'
+import { assertThemeModule } from '@/lib/theme/contract'
 import clean from './clean'
 import desktop from './desktop'
+import chess from './chess'
 
 /**
  * The theme registry.
@@ -18,7 +19,7 @@ import desktop from './desktop'
 export const themeModules = {
   clean,
   desktop,
-  // chess: → themes/chess  (board as navigation, see OPEN_QUESTIONS Q9)
+  chess,
 } satisfies Record<string, ThemeModule>
 
 export type ThemeId = keyof typeof themeModules
@@ -35,7 +36,7 @@ export const DEFAULT_THEME: ThemeId = 'clean'
    for a visitor months later. Silent gaps are the failure mode here.          */
 
 for (const mod of Object.values(themeModules)) {
-  assertThemeCoverage(mod.manifest)
+  assertThemeModule(mod)
 }
 
 const canonicals = Object.values(themeModules).filter((m) => m.manifest.canonical)
@@ -61,7 +62,7 @@ if (canonicals[0].manifest.omits.length > 0) {
 }
 
 export function getThemeModule(id: string | undefined): ThemeModule {
-  if (id && id in themeModules) return themeModules[id as ThemeId]
+  if (id && Object.hasOwn(themeModules, id)) return themeModules[id as ThemeId]
   return themeModules[DEFAULT_THEME]
 }
 

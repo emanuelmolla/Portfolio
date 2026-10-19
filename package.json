@@ -12,9 +12,10 @@
     "seed": "tsx --env-file-if-exists=.env.local scripts/seed.ts"
   },
   "dependencies": {
+    "chess.js": "^1.4.0",
     "marked": "^18.0.11",
     "mongoose": "^9.9.4",
-    "next": "16.3.4",
+    "next": "16.4.2",
     "next-auth": "^5.0.0-beta.32",
     "react": "19.2.8",
     "react-dom": "19.2.8",
@@ -26,7 +27,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.3.4",
+    "eslint-config-next": "16.4.2",
     "tailwindcss": "^4",
     "tsx": "^4.23.13",
     "typescript": "^5"

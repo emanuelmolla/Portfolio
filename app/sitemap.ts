@@ -18,7 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getPageSlugs(),
   ])
 
-  const fixed: MetadataRoute.Sitemap = ['', '/work', '/blog', '/about', '/contact'].map(
+  const fixed: MetadataRoute.Sitemap = ['', '/work', '/blog', '/about', '/experience', '/contact'].map(
     (path) => ({
       url: `${BASE}${path}`,
       changeFrequency: 'monthly',

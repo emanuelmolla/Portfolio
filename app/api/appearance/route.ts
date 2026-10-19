@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
 
   const response = NextResponse.redirect(new URL(from, request.nextUrl.origin))
 
-  if (theme && theme in themes) {
+  if (theme && Object.hasOwn(themes, theme)) {
     response.cookies.set(THEME_COOKIE, theme, {
       path: '/',
       maxAge: ONE_YEAR,

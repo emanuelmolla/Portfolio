@@ -157,3 +157,20 @@ export function assertThemeCoverage(manifest: ThemeManifest): void {
     )
   }
 }
+
+/** Reject advertised renderers that do not exist, before a request reaches them. */
+export function assertThemeModule(theme: ThemeModule): void {
+  assertThemeCoverage(theme.manifest)
+  for (const kind of ContentKind.options) {
+    const contexts = theme.manifest.renders[kind]
+    if (contexts && theme.manifest.omits.includes(kind)) {
+      throw new Error(`Theme "${theme.manifest.id}" both renders and omits ${kind}.`)
+    }
+    if (contexts?.length === 0) throw new Error(`Theme "${theme.manifest.id}" declares no contexts for ${kind}.`)
+    for (const context of contexts ?? []) {
+      if (!theme.views[kind]?.[context]) {
+        throw new Error(`Theme "${theme.manifest.id}" advertises missing ${kind}.${context}.`)
+      }
+    }
+  }
+}
