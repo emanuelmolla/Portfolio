@@ -22,7 +22,8 @@ const routes = [
 ]
 async function main() {
   let checked = 0
-  for (const theme of ['clean', 'desktop', 'chess']) {
+  for (const theme of ['clean', 'chess', 'terminal', 'desktop']) {
+    const renderedTheme = theme === 'terminal' ? 'clean' : theme
     for (const route of routes) {
       const response = await fetch(new URL(route, base), {
         headers: { Cookie: `theme=${theme}; scheme=light` },
@@ -31,7 +32,7 @@ async function main() {
       const html = await response.text()
       assert.match(
         html,
-        new RegExp(`data-theme="${theme}"`),
+        new RegExp(`data-theme="${renderedTheme}"`),
         `${theme} ${route} theme`,
       )
       assert.match(
@@ -60,7 +61,7 @@ async function main() {
     assert.ok([200, 404].includes(missing.status))
     assert.match(await missing.text(), /name="robots" content="noindex"/)
     console.log(
-      `${theme}: ${routes.length} content routes and themed not-found checked`,
+      `${theme}${theme === 'terminal' ? ' (disabled, Minimal fallback)' : ''}: ${routes.length} content routes and themed not-found checked`,
     )
   }
   for (const [source, destination] of [

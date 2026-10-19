@@ -43,7 +43,9 @@ export function Viewer({ images, name }: { images: Media[]; name: string }) {
       {/* Title bar */}
       <div className="flex items-center gap-2 border-b border-[var(--rule)] bg-[var(--chrome)] px-3 py-1.5">
         <span aria-hidden className="h-2 w-2 rounded-full bg-[var(--accent)]" />
-        <span className="truncate font-mono text-[11px] text-[var(--muted)]">{name}</span>
+        <span className="min-w-0 [overflow-wrap:anywhere] font-mono text-[11px] text-[var(--muted)]">
+          {name}
+        </span>
       </div>
 
       {/* Frame. A fixed band so switching images does not resize the window,
@@ -62,8 +64,16 @@ export function Viewer({ images, name }: { images: Media[]; name: string }) {
 
         {images.length > 1 && (
           <>
-            <ViewerButton side="left" onClick={() => step(-1)} label="Previous screenshot" />
-            <ViewerButton side="right" onClick={() => step(1)} label="Next screenshot" />
+            <ViewerButton
+              side="left"
+              onClick={() => step(-1)}
+              label="Previous screenshot"
+            />
+            <ViewerButton
+              side="right"
+              onClick={() => step(1)}
+              label="Next screenshot"
+            />
           </>
         )}
       </div>
@@ -101,7 +111,7 @@ export function Viewer({ images, name }: { images: Media[]; name: string }) {
       {/* Status line. The dimensions are read off the record, so they cost
           nothing and are the kind of thing a viewer actually shows. */}
       <div className="flex items-center justify-between gap-3 border-t border-[var(--rule)] bg-[var(--chrome)] px-3 py-1.5 font-mono text-[11px] text-[var(--faint)]">
-        <span className="truncate">{current.caption ?? current.alt}</span>
+        <span className="min-w-0 [overflow-wrap:anywhere]">{current.caption ?? current.alt}</span>
         <span className="tabular shrink-0">
           {images.length > 1 && `${index + 1} of ${images.length}  ·  `}
           {current.width}×{current.height}

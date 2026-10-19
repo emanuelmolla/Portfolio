@@ -1,0 +1,133 @@
+/* App interiors only; window chrome and desktop layout belong to the shell. */
+.desktop-home-app {
+  color: var(--ink);
+}
+.desktop-home-app .desktop-home-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--rule);
+}
+.desktop-home-app .desktop-home-heading > svg {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  color: var(--desktop-ochre);
+}
+.desktop-home-app h1 {
+  font-size: 22px;
+  font-weight: 600;
+}
+.desktop-home-app .desktop-home-heading p {
+  margin-top: 4px;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.desktop-home-app .desktop-home-heading p span {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+}
+.desktop-home-app .desktop-home-directory {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: 4px 16px;
+  padding: 18px 0;
+}
+.desktop-home-app .desktop-home-directory a,
+.desktop-home-app .desktop-home-documents a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 10px;
+  border-radius: 4px;
+}
+.desktop-home-app .desktop-home-directory svg,
+.desktop-home-app .desktop-home-documents svg {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  color: var(--desktop-ochre);
+}
+.desktop-home-app strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+}
+.desktop-home-app small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.desktop-home-app a:hover {
+  background: var(--selection);
+}
+.desktop-home-app a:focus-visible,
+.desktop-mail-app .desktop-contact-card a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.desktop-home-app .desktop-home-documents {
+  border-top: 1px solid var(--rule);
+  padding-top: 18px;
+}
+.desktop-home-app .desktop-home-documents h2 {
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.desktop-home-app .desktop-home-documents a {
+  width: fit-content;
+}
+.desktop-home-app .desktop-home-documents svg {
+  color: var(--accent);
+}
+.desktop-mail-app .desktop-mail-layout {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
+}
+.desktop-mail-app .desktop-composer {
+  min-width: 0;
+}
+.desktop-mail-app .desktop-contact-card {
+  min-width: 0;
+  padding: 20px;
+  background: var(--raised);
+}
+.desktop-mail-app .desktop-contact-card > p {
+  margin: 6px 0 20px;
+  line-height: 1.6;
+}
+.desktop-mail-app .desktop-contact-details {
+  display: grid;
+  gap: 16px;
+  font-size: 13px;
+}
+.desktop-mail-app .desktop-contact-details dt {
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.desktop-mail-app .desktop-contact-details dd {
+  margin: 0;
+  line-height: 1.5;
+}
+.desktop-mail-app .desktop-contact-card a {
+  padding: 0;
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (min-width: 1024px) {
+  .desktop-mail-app .desktop-mail-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, max-content);
+  }
+  .desktop-mail-app .desktop-contact-card .desktop-contact-email {
+    white-space: nowrap;
+    overflow-wrap: normal;
+  }
+}

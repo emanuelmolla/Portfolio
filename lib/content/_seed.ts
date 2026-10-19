@@ -639,7 +639,7 @@ export const seedPosts: Post[] = [
     slug: "devnest",
     previousSlugs: [],
     title: "DevNest: My 6-Week Journey Building a Sprint Planner",
-    excerpt: "Over 6 weeks and 4 iterations, I built DevNest, a sprint-based project management app designed for developers. What started as a simple task manager grew into a tool with JWT/",
+    excerpt: "Over 6 weeks and 4 iterations, I built DevNest, a sprint-based project management app designed for developers.",
     body: "Over 6 weeks and 4 iterations, I built **DevNest**, a sprint-based project management app designed for developers. What started as a simple task manager grew into a tool with **JWT/Auth0 authentication,** Markdown notes, and **Gemini API** integration for auto-generating sprint tasks and feature goals.\n\nThis project taught me to think more like an engineer, making system design decisions, structuring a database that could scale, and balancing frontend vs backend responsibilities. Just as importantly, I learned to accept user feedback and turn it into real improvements, which made DevNest better after each iteration.\n\nA big thank-you to everyone who tested and shared feedback, you helped shape this project into something I\u2019m proud of.\n\n\ud83d\udc49 Try it live: [https://devnest.molla.dev](https://devnest.molla.dev)",
     bodyFormat: 'markdown',
     coverImage: {

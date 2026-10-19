@@ -1,21 +1,19 @@
 import Link from 'next/link'
 import type { NavLink } from '@/lib/theme/contract'
+import './clean.css'
 
 /**
  * Chrome for every page in the clean theme.
  *
- * Left-aligned, single column, generous vertical rhythm. No hero banner, no
- * call-to-action button, no card grid. The structural bet is that a portfolio
- * whose work is mostly backend should read like a well-set index rather than a
- * product landing page: there are no screenshots worth showing for an API, so
- * typography carries it.
+ * A left-aligned reading column with a compact masthead. Typography establishes
+ * hierarchy while real project screenshots provide evidence of the work.
  */
 export function Shell({
   children,
   nav,
   siteName,
-  appearance,
   location,
+  path = '/',
 }: {
   children: React.ReactNode
   nav: NavLink[]
@@ -25,7 +23,7 @@ export function Shell({
   location?: string
 }) {
   return (
-    <div className="min-h-screen px-6">
+    <div className="clean-shell min-h-screen px-6">
       {/* Keyboard users land here first. Hidden until focused, then it appears
           in the corner. Every page starts with the same masthead and nav, so
           without this a keyboard visitor tabs through the same links on every
@@ -50,16 +48,14 @@ export function Shell({
           air that used to sit above it now belongs to the page: every view
           already opens with its own pt-20 or pt-24.
 
-          The translucent ground plus blur is what keeps text from sliding
-          visibly behind it, and the hairline gives the bar an edge once content
-          is underneath. z-40 sits below the appearance menu, which must stay
-          reachable.
+          An opaque ground keeps scrolling text from showing behind the header.
+          z-40 sits below the appearance menu, which must stay reachable.
 
           Tighter padding below the sm breakpoint: the wordmark and the nav wrap
           onto two lines on a phone, and at the desktop padding that bar would
           take a sixth of the viewport for the whole scroll.
         */}
-        <header className="sticky top-0 z-40 -mx-6 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-[var(--rule)] bg-[var(--ground)]/85 px-6 py-3.5 backdrop-blur-md sm:gap-x-8 sm:py-5">
+        <header className="clean-header sticky top-0 z-40 -mx-6 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-[var(--rule)] bg-[var(--ground)] px-6 py-3.5 sm:gap-x-8 sm:py-5">
           {/* The wordmark, not a nav item. Set in the display face so the one
               piece of identity in the header reads as a mark rather than as the
               first link in a list. Ink where the nav is muted, which is the whole
@@ -72,12 +68,19 @@ export function Shell({
           </Link>
 
           <nav aria-label="Primary">
-            <ul className="flex flex-wrap gap-6 font-mono text-xs tracking-[0.04em]">
+            <ul className="clean-nav flex flex-wrap">
               {nav.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-[var(--muted)] hover:text-[var(--accent)]"
+                    aria-current={
+                      path === item.href
+                        ? 'page'
+                        : item.href !== '/' && path.startsWith(`${item.href}/`)
+                          ? 'location'
+                          : undefined
+                    }
+                    className="clean-nav-link"
                   >
                     {item.label}
                   </Link>
@@ -87,7 +90,7 @@ export function Shell({
           </nav>
         </header>
 
-        <main id="content" className="flex-1">
+        <main id="content" tabIndex={-1} className="flex-1">
           {children}
         </main>
 
@@ -100,20 +103,7 @@ export function Shell({
   )
 }
 
-/**
- * Section heading. A single hairline under a small-caps mono label, and nothing
- * else: dense hairline rules between every row is a broadsheet pastiche that
- * currently reads as machine-generated, so rows below are separated by space.
- */
-/**
- * A section heading. `as` changes only the TAG, never the look.
- *
- * The index pages at /work and /blog had no h1 at all, because this label was
- * their page title and it renders an h2. A page with no h1 has no stated
- * subject: assistive technology has nothing to announce it by, and a crawler is
- * left inferring it. The visual treatment is right and stays exactly as it is;
- * only the element changes.
- */
+/** Index titles use h1; sections use h2 with a quieter scale. */
 export function SectionLabel({
   children,
   as: Tag = 'h2',
@@ -121,9 +111,5 @@ export function SectionLabel({
   children: React.ReactNode
   as?: 'h1' | 'h2'
 }) {
-  return (
-    <Tag className="mb-10 border-b border-[var(--rule)] pb-3.5 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--faint)]">
-      {children}
-    </Tag>
-  )
+  return <Tag className="clean-section-label">{children}</Tag>
 }

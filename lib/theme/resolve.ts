@@ -1,6 +1,8 @@
 import { cookies } from 'next/headers'
 import { DEFAULT_THEME, themes, type ThemeId } from '@/themes/registry'
 import type { ThemeManifest } from './contract'
+import { getEnabledThemeIds } from './settings'
+import { resolveEnabledTheme } from './policy'
 
 /**
  * Two independent axes, deliberately kept apart:
@@ -37,7 +39,8 @@ export function isThemeId(value: string | undefined): value is ThemeId {
 export async function resolveTheme(): Promise<ThemeManifest> {
   const store = await cookies()
   const requested = store.get(THEME_COOKIE)?.value
-  return isThemeId(requested) ? themes[requested] : themes[DEFAULT_THEME]
+  const id = resolveEnabledTheme(requested, await getEnabledThemeIds())
+  return isThemeId(id) ? themes[id] : themes[DEFAULT_THEME]
 }
 
 export async function resolveColorScheme(): Promise<ColorScheme> {

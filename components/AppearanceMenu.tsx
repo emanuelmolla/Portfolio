@@ -1,5 +1,9 @@
 import { themes } from '@/themes/registry'
 import type { ColorScheme } from '@/lib/theme/resolve'
+import { THEME_ORDER } from '@/lib/theme/appearance'
+import { AppearanceGuide } from './AppearanceGuide'
+import './appearance.css'
+import { getEnabledThemeIds } from '@/lib/theme/settings'
 
 /**
  * The appearance switcher: a fixed overlay control, bottom-right, on every
@@ -58,53 +62,103 @@ function Item({
           active ? 'bg-[var(--accent)]' : 'bg-transparent'
         }`}
       />
-      <span className={active ? 'text-[var(--ink)]' : undefined}>{children}</span>
+      <span className={active ? 'text-[var(--ink)]' : undefined}>
+        {children}
+      </span>
     </a>
   )
 }
 
-export function AppearanceMenu({ path, currentTheme, currentScheme }: Props) {
+export async function AppearanceMenu({
+  path,
+  currentTheme,
+  currentScheme,
+}: Props) {
+  const enabled = await getEnabledThemeIds()
   return (
-    <details className="group fixed bottom-5 right-5 z-50">
-      <summary
-        aria-label="Appearance settings"
-        className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full border border-[var(--rule)] bg-[var(--raised)] text-[var(--muted)] shadow-[var(--shadow)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] [&::-webkit-details-marker]:hidden"
-      >
-        {/* Sliders glyph: reads as "settings" without being a gear, which is
+    <AppearanceGuide>
+      <details className="group">
+        <summary
+          aria-label="Appearance settings"
+          className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full border border-[var(--rule)] bg-[var(--raised)] text-[var(--muted)] shadow-[var(--shadow)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] [&::-webkit-details-marker]:hidden"
+        >
+          {/* Sliders glyph: reads as "settings" without being a gear, which is
             the single most overused icon on the web. */}
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-          <path d="M2 4.5h6M11 4.5h3" stroke="currentColor" strokeWidth="1.3" />
-          <path d="M2 11.5h3M8 11.5h6" stroke="currentColor" strokeWidth="1.3" />
-          <circle cx="9.5" cy="4.5" r="1.8" stroke="currentColor" strokeWidth="1.3" />
-          <circle cx="6.5" cy="11.5" r="1.8" stroke="currentColor" strokeWidth="1.3" />
-        </svg>
-      </summary>
-
-      <div className="absolute bottom-full right-0 mb-2 min-w-[12rem] overflow-hidden rounded-md border border-[var(--rule)] bg-[var(--raised)] py-1.5 shadow-[var(--shadow)]">
-        <p className="px-3 pb-1 pt-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--faint)]">
-          Theme
-        </p>
-        {Object.values(themes).map((t) => (
-          <Item key={t.id} href={href({ theme: t.id }, path)} active={t.id === currentTheme}>
-            {t.name}
-          </Item>
-        ))}
-
-        <hr className="my-1.5 border-t border-[var(--rule)]" />
-
-        <p className="px-3 pb-1 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--faint)]">
-          Mode
-        </p>
-        {SCHEMES.map((s) => (
-          <Item
-            key={s.value}
-            href={href({ scheme: s.value }, path)}
-            active={s.value === currentScheme}
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden
           >
-            {s.label}
-          </Item>
-        ))}
-      </div>
-    </details>
+            <path
+              d="M2 4.5h6M11 4.5h3"
+              stroke="currentColor"
+              strokeWidth="1.3"
+            />
+            <path
+              d="M2 11.5h3M8 11.5h6"
+              stroke="currentColor"
+              strokeWidth="1.3"
+            />
+            <circle
+              cx="9.5"
+              cy="4.5"
+              r="1.8"
+              stroke="currentColor"
+              strokeWidth="1.3"
+            />
+            <circle
+              cx="6.5"
+              cy="11.5"
+              r="1.8"
+              stroke="currentColor"
+              strokeWidth="1.3"
+            />
+          </svg>
+        </summary>
+
+        <div className="absolute bottom-full right-0 mb-2 min-w-[12rem] overflow-hidden rounded-md border border-[var(--rule)] bg-[var(--raised)] py-1.5 shadow-[var(--shadow)]">
+          <p className="px-3 pb-1 pt-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--faint)]">
+            Theme
+          </p>
+          {THEME_ORDER.filter(
+            (id) => Object.hasOwn(themes, id) && enabled.includes(id)
+          ).map((id) => {
+            const t = themes[id as keyof typeof themes]
+            return (
+              <div
+                key={t.id}
+                className={
+                  id === 'desktop' ? 'appearance-desktop-only' : undefined
+                }
+              >
+                <Item
+                  href={href({ theme: t.id }, path)}
+                  active={t.id === currentTheme}
+                >
+                  {t.name}
+                </Item>
+              </div>
+            )
+          })}
+
+          <hr className="my-1.5 border-t border-[var(--rule)]" />
+
+          <p className="px-3 pb-1 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--faint)]">
+            Mode
+          </p>
+          {SCHEMES.map((s) => (
+            <Item
+              key={s.value}
+              href={href({ scheme: s.value }, path)}
+              active={s.value === currentScheme}
+            >
+              {s.label}
+            </Item>
+          ))}
+        </div>
+      </details>
+    </AppearanceGuide>
   )
 }

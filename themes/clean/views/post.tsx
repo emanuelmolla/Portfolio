@@ -37,15 +37,22 @@ export function PostSummary({ post }: { post: Post }) {
  * What it must not say is "coming soon", which was one of the clearest tells
  * in the research. Stating the position plainly is honest and costs nothing.
  */
-export function PostIndex({ items, heading }: { items: Post[]; heading?: string }) {
+export function PostIndex({
+  items,
+  heading,
+}: {
+  items: Post[]
+  heading?: string
+}) {
   return (
     <section className="pt-20 pb-22">
       <SectionLabel as="h1">{heading ?? 'Writing'}</SectionLabel>
 
       {items.length === 0 ? (
         <p className="max-w-[34rem] text-[15px] leading-relaxed text-[var(--muted)]">
-          Nothing published here yet. Most of what I build is backend work, so writing it
-          up is the only way to show it. That is the next thing on the list.
+          Nothing published here yet. Most of what I build is backend work, so
+          writing it up is the only way to show it. That is the next thing on
+          the list.
         </p>
       ) : (
         <div className="flex flex-col gap-7">

@@ -1,6 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { SCHEME_COOKIE, THEME_COOKIE } from '@/lib/theme/resolve'
-import { themes } from '@/themes/registry'
+import { getEnabledThemeIds } from '@/lib/theme/settings'
+import { resolveEnabledTheme } from '@/lib/theme/policy'
+import { safeReturnPath } from '@/lib/theme/appearance'
 
 /**
  * Sets the theme and/or colour-scheme cookie, then redirects back.
@@ -24,13 +26,13 @@ export async function GET(request: NextRequest) {
 
   // Only ever redirect to a path on this site. Taking the raw parameter would
   // turn this into an open redirect.
-  const rawFrom = searchParams.get('from') ?? '/'
-  const from = rawFrom.startsWith('/') && !rawFrom.startsWith('//') ? rawFrom : '/'
+  const from = safeReturnPath(searchParams.get('from'))
 
   const response = NextResponse.redirect(new URL(from, request.nextUrl.origin))
 
-  if (theme && Object.hasOwn(themes, theme)) {
-    response.cookies.set(THEME_COOKIE, theme, {
+  if (theme) {
+    const allowed = resolveEnabledTheme(theme, await getEnabledThemeIds())
+    response.cookies.set(THEME_COOKIE, allowed, {
       path: '/',
       maxAge: ONE_YEAR,
       sameSite: 'lax',

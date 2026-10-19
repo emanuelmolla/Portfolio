@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import type { Media, Tech, Work } from '@/lib/models'
 import { renderMarkdown } from '@/lib/markdown'
 import { SectionLabel } from '../Shell'
@@ -13,56 +14,62 @@ import { workDateLine, workRoleLine } from '../format'
  * sequence and numbering that is not ordinal is decoration dressed up as
  * structure.
  *
- * A third reason used to be stated here and was wrong: that the work is mostly
- * backend so a card grid would want screenshots of UI that does not exist. There
- * are screenshots for every project. They are on the detail pages, which is where
- * a full-width screenshot belongs; whether the index should carry thumbnails as
- * well is a separate design call, not a fact about the data.
+ * Existing cover or gallery images sit beside the writing. An item without
+ * media stays a text row rather than acquiring a fabricated preview.
  */
 
 export function WorkSummary({ work }: { work: Work }) {
+  const preview = work.coverImage ?? work.gallery?.[0]
   return (
-    <Link
-      href={`/work/${work.slug}`}
-      className="group grid grid-cols-1 items-baseline gap-x-8 gap-y-2 sm:grid-cols-[minmax(0,1fr)_10rem]"
-    >
-      <span className="text-xl font-medium tracking-[-0.015em] transition-colors group-hover:text-[var(--accent)]">
-        {work.title}
-      </span>
-
-      {/* Date alone in the right column, and nowrap.
-          It previously carried "date · role" in an 8rem column, which wrapped
-          to two lines on anything with a longer range. Dates in a column only
-          read as a column if they all sit on one line; the role moved down to
-          the meta row where it has the full width. */}
-      <span className="tabular whitespace-nowrap font-mono text-xs text-[var(--faint)] sm:text-right">
-        {workDateLine(work)}
-      </span>
-
-      <p className="max-w-[34rem] text-[15px] leading-relaxed text-[var(--muted)] sm:col-span-1">
-        {work.summary}
-      </p>
-
-      <ul className="flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[11px] text-[var(--faint)] sm:col-span-2">
-        <li className="text-[var(--muted)]">{workRoleLine(work)}</li>
-        {work.details?.kind === 'software' &&
-          work.details.stack.slice(0, 5).map((item) => (
-            <li key={item} className="before:mr-3 before:content-['·']">
-              {item.toLowerCase()}
-            </li>
-          ))}
-      </ul>
+    <Link href={`/work/${work.slug}`} className="group clean-work">
+      {preview && (
+        <span className="clean-work-preview">
+          <Image
+            src={preview.url}
+            alt={preview.alt}
+            width={preview.width}
+            height={preview.height}
+            sizes="(min-width: 640px) 288px, calc(100vw - 48px)"
+          />
+        </span>
+      )}
+      <div className="clean-work-copy">
+        <div className="clean-work-heading">
+          <h3 className="clean-work-title">{work.title}</h3>
+          <span className="tabular font-mono text-xs text-[var(--faint)]">
+            {workDateLine(work)}
+          </span>
+        </div>
+        <p className="clean-work-summary">{work.summary}</p>
+        <ul className="clean-work-meta flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[11px] text-[var(--faint)]">
+          <li className="text-[var(--muted)]">{workRoleLine(work)}</li>
+          {work.details?.kind === 'software' &&
+            work.details.stack.slice(0, 5).map((item) => (
+              <li key={item} className="before:mr-3 before:content-['·']">
+                {item}
+              </li>
+            ))}
+        </ul>
+      </div>
     </Link>
   )
 }
 
-export function WorkIndex({ items, heading }: { items: Work[]; heading?: string }) {
+export function WorkIndex({
+  items,
+  heading,
+}: {
+  items: Work[]
+  heading?: string
+}) {
   return (
     <section className="pt-20 pb-22">
       <SectionLabel as="h1">{heading ?? 'Work'}</SectionLabel>
 
       {items.length === 0 ? (
-        <p className="max-w-[34rem] text-[15px] text-[var(--muted)]">Nothing here yet.</p>
+        <p className="max-w-[34rem] text-[15px] text-[var(--muted)]">
+          Nothing here yet.
+        </p>
       ) : (
         <div className="flex flex-col gap-11">
           {items.map((work) => (
@@ -117,11 +124,13 @@ export function WorkItem({
         </ul>
       )}
 
-      {/* After the summary and links: what it is, then, if the reader wants it,
-          what it does. Folded away by default so this page stays writing rather
-          than a slide deck. The cover leads the sequence, so it is prepended
-          rather than shown separately. */}
-      <Screenshots images={[work.coverImage, ...(work.gallery ?? [])].filter(Boolean) as Media[]} />
+      {/* The cover provides immediate evidence; further screenshots expand
+          without client JavaScript. */}
+      <Screenshots
+        images={
+          [work.coverImage, ...(work.gallery ?? [])].filter(Boolean) as Media[]
+        }
+      />
 
       {/* Rendered only when written. An empty "Problem" heading is worse than
           no heading, and inventing one would be worse still. */}
@@ -140,7 +149,10 @@ export function WorkItem({
       )}
 
       {body && (
-        <div className="prose mb-12" dangerouslySetInnerHTML={{ __html: body }} />
+        <div
+          className="prose mb-12"
+          dangerouslySetInnerHTML={{ __html: body }}
+        />
       )}
 
       {tech.length > 0 && (
@@ -176,7 +188,10 @@ export function WorkItem({
         >
           <div>
             {adjacent?.prev && (
-              <Link href={`/work/${adjacent.prev.slug}`} className="group block">
+              <Link
+                href={`/work/${adjacent.prev.slug}`}
+                className="group block"
+              >
                 <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--faint)]">
                   Previous
                 </span>
@@ -188,7 +203,10 @@ export function WorkItem({
           </div>
           <div className="sm:text-right">
             {adjacent?.next && (
-              <Link href={`/work/${adjacent.next.slug}`} className="group block">
+              <Link
+                href={`/work/${adjacent.next.slug}`}
+                className="group block"
+              >
                 <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--faint)]">
                   Next
                 </span>

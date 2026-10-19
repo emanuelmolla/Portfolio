@@ -25,6 +25,11 @@ The source artwork library and approved reference page are preserved separately.
 Only the board, twelve piece SVGs, and a 127 KB WebP tabletop are shipped here.
 All styling is scoped to the chess theme or its `chess-` classes.
 
+Fine-pointer devices use an ivory/brass arrow and a pawn pointer for links and
+controls. Text uses a matching I-beam; disabled controls and
+forced-colour mode retain standard accessibility affordances. These are native
+SVG cursors, with no pointer-following JavaScript or animation trail.
+
 ## Interaction
 
 The board offers a complete 33-ply Opera Game replay and five short studies.

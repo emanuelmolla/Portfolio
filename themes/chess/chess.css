@@ -36,11 +36,23 @@ html[data-theme='chess'][data-scheme='dark'] {
   --chess-surface-muted: #c2b79c;
 }
 .chess-room {
+  --club-cursor: url('/themes/chess/cursor-arrow.svg') 4 2, default;
   overflow-x: clip;
   min-height: 100svh;
   color: var(--ink);
   background: var(--ground);
   font-family: var(--app-font-sans), sans-serif;
+}
+@media (pointer: fine) {
+  html[data-theme='chess'] body { cursor: url('/themes/chess/cursor-arrow.svg') 4 2, default; }
+  .chess-room, .chess-room * { cursor: var(--club-cursor); }
+  .chess-room :is(a,button,summary,select), .chess-room :is(a,button,summary,select) * { cursor: url('/themes/chess/cursor-pawn.svg') 16 3, pointer; }
+  .chess-room :is(p,h1,h2,h3,li,blockquote,pre,code,input,textarea) { cursor: url('/themes/chess/cursor-text.svg') 16 16, text; }
+  .chess-room :is(a,button,summary) :is(p,h1,h2,h3,li,span) { cursor: url('/themes/chess/cursor-pawn.svg') 16 3, pointer; }
+  .chess-room :is(button,input,select,textarea):disabled { cursor: not-allowed; }
+}
+@media (forced-colors: active) {
+  html[data-theme='chess'] body,.chess-room,.chess-room * { cursor: auto !important; }
 }
 .chess-room * {
   box-sizing: border-box;

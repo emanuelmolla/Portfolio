@@ -3,6 +3,7 @@ import { assertThemeModule } from '@/lib/theme/contract'
 import clean from './clean'
 import desktop from './desktop'
 import chess from './chess'
+import terminal from './terminal'
 
 /**
  * The theme registry.
@@ -18,8 +19,9 @@ import chess from './chess'
 
 export const themeModules = {
   clean,
-  desktop,
   chess,
+  terminal,
+  desktop,
 } satisfies Record<string, ThemeModule>
 
 export type ThemeId = keyof typeof themeModules

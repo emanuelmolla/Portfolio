@@ -3,6 +3,7 @@ import { resolveColorScheme, resolveTheme } from '@/lib/theme/resolve'
 import { getThemeModule, canonicalModule } from '@/themes/registry'
 import type { ContentKind, NavLink, RenderContext } from '@/lib/theme/contract'
 import { AppearanceMenu } from './AppearanceMenu'
+import { DesktopAvailability } from './DesktopAvailability'
 
 /**
  * Wraps a page in the active theme's chrome.
@@ -32,7 +33,10 @@ export async function ThemedPage({
     { href: '/work', label: 'work' },
     { href: '/blog', label: 'writing' },
     { href: '/about', label: 'about' },
-    ...navPages.map((p) => ({ href: `/${p.slug}`, label: p.title.toLowerCase() })),
+    ...navPages.map((p) => ({
+      href: `/${p.slug}`,
+      label: p.title.toLowerCase(),
+    })),
     { href: '/contact', label: 'contact' },
   ]
 
@@ -40,24 +44,29 @@ export async function ThemedPage({
 
   return (
     <>
+      {theme.id === 'desktop' && <DesktopAvailability path={path} />}
       <Shell
-      nav={nav}
-      siteName={profile?.name ?? 'Emanuel Molla'}
-      path={path}
-      headline={profile?.headline}
-      location={profile?.location?.city}
-      resumeUrl={profile?.resumeUrl}
-      links={(profile?.links ?? [])
-        .filter((l) => l.visible)
-        .map((l) => ({ kind: l.kind, url: l.url, label: l.label }))}
-    >
-      {children}
-    </Shell>
+        nav={nav}
+        siteName={profile?.name ?? 'Emanuel Molla'}
+        path={path}
+        headline={profile?.headline}
+        location={profile?.location?.city}
+        resumeUrl={profile?.resumeUrl}
+        links={(profile?.links ?? [])
+          .filter((l) => l.visible)
+          .map((l) => ({ kind: l.kind, url: l.url, label: l.label }))}
+      >
+        {children}
+      </Shell>
 
       {/* Outside the Shell on purpose: the control that changes themes must sit
           in the same place in every theme, or a visitor who lands in an
           unfamiliar one has to hunt for the way out. */}
-      <AppearanceMenu path={path} currentTheme={theme.id} currentScheme={scheme} />
+      <AppearanceMenu
+        path={path}
+        currentTheme={theme.id}
+        currentScheme={scheme}
+      />
     </>
   )
 }
@@ -93,7 +102,9 @@ export async function resolveView(
   )
 }
 
-export async function resolveHome(): Promise<React.ComponentType<Record<string, unknown>>> {
+export async function resolveHome(): Promise<
+  React.ComponentType<Record<string, unknown>>
+> {
   const theme = await resolveTheme()
   const mod = getThemeModule(theme.id)
   return mod.views.home ?? canonicalModule.views.home!

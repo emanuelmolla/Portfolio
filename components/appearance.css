@@ -1,0 +1,124 @@
+.appearance-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 70;
+}
+.appearance-widget > details {
+  position: relative;
+}
+.appearance-desktop-only {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .appearance-desktop-only {
+    display: block;
+  }
+}
+.theme-guide {
+  --guide-ear: #d9b47e;
+  position: absolute;
+  bottom: 53px;
+  right: 0;
+  width: 237px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--raised);
+  color: var(--ink);
+  box-shadow: 0 8px 28px #00000016;
+  animation: guide-arrive 450ms ease-out both;
+}
+.theme-guide::after {
+  content: "";
+  position: absolute;
+  right: 14px;
+  bottom: -5px;
+  width: 9px;
+  height: 9px;
+  background: var(--raised);
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  transform: rotate(45deg);
+}
+.theme-guide-dismiss {
+  position: absolute;
+  top: 3px;
+  right: 6px;
+  z-index: 1;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 20px;
+}
+.theme-guide-invite {
+  display: flex;
+  width: 100%;
+  text-align: left;
+  align-items: center;
+  gap: 8px;
+  padding: 22px 13px 12px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.theme-guide-invite strong {
+  font-weight: 600;
+}
+.theme-guide-invite small {
+  display: block;
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.theme-guide-cat {
+  flex: 0 0 70px;
+  color: #996b3e;
+  overflow: visible;
+}
+.cat-paw {
+  transform-origin: 49px 49px;
+  animation: cat-point 1.3s ease-in-out 2;
+}
+.cat-tail {
+  transform-origin: 59px 62px;
+  animation: cat-tail 1.6s ease-in-out 2;
+}
+.desktop-availability-note {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  z-index: 60;
+  max-width: 30rem;
+  padding: 14px;
+  background: var(--raised);
+  border: 1px solid var(--rule);
+}
+@keyframes guide-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes cat-point {
+  50% {
+    transform: rotate(17deg);
+  }
+}
+@keyframes cat-tail {
+  50% {
+    transform: rotate(-9deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .theme-guide,
+  .cat-paw,
+  .cat-tail {
+    animation: none;
+  }
+}

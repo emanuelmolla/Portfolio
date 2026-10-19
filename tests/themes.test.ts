@@ -10,6 +10,7 @@ import {
 import clean from '../themes/clean/manifest'
 import desktop from '../themes/desktop/manifest'
 import chess from '../themes/chess/manifest'
+import terminal from '../themes/terminal/manifest'
 import openings from '../themes/chess/openings.json'
 import { piecesFromFen, positionAt } from '../themes/chess/position'
 import { createElement } from 'react'
@@ -33,7 +34,7 @@ import {
   subscribeClock,
 } from '../themes/chess/motion-store'
 
-for (const manifest of [clean, desktop, chess]) {
+for (const manifest of [clean, desktop, chess, terminal]) {
   test(`${manifest.id} declares the same public routes as the canonical theme`, () => {
     assert.ok(ThemeManifest.safeParse(manifest).success)
     assert.deepEqual(manifest.routes, clean.routes)

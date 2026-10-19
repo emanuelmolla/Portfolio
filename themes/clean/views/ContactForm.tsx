@@ -90,7 +90,9 @@ export function ContactForm() {
         <label className={floating} htmlFor="name">
           Your name
         </label>
-        {state.fieldErrors?.name && <p className={error}>{state.fieldErrors.name}</p>}
+        {state.fieldErrors?.name && (
+          <p className={error}>{state.fieldErrors.name}</p>
+        )}
       </div>
 
       <div className={group}>
@@ -106,7 +108,9 @@ export function ContactForm() {
         <label className={floating} htmlFor="email">
           Your email
         </label>
-        {state.fieldErrors?.email && <p className={error}>{state.fieldErrors.email}</p>}
+        {state.fieldErrors?.email && (
+          <p className={error}>{state.fieldErrors.email}</p>
+        )}
       </div>
 
       <div className={group}>
@@ -121,21 +125,32 @@ export function ContactForm() {
         <label className={floating} htmlFor="message">
           Your message
         </label>
-        {state.fieldErrors?.message && <p className={error}>{state.fieldErrors.message}</p>}
+        {state.fieldErrors?.message && (
+          <p className={error}>{state.fieldErrors.message}</p>
+        )}
       </div>
 
       {/* Honeypot: offered to bots, hidden from people and assistive tech. */}
-      <div aria-hidden className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
+      <div
+        aria-hidden
+        className="absolute left-[-9999px] h-0 w-0 overflow-hidden"
+      >
         <label htmlFor="website">Website</label>
         <input id="website" name="website" tabIndex={-1} autoComplete="off" />
       </div>
 
       <label className="flex items-start gap-2.5 text-[13px] text-[var(--muted)]">
-        <input type="checkbox" name="contactConsent" className="mt-1 accent-[var(--accent)]" />
+        <input
+          type="checkbox"
+          name="contactConsent"
+          className="mt-1 accent-[var(--accent)]"
+        />
         <span>You can keep my details on file to reply.</span>
       </label>
 
-      {state.error && <p className="text-sm text-[var(--accent)]">{state.error}</p>}
+      {state.error && (
+        <p className="text-sm text-[var(--accent)]">{state.error}</p>
+      )}
 
       <button
         type="submit"

@@ -83,6 +83,9 @@ export async function generateMetadata(): Promise<Metadata> {
 const schemeScript = `
 (function(){try{
   var el=document.documentElement;
+  if(el.getAttribute('data-theme')==='desktop'&&!window.matchMedia('(min-width: 1024px)').matches&&!location.pathname.startsWith('/admin')){
+    location.replace('/api/appearance?'+new URLSearchParams({theme:'clean',from:location.pathname+location.search+location.hash}));
+  }
   if(el.getAttribute('data-scheme'))return;
   var dark=window.matchMedia('(prefers-color-scheme: dark)').matches;
   el.setAttribute('data-scheme',dark?'dark':'light');

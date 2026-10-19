@@ -1,0 +1,271 @@
+/* Keep palette overrides on the theme root so body and appearance inherit them.
+   Component rules stay within the clean shell, including fallback views. */
+html[data-theme='clean']:not([data-scheme='dark']),
+.clean-shell {
+  --ground: #fcfcfa;
+  --raised: #ffffff;
+  --ink: #182b35;
+  --muted: #465961;
+  --faint: #52656d;
+  --rule: #cdd7d6;
+  --accent: #17634e;
+  --accent-contrast: #ffffff;
+  --selection: #17634e18;
+}
+
+html[data-scheme='dark'] .clean-shell,
+html[data-theme='clean'][data-scheme='dark'] {
+  --ground: #0f1215;
+  --raised: #161a1e;
+  --ink: #e7eaed;
+  --muted: #b0bac3;
+  --faint: #9aa7b0;
+  --rule: #354049;
+  --accent: #70d8a1;
+  --accent-contrast: #0f1215;
+  --selection: #70d8a124;
+}
+
+.clean-shell {
+  background: var(--ground);
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.clean-shell .clean-header {
+  align-items: center;
+  gap: 0.75rem 2rem;
+}
+
+.clean-shell .clean-header .wordmark {
+  font-size: 1.1rem;
+}
+.clean-shell .clean-nav {
+  gap: 0.25rem 0.5rem;
+}
+.clean-shell .clean-nav-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 0.3rem;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  font-weight: 550;
+  text-decoration: none;
+}
+.clean-shell .clean-nav-link:hover {
+  color: var(--accent);
+  background: var(--selection);
+}
+.clean-shell .clean-nav-link[aria-current] {
+  color: var(--accent);
+  background: var(--selection);
+  text-decoration: underline;
+  text-underline-offset: 0.4rem;
+  text-decoration-thickness: 2px;
+}
+
+.clean-shell #content {
+  scroll-margin-top: 9rem;
+  min-width: 0;
+}
+.clean-shell :is(h1, h2, h3) {
+  color: var(--ink);
+}
+.clean-shell h1 {
+  text-wrap: balance;
+}
+.clean-shell .clean-hero {
+  padding-block: clamp(3.5rem, 8vw, 6rem) 4.5rem;
+}
+.clean-shell .clean-name {
+  max-width: 14ch;
+  line-height: 1.12;
+}
+.clean-shell .clean-name span {
+  color: var(--ink);
+}
+.clean-shell .clean-headline {
+  color: var(--ink);
+  font-weight: 500;
+  line-height: 1.4;
+}
+.clean-shell .clean-section-label {
+  margin-bottom: 2rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink);
+  font-size: 1.25rem;
+  font-weight: 650;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+.clean-shell h1.clean-section-label {
+  margin-bottom: 3rem;
+  padding-bottom: 1.25rem;
+  font-size: clamp(2.25rem, 5vw, 3.25rem);
+}
+
+/* Small mono remains useful for dates, but it must be readable. */
+.clean-shell :is(.text-xs, .text-\[11px\]) {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+.clean-shell .text-\[15px\] {
+  font-size: 1rem;
+}
+.clean-shell .prose {
+  max-width: 66ch;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+.clean-shell .prose :is(h2, h3) {
+  line-height: 1.35;
+}
+.clean-shell .prose a {
+  text-decoration-color: var(--muted);
+}
+.clean-shell .prose pre {
+  max-width: 100%;
+  overflow-wrap: normal;
+}
+.clean-shell :is(a, button, summary, input, textarea):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.clean-shell .clean-work {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 1.5rem 2rem;
+  padding-block: 0.25rem 2rem;
+  border-bottom: 1px solid var(--rule);
+}
+.clean-shell .clean-work-copy {
+  min-width: 0;
+}
+.clean-shell .clean-work-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1.5rem;
+}
+.clean-shell .clean-work-title {
+  font-size: 1.5rem;
+  font-weight: 650;
+  line-height: 1.3;
+  letter-spacing: -0.025em;
+}
+.clean-shell .clean-work:hover .clean-work-title {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.clean-shell .clean-work-summary {
+  max-width: 58ch;
+  margin-top: 0.8rem;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+.clean-shell .clean-work-meta {
+  margin-top: 1rem;
+}
+.clean-shell .clean-work-preview {
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 0.4rem;
+  background: var(--raised);
+}
+.clean-shell .clean-work-preview img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: contain;
+}
+.clean-shell .clean-project-cover {
+  margin-bottom: 2rem;
+}
+.clean-shell .clean-project-cover img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--rule);
+  border-radius: 0.4rem;
+}
+.clean-shell .clean-project-cover figcaption {
+  margin-top: 0.75rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+.clean-shell .clean-gallery {
+  margin-block: 1.5rem 3rem;
+}
+.clean-shell .clean-gallery summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  padding-block: 0.5rem;
+}
+.clean-shell .clean-gallery[open] summary {
+  margin-bottom: 1.5rem;
+}
+.clean-shell .clean-experience {
+  padding-top: 4.5rem;
+}
+.clean-shell .clean-experience article {
+  scroll-margin-top: 8rem;
+}
+.clean-shell .clean-experience article :is(p, li) {
+  font-size: 1rem;
+}
+.clean-shell .clean-experience article > p:first-child {
+  font-size: 0.875rem;
+}
+.clean-shell .clean-experience article h2 {
+  font-size: 1.375rem;
+}
+.clean-shell .clean-experience-highlights {
+  list-style: disc;
+  padding-left: 1.2rem;
+  line-height: 1.7;
+}
+.clean-shell footer {
+  color: var(--muted);
+}
+
+@media (min-width: 640px) {
+  .clean-shell .clean-work:has(.clean-work-preview) {
+    grid-template-columns: minmax(0, 1fr) minmax(12rem, 18rem);
+  }
+  .clean-shell .clean-work-preview {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .clean-shell .clean-work-copy {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+@media (max-width: 639px) {
+  .clean-shell .clean-header nav {
+    width: 100%;
+  }
+  .clean-shell .clean-nav {
+    gap: 0.1rem;
+  }
+  .clean-shell .clean-nav-link {
+    padding-inline: 0.55rem;
+    font-size: 0.875rem;
+  }
+  .clean-shell .clean-name {
+    font-size: clamp(2rem, 9vw, 3.25rem);
+    overflow-wrap: anywhere;
+  }
+}

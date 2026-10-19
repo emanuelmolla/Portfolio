@@ -2,144 +2,36 @@ import Link from 'next/link'
 import type { NavLink, ShellLink } from '@/lib/theme/contract'
 import { resumeFilename } from '@/lib/resume'
 import { Clock } from './Clock'
-import { DocIcon, FolderIcon, GridIcon, LinkIcon, MailIcon, PdfIcon, PersonIcon } from './icons'
+import {
+  FolderIcon,
+  DocIcon,
+  GridIcon,
+  MailIcon,
+  PdfIcon,
+  PersonIcon,
+} from './icons'
+import './desktop.css'
+import { DesktopSession, DesktopWindow } from './Window'
+import { StickyNotes } from './StickyNotes'
 
-/**
- * A desktop: menu bar, wallpaper, icons, windows, dock.
- *
- * The constraint that shapes all of it: every icon and dock item is a real
- * <a href> to a real URL, and window content is in the server HTML before any
- * JavaScript runs. Google only discovers anchors, and it will not load content
- * that appears on click. So this is an OS metaphor drawn over a genuinely
- * navigable site, not an app that paints content in.
- *
- * What is deliberately NOT copied: traffic-light buttons and pixel-accurate
- * chrome. Realistic chrome creates false affordances. On a well-known
- * macOS-simulation portfolio, visitors pressed Cmd+W expecting to close a fake
- * window and closed their actual browser tab.
- */
-
-interface DesktopFile {
-  href: string
-  label: string
-  icon: React.ComponentType<{ className?: string }>
-  external?: boolean
-  download?: boolean
-  /** Explicit filename for the saved file; see desktopFiles below. */
-  downloadAs?: string
-}
-
-/**
- * The desktop icons, built from the profile rather than written down.
- *
- * This used to be a literal array with '/resume' and a full GitHub URL in it.
- * That is the v1 failure exactly: the old site had a handle hardcoded across
- * fourteen files, six of them pointing at a username that no longer existed, and
- * changing it meant a deploy. The fixed entries below are ROUTES, which are part
- * of this theme's structure; the resume and the GitHub link are DATA, so they
- * come in as props.
- *
- * downloadAs carries the filename explicitly. /resume normally names the file
- * itself through Content-Disposition, but when nothing has been uploaded it
- * redirects to the committed public/resume.pdf and the static handler sends no
- * disposition at all, so the download would land as "resume.pdf". A same-origin
- * download attribute wins on either path.
- */
-function desktopFiles(
-  resumeUrl: string,
-  siteName: string,
-  links: ShellLink[]
-): DesktopFile[] {
-  const github = links.find((l) => l.kind === 'github')
-
-  return [
-    { href: '/work', label: 'Projects', icon: FolderIcon },
-    { href: '/blog', label: 'Writing', icon: FolderIcon },
-    { href: '/about', label: 'About me', icon: PersonIcon },
-    { href: '/contact', label: 'Contact', icon: MailIcon },
-    {
-      href: resumeUrl,
-      label: resumeFilename(siteName),
-      icon: PdfIcon,
-      external: true,
-      download: true,
-      downloadAs: resumeFilename(siteName),
-    },
-    ...(github
-      ? [
-          {
-            href: github.url,
-            label: github.label ?? 'GitHub',
-            icon: LinkIcon,
-            external: true,
-          },
-        ]
-      : []),
-  ]
-}
-
-const APPS: NavLink[] = [
-  { href: '/work', label: 'Projects' },
-  { href: '/blog', label: 'Writing' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
+const apps = [
+  { href: '/work', label: 'Projects', icon: FolderIcon },
+  { href: '/blog', label: 'Writing', icon: DocIcon },
+  { href: '/about', label: 'About', icon: PersonIcon },
+  { href: '/experience', label: 'Experience', icon: FolderIcon },
+  { href: '/contact', label: 'Mail', icon: MailIcon },
 ]
-
-function isActive(path: string, href: string) {
-  return path === href || path.startsWith(`${href}/`)
-}
-
-/** `/work/devnest` reads as `~/work/devnest` in a title bar. */
-function asPath(path: string) {
-  return path === '/' ? '~' : `~${path}`
-}
-
-function DesktopIcon({ file }: { file: DesktopFile }) {
-  const Icon = file.icon
-  const content = (
-    <>
-      <span className="flex h-14 w-14 items-center justify-center rounded-lg bg-[var(--raised)]/60 text-[var(--ink)] ring-1 ring-[var(--rule)] transition-all group-hover:bg-[var(--selection)] group-hover:text-[var(--accent)] group-hover:ring-[var(--accent)]">
-        <Icon className="h-7 w-7" />
-      </span>
-      <span className="max-w-[5.5rem] rounded px-1.5 py-0.5 text-center text-[11px] leading-tight text-[var(--ink)] group-hover:bg-[var(--accent)] group-hover:text-[var(--accent-contrast)]">
-        {file.label}
-      </span>
-    </>
-  )
-
-  const cls =
-    'group flex w-[5.75rem] flex-col items-center gap-1.5 rounded p-1 focus-visible:outline-2 focus-visible:outline-[var(--accent)]'
-
-  if (file.external) {
-    return (
-      <a
-        href={file.href}
-        className={cls}
-        target={file.download ? undefined : '_blank'}
-        rel="noreferrer noopener"
-        download={file.downloadAs ?? file.download}
-      >
-        {content}
-      </a>
-    )
-  }
-
-  return (
-    <Link href={file.href} className={cls}>
-      {content}
-    </Link>
-  )
-}
+const active = (path: string, href: string) =>
+  path === href || (href !== '/' && path.startsWith(`${href}/`))
 
 export function Shell({
   children,
+  nav,
   siteName,
   path,
-  appearance,
   headline,
   location,
   resumeUrl = '/resume',
-  links = [],
 }: {
   children: React.ReactNode
   nav: NavLink[]
@@ -151,152 +43,190 @@ export function Shell({
   resumeUrl?: string
   links?: ShellLink[]
 }) {
-  const onDesktop = path === '/'
-  const FILES = desktopFiles(resumeUrl, siteName, links)
-  const openApp = APPS.find((t) => isActive(path, t.href))
-
+  const app = apps.find((item) => active(path, item.href))
+  const segments = path.split('/').filter(Boolean)
+  const filename = resumeFilename(siteName)
+  const pages = nav.filter(
+    (item) => !apps.some((app) => app.href === item.href)
+  )
   return (
-    <div className="relative flex h-screen flex-col overflow-hidden bg-[var(--ground)]">
-      {/*
-        Wallpaper: a flat ground with a faint grain, and no gradient.
-
-        This was previously two radial washes in the accent colour, which is
-        exactly the "radial orbs / harsh gradient" decoration that reads as
-        machine-generated, and it tinted the whole screen yellow. A real desktop
-        wallpaper is a photograph or a flat colour, never a glow.
-
-        The grain is generated SVG turbulence, inline, so it costs no request
-        and no image asset. At 3.5% opacity it is not visible as texture; it
-        just stops a large flat area from looking like an empty div.
-      */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.035] mix-blend-overlay"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E\")",
-        }}
-      />
-
-      {/* Menu bar. The single strongest signal that this is an OS rather than a
-          website in a box. */}
-      <div className="relative z-30 flex h-8 shrink-0 items-center justify-between gap-4 border-b border-[var(--rule)] bg-[var(--chrome)]/85 px-3 backdrop-blur-md">
-        <div className="flex min-w-0 items-center gap-4 font-mono text-[11px]">
-          <Link
-            href="/"
-            className="shrink-0 font-semibold text-[var(--ink)] hover:text-[var(--accent)]"
-          >
-            {siteName}
-          </Link>
-          <span className="hidden truncate text-[var(--muted)] sm:inline">
-            {openApp?.label ?? 'Desktop'}
-          </span>
-        </div>
-        <div className="flex shrink-0 items-center gap-3 font-mono text-[11px] text-[var(--muted)]">
-          {location && <span className="hidden sm:inline">{location}</span>}
+    <DesktopSession key={path} path={path}>
+      <a
+        href={path === '/' ? '#desktop-workspace' : '#content'}
+        className="desktop-skip-link"
+      >
+        Skip to content
+      </a>
+      <header className="desktop-menubar">
+        <Link href="/" data-desktop-surface>
+          {siteName}
+        </Link>
+        <span>{path === '/' ? 'Desktop' : (app?.label ?? 'Document')}</span>
+        <div>
+          {location && <span>{location}</span>}
           <Clock />
         </div>
-      </div>
-
-      {/* Identity on the wallpaper. Stays visible behind an open window so the
-          person never disappears behind the interface, which is the most common
-          failure of this genre. */}
-      {headline && (
-        <div className="relative z-0 shrink-0 px-6 pt-7 sm:px-10">
-          <h2 className="max-w-[24ch] text-xl font-medium leading-snug tracking-[-0.02em] text-[var(--ink)] sm:text-2xl">
-            {headline}
-          </h2>
-        </div>
-      )}
-
-      {/* Desktop surface. min-h-0 is what lets these children scroll rather
-          than overflow: a flex item will not shrink below its content without
-          it, and the h-screen parent then clips the bottom. */}
-      <div className="relative z-0 flex min-h-0 flex-1 flex-col gap-6 px-6 pb-24 pt-6 sm:flex-row sm:px-10">
-        <div className="flex shrink-0 flex-wrap content-start gap-x-2 gap-y-4 sm:max-w-[7rem] sm:flex-col sm:flex-nowrap sm:overflow-y-auto">
-          {FILES.map((file) => (
-            <DesktopIcon key={file.href} file={file} />
-          ))}
-        </div>
-
-        {onDesktop && <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>}
-      </div>
-
-      {/* Window layer. */}
-      {!onDesktop && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-20 top-24 z-10 flex justify-center px-3 sm:px-6">
-          <div className="pointer-events-auto flex w-full max-w-[58rem] flex-col overflow-hidden rounded-lg border border-[var(--rule)] bg-[var(--window)] shadow-[var(--shadow)] sm:ml-[7rem]">
-            <div className="flex shrink-0 items-center justify-between gap-4 border-b border-[var(--rule)] bg-[var(--chrome)] px-3.5 py-2">
-              <span className="flex min-w-0 items-center gap-2 font-mono text-[11px] text-[var(--muted)]">
-                <DocIcon className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate">{asPath(path)}</span>
-              </span>
-              <Link
-                href="/"
-                aria-label="Close window"
-                className="shrink-0 rounded border border-[var(--rule)] px-2 py-0.5 font-mono text-[11px] text-[var(--muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
-              >
-                close
-              </Link>
-            </div>
-
-            <div id="content" className="min-h-0 flex-1 overflow-y-auto px-5 py-4 sm:px-9">
-              {children}
-            </div>
-
-            {/* Status strip, the way a file browser reports where you are. */}
-            <div className="flex shrink-0 items-center justify-between border-t border-[var(--rule)] bg-[var(--chrome)] px-3.5 py-1.5 font-mono text-[10px] text-[var(--faint)]">
-              <span>{openApp?.label ?? 'Window'}</span>
-              <span>{siteName}</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Dock: a centred floating pill. The scrolling region is the app list
-          ALONE, because an ancestor with overflow clips any child that extends
-          past its box, which was cutting off the settings menu. */}
-      <div className="absolute inset-x-0 bottom-0 z-20 flex justify-center px-3 pb-4">
-        <div className="flex max-w-full items-center gap-1 rounded-xl border border-[var(--rule)] bg-[var(--chrome)]/90 px-2 py-1.5 shadow-[var(--shadow)] backdrop-blur-md">
-          <nav aria-label="Applications" className="flex min-w-0 items-center gap-1 overflow-x-auto">
+      </header>
+      <StickyNotes
+        siteName={siteName}
+        headline={headline}
+        resumeUrl={resumeUrl}
+        filename={filename}
+      />
+      <div
+        className="desktop-workspace"
+        id="desktop-workspace"
+        tabIndex={-1}
+        role={path === '/' ? 'main' : undefined}
+      >
+        <nav className="desktop-shortcuts" aria-label="Desktop files">
+          {apps.map(({ href, label, icon: Icon }) => (
             <Link
-              href="/"
-              aria-label="Desktop"
-              aria-current={onDesktop ? 'page' : undefined}
-              className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 font-mono text-[11px] tracking-[0.04em] transition-colors ${
-                onDesktop
-                  ? 'bg-[var(--selection)] text-[var(--accent)]'
-                  : 'text-[var(--muted)] hover:bg-[var(--selection)] hover:text-[var(--ink)]'
-              }`}
+              key={href}
+              href={href}
+              aria-current={active(path, href) ? 'page' : undefined}
             >
-              <GridIcon className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Desktop</span>
+              <Icon />
+              <span>{label}</span>
             </Link>
-
-            <span aria-hidden className="mx-0.5 h-5 w-px shrink-0 bg-[var(--rule)]" />
-
-            {APPS.map((item) => {
-              const active = isActive(path, item.href)
-              return (
+          ))}
+          <a href={resumeUrl} download={filename}>
+            <PdfIcon />
+            <span>{filename}</span>
+          </a>
+        </nav>
+        <div className="desktop-stage">
+          <div className="desktop-identity">
+            {path === '/' ? <h1>{siteName}</h1> : <strong>{siteName}</strong>}
+            {headline && <span>{headline}</span>}
+          </div>
+          {path !== '/' && (
+            <DesktopWindow title={app?.label ?? 'Document'}>
+              <nav className="desktop-address" aria-label="File location">
                 <Link
-                  key={item.href}
-                  href={item.href}
-                  aria-current={active ? 'page' : undefined}
-                  className={`shrink-0 rounded-lg px-3.5 py-2 text-[12px] transition-colors ${
-                    active
-                      ? 'bg-[var(--selection)] text-[var(--accent)] shadow-[inset_0_-2px_0_var(--accent)]'
-                      : 'text-[var(--muted)] hover:bg-[var(--selection)] hover:text-[var(--ink)]'
-                  }`}
+                  href={
+                    segments.length > 1
+                      ? `/${segments.slice(0, -1).join('/')}`
+                      : '/'
+                  }
+                  aria-label="Parent folder"
+                  data-desktop-surface={segments.length <= 1 ? '' : undefined}
                 >
-                  {item.label}
+                  ↑
                 </Link>
-              )
-            })}
-          </nav>
-
+                <ol>
+                  <li>
+                    <Link href="/" data-desktop-surface>
+                      Desktop
+                    </Link>
+                  </li>
+                  {segments.map((segment, index) => (
+                    <li key={index}>
+                      <span aria-hidden>›</span>
+                      {index === segments.length - 1 ? (
+                        <span aria-current="page">
+                          {apps.find((a) => a.href === `/${segment}`)?.label ??
+                            segment}
+                        </span>
+                      ) : (
+                        <Link
+                          href={`/${segments.slice(0, index + 1).join('/')}`}
+                        >
+                          {apps.find((a) => a.href === `/${segment}`)?.label ??
+                            segment}
+                        </Link>
+                      )}
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+              <div className="desktop-window-body">
+                <aside className="desktop-sidebar">
+                  <p>Folders</p>
+                  <nav aria-label="Explorer folders">
+                    <Link href="/" data-desktop-surface>
+                      <GridIcon />
+                      Desktop
+                    </Link>
+                    {apps.map(({ href, label, icon: Icon }) => (
+                      <Link
+                        key={href}
+                        href={href}
+                        aria-current={active(path, href) ? 'page' : undefined}
+                      >
+                        <Icon />
+                        {label}
+                      </Link>
+                    ))}
+                  </nav>
+                  {pages.length > 0 && (
+                    <>
+                      <p>Pages</p>
+                      <nav aria-label="Pages">
+                        {pages.map((page) => (
+                          <Link
+                            key={page.href}
+                            href={page.href}
+                            aria-current={
+                              active(path, page.href) ? 'page' : undefined
+                            }
+                          >
+                            <DocIcon />
+                            {page.label}
+                          </Link>
+                        ))}
+                      </nav>
+                    </>
+                  )}
+                  <p>Documents</p>
+                  <a href={resumeUrl} download={filename}>
+                    <PdfIcon />
+                    Resume.pdf
+                  </a>
+                  <small>
+                    {siteName}
+                    <br />
+                    Personal portfolio
+                  </small>
+                </aside>
+                <main id="content" tabIndex={-1} className="desktop-content">
+                  {children}
+                </main>
+              </div>
+              <footer className="desktop-status">
+                <span>
+                  Desktop{segments.length ? ` / ${segments.join(' / ')}` : ''}
+                </span>
+                <span>Portfolio</span>
+              </footer>
+            </DesktopWindow>
+          )}
         </div>
       </div>
-    </div>
+      <div className="desktop-taskbar">
+        <nav aria-label="Applications">
+          <Link href="/" data-desktop-surface title="Desktop">
+            <GridIcon />
+            <span>Desktop</span>
+          </Link>
+          {apps.map(({ href, label, icon: Icon }) => (
+            <Link
+              href={href}
+              key={href}
+              aria-current={active(path, href) ? 'page' : undefined}
+              title={label}
+            >
+              <Icon />
+              <span>{label}</span>
+            </Link>
+          ))}
+          <a href={resumeUrl} download={filename} title="Download resume">
+            <PdfIcon />
+            <span>Resume</span>
+          </a>
+        </nav>
+      </div>
+    </DesktopSession>
   )
 }
 
@@ -308,10 +238,8 @@ export function WindowSection({
   children: React.ReactNode
 }) {
   return (
-    <section className="pb-12">
-      <h2 className="mb-6 border-b border-[var(--rule)] pb-2.5 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--faint)]">
-        {label}
-      </h2>
+    <section className="desktop-section">
+      <h2>{label}</h2>
       {children}
     </section>
   )

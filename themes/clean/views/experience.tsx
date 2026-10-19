@@ -9,7 +9,7 @@ export function ExperienceView({ experience }: { experience: Experience[] }) {
       timeZone: 'UTC',
     }).format(new Date(value))
   return (
-    <section>
+    <section className="clean-experience">
       <h1 className="mb-12 text-4xl font-semibold tracking-tight">
         Experience & education
       </h1>

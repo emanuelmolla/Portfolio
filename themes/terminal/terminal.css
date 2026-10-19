@@ -1,0 +1,207 @@
+html[data-theme='terminal'],
+.terminal-shell {
+  --ground: #181818;
+  --ink: #dedede;
+  --muted: #ababab;
+  --accent: #bed5e6;
+  --rule: #666666;
+  --raised: #252525;
+  --faint: var(--muted);
+  --accent-contrast: #181818;
+  --selection: #bed5e633;
+  color-scheme: dark;
+}
+html[data-theme='terminal'][data-scheme='light'],
+html[data-scheme='light'] .terminal-shell {
+  --ground: #fafafa;
+  --ink: #252525;
+  --muted: #595959;
+  --accent: #245776;
+  --rule: #888888;
+  --raised: #eeeeee;
+  --accent-contrast: #fafafa;
+  --selection: #24577622;
+  color-scheme: light;
+}
+.terminal-shell {
+  min-height: 100dvh;
+  width: 100%;
+  padding: 1rem;
+  background: var(--ground);
+  color: var(--ink);
+  font:
+    16px/1.6 var(--app-font-mono),
+    'Courier New',
+    monospace;
+  overflow-wrap: anywhere;
+}
+.terminal-shell * {
+  box-sizing: border-box;
+}
+.terminal-console {
+  width: 100%;
+}
+.terminal-log {
+  max-width: 80ch;
+}
+.terminal-shell p,
+.terminal-shell pre {
+  margin: 0 0 1rem;
+}
+.terminal-log pre {
+  white-space: pre-wrap;
+  font: inherit;
+}
+.terminal-echo,
+.terminal-meta,
+.terminal-shell figcaption {
+  color: var(--muted);
+}
+.terminal-console > form {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+.terminal-console > form label {
+  flex-shrink: 0;
+}
+.terminal-input-row {
+  flex: 1;
+  min-width: 0;
+}
+.terminal-input-row input {
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  border-radius: 0;
+}
+.terminal-shell a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.terminal-shell :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.terminal-shell h1,
+.terminal-shell h2,
+.terminal-shell h3 {
+  font: inherit;
+  font-weight: bold;
+  margin: 1rem 0;
+}
+.terminal-shell h1::before {
+  content: '# ';
+}
+.terminal-shell h2::before {
+  content: '## ';
+}
+.terminal-shell h3::before {
+  content: '### ';
+}
+.terminal-entry,
+.terminal-shell article > section {
+  margin-block: 1.5rem;
+}
+.terminal-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  list-style: none;
+  padding: 0;
+}
+.terminal-shell ul:not(.terminal-links),
+.terminal-shell ol {
+  list-style: revert;
+  padding-left: 2ch;
+}
+.terminal-shell img {
+  max-width: 100%;
+  height: auto;
+}
+.terminal-shell figure {
+  margin: 1rem 0;
+}
+.terminal-prose pre,
+.terminal-prose table {
+  overflow-x: auto;
+}
+.terminal-prose pre {
+  white-space: pre;
+}
+.terminal-prose code {
+  font: inherit;
+}
+.terminal-prose blockquote {
+  margin: 1rem 0;
+  padding-left: 2ch;
+}
+.terminal-prose table {
+  display: block;
+  border-collapse: collapse;
+}
+.terminal-prose th,
+.terminal-prose td {
+  border: 1px solid var(--rule);
+  padding: 0.4rem;
+}
+.terminal-composer {
+  margin-block: 1.5rem;
+}
+.terminal-composer label {
+  display: block;
+}
+.terminal-composer > div {
+  margin-block: 1rem;
+}
+.terminal-composer input:not([type='checkbox']),
+.terminal-composer textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--rule);
+  color: inherit;
+  background: transparent;
+  font: inherit;
+}
+.terminal-composer textarea {
+  resize: vertical;
+}
+.terminal-composer button {
+  min-height: 44px;
+  padding: 0.4rem 0.8rem;
+  font: inherit;
+  background: var(--raised);
+  color: inherit;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+}
+.terminal-composer button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+.terminal-fallback {
+  display: none;
+}
+.terminal-fallback summary {
+  cursor: pointer;
+}
+.terminal-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 540px) {
+  .terminal-shell {
+    padding: 0.75rem;
+  }
+}

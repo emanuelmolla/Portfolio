@@ -26,7 +26,7 @@ export function Nav({ items }: { items: NavItem[] }) {
   return (
     <nav aria-label="Admin sections">
       <ul className="flex gap-1 overflow-x-auto lg:flex-col lg:overflow-visible">
-        {items.map((item) => {
+        {[...items, ...(items.some((item) => item.href === '/admin/settings') ? [] : [{ href: '/admin/settings', label: 'Settings' }])].map((item) => {
           const active =
             item.href === '/admin' ? pathname === '/admin' : pathname.startsWith(item.href)
 

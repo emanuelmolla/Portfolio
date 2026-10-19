@@ -15,7 +15,8 @@ const manifest: ThemeManifest = {
   id: 'desktop',
   name: 'Desktop',
   version: '0.1.0',
-  description: 'Pages as windows on a dock. The previous version of this site, rebuilt.',
+  description:
+    'Pages as windows on a dock. The previous version of this site, rebuilt.',
 
   renders: {
     profile: ['full'],

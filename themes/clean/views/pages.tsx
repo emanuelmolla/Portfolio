@@ -39,7 +39,9 @@ export function Home({
 }) {
   if (!profile) return null
 
-  const roles = (experience ?? []).filter((e) => e.section === 'work' || e.section === 'coop')
+  const roles = (experience ?? []).filter(
+    (e) => e.section === 'work' || e.section === 'coop'
+  )
 
   // Split off the first word rather than trusting givenName/familyName to be
   // filled in. The name is the one field guaranteed to exist.
@@ -48,7 +50,7 @@ export function Home({
 
   return (
     <>
-      <section className="pt-24 pb-20">
+      <section className="clean-hero pt-24 pb-20">
         {/*
           THE NAME IS THE H1, not the headline.
 
@@ -66,16 +68,14 @@ export function Home({
           same grotesque as the paragraph under it is not a wordmark, it is just
           large text, which is what made the first version of this look flat.
 
-          The family name takes the muted tone. It is the quietest way to give a
-          two-word name some shape without reaching for a second colour, and it
-          puts the emphasis on the half people actually say.
+          Both parts of the name use full-contrast ink for a legible identity.
         */}
-        <h1 className="wordmark mb-3 text-[clamp(2.75rem,7.5vw,4.5rem)] leading-[1.0] tracking-[-0.02em]">
+        <h1 className="clean-name wordmark mb-5 text-[clamp(2.75rem,7.5vw,4.5rem)] leading-[1.0] tracking-[-0.02em]">
           <span className="text-[var(--ink)]">{given}</span>
           {family && <span className="text-[var(--faint)]"> {family}</span>}
         </h1>
 
-        <p className="mb-7 max-w-[24ch] text-[clamp(1.25rem,3vw,1.625rem)] leading-[1.2] tracking-[-0.025em] text-balance text-[var(--muted)]">
+        <p className="clean-headline mb-7 max-w-[32ch] text-[clamp(1.25rem,3vw,1.625rem)] leading-[1.2] tracking-[-0.025em] text-balance text-[var(--muted)]">
           {profile.headline}
         </p>
 
@@ -95,8 +95,18 @@ export function Home({
             download={resumeFilename(profile.name)}
             className="inline-flex items-center gap-2.5 border border-[var(--ink)] bg-[var(--ink)] px-5 py-2.5 font-mono text-xs tracking-[0.04em] text-[var(--ground)] transition-colors hover:border-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--accent-contrast)]"
           >
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden>
-              <path d="M7 1v9M3.5 6.5 7 10l3.5-3.5" stroke="currentColor" strokeWidth="1.4" />
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 14 14"
+              fill="none"
+              aria-hidden
+            >
+              <path
+                d="M7 1v9M3.5 6.5 7 10l3.5-3.5"
+                stroke="currentColor"
+                strokeWidth="1.4"
+              />
               <path d="M1.5 12.5h11" stroke="currentColor" strokeWidth="1.4" />
             </svg>
             Download resume
@@ -112,7 +122,10 @@ export function Home({
 
         {profile.availability.status !== 'not-looking' && (
           <p className="mt-8 inline-flex items-center gap-2 font-mono text-xs tracking-[0.03em] text-[var(--muted)]">
-            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+            <span
+              aria-hidden
+              className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]"
+            />
             {profile.availability.note ??
               (profile.availability.status === 'open'
                 ? 'Open to new roles'
@@ -137,7 +150,10 @@ export function Home({
                 <span className="tabular whitespace-nowrap font-mono text-xs text-[var(--faint)] sm:text-right">
                   {entry.current
                     ? `${formatDate(entry.startDate, 'month')} to now`
-                    : [formatDate(entry.startDate, 'month'), formatDate(entry.endDate, 'month')]
+                    : [
+                        formatDate(entry.startDate, 'month'),
+                        formatDate(entry.endDate, 'month'),
+                      ]
                         .filter(Boolean)
                         .join(' to ')}
                 </span>
@@ -240,7 +256,9 @@ export function About({
           {profile.bio.long && (
             <div
               className="prose"
-              dangerouslySetInnerHTML={{ __html: renderMarkdown(profile.bio.long) }}
+              dangerouslySetInnerHTML={{
+                __html: renderMarkdown(profile.bio.long),
+              }}
             />
           )}
         </div>
@@ -264,44 +282,47 @@ export function About({
         if (rows.length === 0) return null
 
         return (
-        <section key={heading} className="pb-20">
-          <SectionLabel>{heading}</SectionLabel>
-          <div className="flex flex-col gap-9">
-            {rows.map((entry) => (
-              <div
-                key={entry.slug}
-                className="grid grid-cols-1 items-baseline gap-x-8 gap-y-1.5 sm:grid-cols-[minmax(0,1fr)_11rem]"
-              >
-                <span className="text-[17px] font-medium">{entry.role}</span>
-                {/* Month precision, not year. "2021 → 2023" hides whether a
+          <section key={heading} className="pb-20">
+            <SectionLabel>{heading}</SectionLabel>
+            <div className="flex flex-col gap-9">
+              {rows.map((entry) => (
+                <div
+                  key={entry.slug}
+                  className="grid grid-cols-1 items-baseline gap-x-8 gap-y-1.5 sm:grid-cols-[minmax(0,1fr)_11rem]"
+                >
+                  <span className="text-[17px] font-medium">{entry.role}</span>
+                  {/* Month precision, not year. "2021 → 2023" hides whether a
                     two-year entry was two full years or thirteen months, which is
                     the one thing the range is there to answer. The column is
                     widened to fit "Jul 2021 → Jul 2023". */}
-                <span className="tabular font-mono text-xs text-[var(--faint)] sm:text-right">
-                  {entry.current
-                    ? entry.startDate
-                      ? `${formatDate(entry.startDate, 'month')} → now`
-                      : 'current'
-                    : [formatDate(entry.startDate, 'month'), formatDate(entry.endDate, 'month')]
-                        .filter(Boolean)
-                        .join(' → ')}
-                </span>
-                <span className="text-[15px] text-[var(--muted)]">
-                  {entry.url ? (
-                    <a
-                      href={entry.url}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className="hover:text-[var(--accent)]"
-                    >
-                      {entry.org}
-                    </a>
-                  ) : (
-                    entry.org
-                  )}
-                  {entry.location ? ` · ${entry.location}` : ''}
-                </span>
-                {/* summary was on the model, editable in the admin, and shown
+                  <span className="tabular font-mono text-xs text-[var(--faint)] sm:text-right">
+                    {entry.current
+                      ? entry.startDate
+                        ? `${formatDate(entry.startDate, 'month')} → now`
+                        : 'current'
+                      : [
+                          formatDate(entry.startDate, 'month'),
+                          formatDate(entry.endDate, 'month'),
+                        ]
+                          .filter(Boolean)
+                          .join(' → ')}
+                  </span>
+                  <span className="text-[15px] text-[var(--muted)]">
+                    {entry.url ? (
+                      <a
+                        href={entry.url}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="hover:text-[var(--accent)]"
+                      >
+                        {entry.org}
+                      </a>
+                    ) : (
+                      entry.org
+                    )}
+                    {entry.location ? ` · ${entry.location}` : ''}
+                  </span>
+                  {/* summary was on the model, editable in the admin, and shown
                     by nothing. A field with no reader is a field that silently
                     swallows whatever gets typed into it.
 
@@ -310,22 +331,22 @@ export function About({
                     lands left, and the FOURTH item lands back in the right-hand
                     column: the summary was being squeezed into the nine-rem date
                     slot. Same reason the highlights below need it. */}
-                {entry.summary && (
-                  <p className="mt-1 max-w-[34rem] text-[15px] leading-relaxed text-[var(--muted)] sm:col-start-1">
-                    {entry.summary}
-                  </p>
-                )}
-                {entry.highlights.length > 0 && (
-                  <ul className="mt-1 flex max-w-[34rem] flex-col gap-1 text-[15px] text-[var(--muted)] sm:col-start-1">
-                    {entry.highlights.map((h) => (
-                      <li key={h}>{h}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            ))}
-          </div>
-        </section>
+                  {entry.summary && (
+                    <p className="mt-1 max-w-[34rem] text-[15px] leading-relaxed text-[var(--muted)] sm:col-start-1">
+                      {entry.summary}
+                    </p>
+                  )}
+                  {entry.highlights.length > 0 && (
+                    <ul className="clean-experience-highlights mt-1 flex max-w-[34rem] flex-col gap-2 text-[15px] text-[var(--muted)] sm:col-start-1">
+                      {entry.highlights.map((h) => (
+                        <li key={h}>{h}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
         )
       })}
 
@@ -390,13 +411,17 @@ export function About({
                 {/* His own words, not a rewrite, and deliberately no
                     proficiency rating: self-rated skill bars appear on zero
                     respected personal sites. */}
-                <p className="max-w-[34rem] text-[15px] text-[var(--muted)]">{t.note}</p>
+                <p className="max-w-[34rem] text-[15px] text-[var(--muted)]">
+                  {t.note}
+                </p>
               </div>
             ))}
 
             {rest.length > 0 && (
               <div className="grid grid-cols-1 items-baseline gap-x-8 gap-y-1.5 pt-2 sm:grid-cols-[9rem_minmax(0,1fr)]">
-                <div className="font-mono text-[11px] text-[var(--faint)]">also</div>
+                <div className="font-mono text-[11px] text-[var(--faint)]">
+                  also
+                </div>
                 <ul className="flex max-w-[44rem] flex-wrap gap-x-5 gap-y-2 font-mono text-xs text-[var(--faint)]">
                   {rest.map((t) => (
                     <li key={t.slug}>{t.name.toLowerCase()}</li>
@@ -479,11 +504,12 @@ export function Contact({ profile }: { profile: Profile | null }) {
 
   return (
     <div className="pt-20 pb-8">
-      <h1 className="mb-6 text-4xl font-medium leading-[1.1] tracking-[-0.03em]">Contact</h1>
+      <h1 className="mb-6 text-4xl font-medium leading-[1.1] tracking-[-0.03em]">
+        Contact
+      </h1>
       <p className="prose mb-14 text-[var(--muted)]">
         Email is the fastest way to reach me. The form lands in the same inbox.
       </p>
-
 
       <section>
         <SectionLabel>Send a message</SectionLabel>
@@ -498,18 +524,23 @@ export function Contact({ profile }: { profile: Profile | null }) {
               const isDownload = link.kind === 'resume'
               const isExternal = !isDownload && link.url.startsWith('http')
               return (
-                <li key={link.url} className="border-b border-[var(--rule)] last:border-b-0">
+                <li
+                  key={link.url}
+                  className="border-b border-[var(--rule)] last:border-b-0"
+                >
                   <a
                     href={link.url}
                     target={isExternal ? '_blank' : undefined}
                     rel="noreferrer noopener"
-                    download={isDownload ? resumeFilename(profile.name) : undefined}
+                    download={
+                      isDownload ? resumeFilename(profile.name) : undefined
+                    }
                     className="group flex items-center gap-4 rounded px-3 py-4 transition-colors hover:bg-[var(--selection)]"
                   >
                     <span className="w-[5.5rem] shrink-0 font-mono text-[11px] uppercase tracking-[0.1em] text-[var(--faint)]">
                       {link.kind}
                     </span>
-                    <span className="min-w-0 flex-1 truncate text-[17px] text-[var(--ink)] transition-colors group-hover:text-[var(--accent)]">
+                    <span className="min-w-0 flex-1 [overflow-wrap:anywhere] text-[17px] text-[var(--ink)] transition-colors group-hover:text-[var(--accent)]">
                       {link.handle ?? link.label ?? link.url}
                     </span>
                     <span

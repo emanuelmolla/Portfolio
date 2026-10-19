@@ -27,9 +27,18 @@ import type { Work } from '@/lib/models'
  */
 const UTC = { timeZone: 'UTC' } as const
 
-const MONTH = new Intl.DateTimeFormat('en-CA', { month: 'short', year: 'numeric', ...UTC })
+const MONTH = new Intl.DateTimeFormat('en-CA', {
+  month: 'short',
+  year: 'numeric',
+  ...UTC,
+})
 const YEAR = new Intl.DateTimeFormat('en-CA', { year: 'numeric', ...UTC })
-const DAY = new Intl.DateTimeFormat('en-CA', { day: 'numeric', month: 'short', year: 'numeric', ...UTC })
+const DAY = new Intl.DateTimeFormat('en-CA', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+  ...UTC,
+})
 
 export function formatDate(
   value: Date | string | null | undefined,
@@ -56,11 +65,15 @@ export function workDateLine(work: Work): string {
 
   const prefix = work.circa ? 'c. ' : ''
   if (!work.endDate) {
-    return work.lifecycle === 'active' ? `${prefix}${start} → now` : `${prefix}${start}`
+    return work.lifecycle === 'active'
+      ? `${prefix}${start} → now`
+      : `${prefix}${start}`
   }
 
   const end = formatDate(work.endDate, work.datePrecision)
-  return end && end !== start ? `${prefix}${start} → ${end}` : `${prefix}${start}`
+  return end && end !== start
+    ? `${prefix}${start} → ${end}`
+    : `${prefix}${start}`
 }
 
 /** "solo" / "team" reads better than a boolean, and role wins when it exists. */
